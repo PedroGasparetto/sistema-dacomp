@@ -25,14 +25,17 @@ class ListaProdutosView(PerfilRequeridoMixin, ListView):
         if self.formulario_pesquisa.is_valid():
             dados = self.formulario_pesquisa.cleaned_data
             return pesquisar_produtos(
-                dados["termo"], dados["por"] or PesquisarPor.NOME, dados["incluir_inativos"]
+                dados["termo"],
+                dados["por"] or PesquisarPor.NOME,
+                dados["incluir_inativos"],
+                dados["categoria"],
             )
         return pesquisar_produtos()
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto["formulario_pesquisa"] = self.formulario_pesquisa
-        contexto["pesquisou"] = bool(self.request.GET.get("termo"))
+        contexto["pesquisou"] = bool(self.request.GET.get("termo") or self.request.GET.get("categoria"))
         return contexto
 
 

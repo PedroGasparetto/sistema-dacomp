@@ -7,7 +7,9 @@ from .servicos import PesquisarPor
 class FormularioProduto(forms.ModelForm):
     class Meta:
         model = Produto
-        fields = ("codigo", "nome", "descricao", "codigo_barras", "preco_unitario", "controla_estoque")
+        fields = (
+            "codigo", "nome", "categoria", "descricao", "codigo_barras", "preco_unitario", "controla_estoque"
+        )
         widgets = {"descricao": forms.Textarea(attrs={"rows": 3})}
 
     def clean_codigo(self):
@@ -30,5 +32,8 @@ class FormularioPesquisaProduto(forms.Form):
     termo = forms.CharField(label="Pesquisar", required=False, max_length=120)
     por = forms.ChoiceField(
         label="Pesquisar por", choices=PesquisarPor.choices, required=False, initial=PesquisarPor.NOME
+    )
+    categoria = forms.ChoiceField(
+        label="Categoria", choices=[("", "Todas")] + Produto.Categoria.choices, required=False
     )
     incluir_inativos = forms.BooleanField(label="Incluir inativos", required=False)

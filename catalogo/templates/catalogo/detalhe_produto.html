@@ -10,6 +10,7 @@
 <article>
   <dl class="detalhes">
     <dt>Código interno</dt><dd>{{ produto.codigo }}</dd>
+    <dt>Categoria</dt><dd>{{ produto.get_categoria_display }}</dd>
     <dt>Código de barras</dt><dd>{{ produto.codigo_barras|default:"—" }}</dd>
     <dt>Preço unitário</dt><dd>{{ produto.preco_unitario|moeda }}</dd>
     <dt>Saldo em estoque</dt>

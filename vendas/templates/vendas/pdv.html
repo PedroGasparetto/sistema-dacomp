@@ -18,7 +18,7 @@
   </div>
 
   <div class="pdv">
-    <section class="pdv-itens" aria-label="Itens da venda">
+    <section class="pdv-produtos" aria-label="Produtos">
       <form method="post" action="{% url 'vendas:adicionar_item' %}" class="pdv-leitura" autocomplete="off">
         {% csrf_token %}
         <label class="pdv-termo">Produto <kbd>F2</kbd>
@@ -41,7 +41,7 @@
                   <td>{{ produto.codigo }}</td>
                   <td>{{ produto.nome }}</td>
                   <td class="num">{{ produto.preco_unitario|moeda }}</td>
-                  <td class="num">{% if produto.controla_estoque %}{{ produto.saldo_estoque }} em estoque{% else %}Serviço{% endif %}</td>
+                  <td class="num">{% if produto.controla_estoque %}{{ produto.saldo_estoque }} em estoque{% else %}Preparo na hora{% endif %}</td>
                   <td>
                     <form method="post" action="{% url 'vendas:adicionar_item' %}" class="formulario-em-linha">
                       {% csrf_token %}
@@ -57,57 +57,83 @@
         </article>
       {% endif %}
 
-      {% if itens %}
-        <div class="tabela-rolavel">
-          <table class="striped">
-            <thead>
-              <tr><th>Produto</th><th class="num">Preço</th><th class="num">Quantidade</th><th class="num">Subtotal</th><th><span class="visualmente-oculto">Ações</span></th></tr>
-            </thead>
-            <tbody>
-              {% for item in itens %}
-                <tr>
-                  <td>{{ item.produto.nome }}<br><small>{{ item.produto.codigo }}</small></td>
-                  <td class="num">{{ item.preco_unitario|moeda }}</td>
-                  <td class="num">
-                    <form method="post" action="{% url 'vendas:alterar_quantidade' item.pk %}" class="pdv-alterar-quantidade">
-                      {% csrf_token %}
-                      <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1"
-                             aria-label="Quantidade de {{ item.produto.nome }}" onchange="this.form.requestSubmit()">
-                      <noscript><button type="submit" class="botao-pequeno">Atualizar</button></noscript>
-                    </form>
-                  </td>
-                  <td class="num">{{ item.subtotal|moeda }}</td>
-                  <td>
-                    <form method="post" action="{% url 'vendas:remover_item' item.pk %}" class="formulario-em-linha">
-                      {% csrf_token %}
-                      <button type="submit" class="botao-link negativo">Remover</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+      <nav class="pdv-categorias" aria-label="Categorias">
+        <a href="?categoria=" {% if not categoria_atual %}aria-current="true"{% endif %}>Todas</a>
+        {% for valor, rotulo in categorias %}
+          <a href="?categoria={{ valor }}" {% if categoria_atual == valor %}aria-current="true"{% endif %}>{{ rotulo }}</a>
+        {% endfor %}
+      </nav>
+
+      {% if atalhos %}
+        <div class="pdv-atalhos">
+          {% for produto in atalhos %}
+            <form method="post" action="{% url 'vendas:adicionar_item' %}">
+              {% csrf_token %}
+              <input type="hidden" name="termo" value="{{ produto.codigo }}">
+              <input type="hidden" name="quantidade" value="1">
+              <button type="submit" class="pdv-atalho"
+                      {% if produto.controla_estoque and produto.saldo_estoque == 0 %}disabled{% endif %}>
+                <span class="pdv-atalho-nome">{{ produto.nome }}</span>
+                <span class="pdv-atalho-preco">{{ produto.preco_unitario|moeda }}</span>
+                {% if produto.controla_estoque %}
+                  <small>{% if produto.saldo_estoque == 0 %}Esgotado{% else %}{{ produto.saldo_estoque }} em estoque{% endif %}</small>
+                {% endif %}
+              </button>
+            </form>
+          {% endfor %}
         </div>
       {% else %}
-        <p class="pdv-vazio">Leia o código de barras ou digite o código ou o nome de um produto para iniciar a venda.</p>
+        <p class="pdv-vazio">Nenhum produto ativo nesta categoria.</p>
       {% endif %}
     </section>
 
-    <aside class="pdv-resumo" aria-label="Total da venda">
+    <aside class="pdv-resumo" aria-label="Comanda">
       <article>
-        <small>{% if venda %}{{ venda }}{% else %}Nova venda{% endif %}</small>
-        <p class="pdv-total">{{ total|moeda }}</p>
-        <small>{{ quantidade_itens }} unidade{{ quantidade_itens|pluralize }} em {{ itens|length }} ite{{ itens|length|pluralize:"m,ns" }}</small>
-        {% if venda and itens %}
-          <a role="button" id="pdv-finalizar" href="{% url 'vendas:pagamento' venda.pk %}">Finalizar venda <kbd>F4</kbd></a>
+        <header class="pdv-comanda-cabecalho">
+          <strong>{% if venda %}{{ venda }}{% else %}Nova venda{% endif %}</strong>
+          <small>{{ quantidade_itens }} unidade{{ quantidade_itens|pluralize }}</small>
+        </header>
+
+        {% if itens %}
+          <ul class="pdv-comanda">
+            {% for item in itens %}
+              <li>
+                <div class="pdv-comanda-item">
+                  <span>{{ item.produto.nome }}</span>
+                  <small>{{ item.preco_unitario|moeda }} cada</small>
+                </div>
+                <form method="post" action="{% url 'vendas:alterar_quantidade' item.pk %}" class="pdv-alterar-quantidade">
+                  {% csrf_token %}
+                  <input type="number" name="quantidade" value="{{ item.quantidade }}" min="1"
+                         aria-label="Quantidade de {{ item.produto.nome }}" onchange="this.form.requestSubmit()">
+                  <noscript><button type="submit" class="botao-pequeno">Atualizar</button></noscript>
+                </form>
+                <span class="num">{{ item.subtotal|moeda }}</span>
+                <form method="post" action="{% url 'vendas:remover_item' item.pk %}" class="formulario-em-linha">
+                  {% csrf_token %}
+                  <button type="submit" class="botao-link negativo" aria-label="Remover {{ item.produto.nome }}" title="Remover">✕</button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="pdv-comanda-vazia">Toque em um produto ou leia o código de barras para iniciar a venda.</p>
         {% endif %}
-        {% if venda %}
-          <form method="post" action="{% url 'vendas:cancelar_venda' venda.pk %}"
-                onsubmit="return confirm('Cancelar a venda em andamento? Os itens serão descartados.');">
-            {% csrf_token %}
-            <button type="submit" class="secondary outline">Cancelar venda</button>
-          </form>
-        {% endif %}
+
+        <footer>
+          <small>Total</small>
+          <p class="pdv-total">{{ total|moeda }}</p>
+          {% if venda and itens %}
+            <a role="button" id="pdv-finalizar" href="{% url 'vendas:pagamento' venda.pk %}">Finalizar venda <kbd>F4</kbd></a>
+          {% endif %}
+          {% if venda %}
+            <form method="post" action="{% url 'vendas:cancelar_venda' venda.pk %}"
+                  onsubmit="return confirm('Cancelar a venda em andamento? Os itens serão descartados.');">
+              {% csrf_token %}
+              <button type="submit" class="secondary outline">Cancelar venda</button>
+            </form>
+          {% endif %}
+        </footer>
       </article>
     </aside>
   </div>

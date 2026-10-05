@@ -18,21 +18,34 @@ USUARIOS_DEMO = [
     ("voluntario", "Vera", "Voluntária", [VOLUNTARIO]),
 ]
 
-# código, nome, preço, controla estoque, código de barras, saldo inicial
+Categoria = Produto.Categoria
+
+# código, nome, categoria, preço, controla estoque, código de barras, saldo inicial
 PRODUTOS_DEMO = [
-    ("CAM-P", "Camiseta da Computação (P)", "45.00", True, "7890000000017", 12),
-    ("CAM-M", "Camiseta da Computação (M)", "45.00", True, "7890000000024", 20),
-    ("MOL-G", "Moletom da Computação (G)", "120.00", True, "7890000000031", 6),
-    ("CAN-01", "Caneca do DACOMP", "30.00", True, "7890000000048", 15),
-    ("ADS-01", "Adesivo do Instituto", "5.00", True, None, 80),
-    ("CAF-01", "Café passado (copo)", "2.50", True, None, 0),
-    ("IMP-PB", "Impressão preto e branco (página)", "0.25", False, None, 0),
-    ("IMP-COR", "Impressão colorida (página)", "1.00", False, None, 0),
+    ("CAF-P", "Café coado (pequeno)", Categoria.CAFE, "2.50", False, None, 0),
+    ("CAF-G", "Café coado (grande)", Categoria.CAFE, "4.00", False, None, 0),
+    ("CAF-LEI", "Café com leite", Categoria.CAFE, "4.50", False, None, 0),
+    ("CHA-01", "Chá (sachê)", Categoria.CAFE, "2.00", True, None, 40),
+    ("CHOC-Q", "Chocolate quente", Categoria.CAFE, "5.00", False, None, 0),
+    ("REF-LAT", "Refrigerante lata 350 ml", Categoria.BEBIDA, "5.00", True, "7894900011517", 48),
+    ("AGU-500", "Água mineral 500 ml", Categoria.BEBIDA, "3.00", True, "7896065200019", 36),
+    ("AGU-GAS", "Água com gás 500 ml", Categoria.BEBIDA, "3.50", True, "7896065200026", 12),
+    ("SUC-CX", "Suco de caixinha 200 ml", Categoria.BEBIDA, "3.50", True, "7891098000019", 24),
+    ("ENE-LAT", "Energético lata 250 ml", Categoria.BEBIDA, "9.00", True, "9002490100070", 0),
+    ("SAL-ASS", "Salgado assado", Categoria.LANCHE, "6.00", True, None, 20),
+    ("PAO-QJ", "Pão de queijo", Categoria.LANCHE, "3.00", True, None, 30),
+    ("SAN-NAT", "Sanduíche natural", Categoria.LANCHE, "8.00", True, None, 8),
+    ("BIS-REC", "Biscoito recheado", Categoria.LANCHE, "4.00", True, "7896004000014", 18),
+    ("CHO-BAR", "Chocolate em barra", Categoria.DOCE, "6.00", True, "7891000100103", 15),
+    ("BOL-FAT", "Fatia de bolo", Categoria.DOCE, "5.00", True, None, 10),
+    ("BRI-01", "Brigadeiro", Categoria.DOCE, "2.50", True, None, 25),
+    ("PAC-01", "Paçoca", Categoria.DOCE, "1.00", True, "7896336000010", 50),
+    ("IMP-PB", "Impressão preto e branco (página)", Categoria.OUTRO, "0.25", False, None, 0),
 ]
 
 
 class Command(BaseCommand):
-    help = "Cria as contas diretoria, bolsista e voluntario e um catálogo de exemplo."
+    help = "Cria as contas diretoria, bolsista e voluntario e um cardápio de bar e café de exemplo."
 
     def add_arguments(self, parser):
         parser.add_argument("--senha", required=True, help="Senha das contas de demonstração.")
@@ -49,11 +62,12 @@ class Command(BaseCommand):
             self.stdout.write(f"{'Criada' if criado else 'Atualizada'} a conta {username}")
 
         autor = Usuario.objects.get(username="bolsista")
-        for codigo, nome, preco, controla_estoque, codigo_barras, saldo_inicial in PRODUTOS_DEMO:
+        for codigo, nome, categoria, preco, controla_estoque, codigo_barras, saldo_inicial in PRODUTOS_DEMO:
             produto, criado = Produto.objects.get_or_create(
                 codigo=codigo,
                 defaults={
                     "nome": nome,
+                    "categoria": categoria,
                     "preco_unitario": Decimal(preco),
                     "controla_estoque": controla_estoque,
                     "codigo_barras": codigo_barras,

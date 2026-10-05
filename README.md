@@ -41,8 +41,12 @@ transação (RNF01). As listagens usam 10 registros por página.
 
 ### PDV
 
-Em **Vendas → PDV**: abra o caixa, leia o código de barras (ou digite o código ou parte do nome) e
-pressione Enter para incluir itens. `F2` volta ao campo de produto e `F4` finaliza a venda. Na
+O catálogo é principalmente de bar e café (cafés, bebidas, lanches, salgados e doces), organizado
+por categoria. Itens preparados na hora, como café coado, podem ser cadastrados sem controle de estoque.
+
+Em **PDV**: abra o caixa e toque nos produtos da grade de atalhos (filtrada por categoria) ou leia o
+código de barras (ou digite o código ou parte do nome) e pressione Enter. A comanda fica à direita,
+com o total. `F2` volta ao campo de produto e `F4` finaliza a venda. Na
 finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o troco. O fechamento do
 caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
 esperado.

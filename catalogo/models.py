@@ -9,12 +9,23 @@ from django.urls import reverse
 class Produto(models.Model):
     """Produto ou serviço oferecido pela lojinha (seção C.3 do relatório).
 
+    A maior parte do catálogo é de bar e café: bebidas, lanches e doces.
     O saldo em estoque não é editável pelo cadastro: ele só muda pelas
     movimentações de estoque (app `estoque`).
     """
 
+    class Categoria(models.TextChoices):
+        CAFE = "cafe", "Cafés e bebidas quentes"
+        BEBIDA = "bebida", "Bebidas"
+        LANCHE = "lanche", "Lanches e salgados"
+        DOCE = "doce", "Doces"
+        OUTRO = "outro", "Outros"
+
     codigo = models.CharField("código interno", max_length=20, unique=True)
     nome = models.CharField("nome", max_length=120)
+    categoria = models.CharField(
+        "categoria", max_length=10, choices=Categoria.choices, default=Categoria.OUTRO
+    )
     descricao = models.TextField("descrição", blank=True)
     codigo_barras = models.CharField(
         "código de barras", max_length=50, unique=True, null=True, blank=True
@@ -29,7 +40,7 @@ class Produto(models.Model):
     controla_estoque = models.BooleanField(
         "controla estoque",
         default=True,
-        help_text="Desmarque para serviços, como impressões e cópias.",
+        help_text="Desmarque para itens preparados na hora (como café coado) e para serviços.",
     )
     saldo_estoque = models.PositiveIntegerField("saldo em estoque", default=0, editable=False)
 

@@ -161,6 +161,28 @@ def test_pdv_sem_caixa_oferece_abertura(client, voluntario):
     assert reverse("vendas:abrir_caixa") in resposta.content.decode()
 
 
+def test_grade_de_atalhos_filtra_e_lembra_a_categoria(client, caixa, voluntario, produto, servico):
+    Produto.objects.filter(pk=produto.pk).update(categoria=Produto.Categoria.DOCE)
+    client.force_login(voluntario)
+
+    resposta = client.get(reverse("vendas:pdv"), {"categoria": Produto.Categoria.DOCE})
+    assert [p.codigo for p in resposta.context["atalhos"]] == ["CAN-01"]
+
+    # Depois de adicionar um item, o PDV volta para a mesma categoria.
+    client.post(reverse("vendas:adicionar_item"), {"termo": "IMP-PB", "quantidade": "1"})
+    assert client.get(reverse("vendas:pdv")).context["categoria_atual"] == Produto.Categoria.DOCE
+
+    resposta = client.get(reverse("vendas:pdv"), {"categoria": "invalida"})
+    assert resposta.context["categoria_atual"] == ""
+
+
+def test_item_preparado_na_hora_e_vendido_sem_estoque(caixa, voluntario, servico):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=servico, quantidade=10)
+    concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
+    assert not Movimentacao.objects.exists()
+
+
 def test_fluxo_completo_no_pdv(client, caixa, voluntario, produto_com_saldo):
     client.force_login(voluntario)
     client.post(reverse("vendas:adicionar_item"), {"termo": "7890000000048", "quantidade": "2"})
