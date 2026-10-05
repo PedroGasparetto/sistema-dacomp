@@ -1,0 +1,43 @@
+# Ambiente de desenvolvimento: PostgreSQL + aplicação Django.
+# Uso: docker compose up --build   →   http://localhost:8000
+# Os valores padrão servem só para desenvolvimento local; para trocá-los, copie .env.example para .env.
+
+name: sistema-dacomp
+
+x-postgres: &postgres
+  POSTGRES_DB: ${POSTGRES_DB:-lojinha}
+  POSTGRES_USER: ${POSTGRES_USER:-lojinha}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lojinha}
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      <<: *postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    image: sistema-dacomp-web
+    environment:
+      <<: *postgres
+      POSTGRES_HOST: db
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dados_postgres:
