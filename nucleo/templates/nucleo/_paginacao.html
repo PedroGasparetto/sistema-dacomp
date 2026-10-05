@@ -1,0 +1,12 @@
+{% load paginacao %}
+{% if is_paginated %}
+  <nav class="paginacao" aria-label="Paginação">
+    {% if page_obj.has_previous %}
+      <a href="{% url_pagina page_obj.previous_page_number %}">← Anterior</a>
+    {% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} · {{ page_obj.paginator.count }} registro{{ page_obj.paginator.count|pluralize }}</span>
+    {% if page_obj.has_next %}
+      <a href="{% url_pagina page_obj.next_page_number %}">Próxima →</a>
+    {% endif %}
+  </nav>
+{% endif %}

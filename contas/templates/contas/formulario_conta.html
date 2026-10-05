@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{% if conta %}Editar conta{% else %}Nova conta{% endif %}{% endblock %}
+{% block content %}
+<h1>{% if conta %}Editar conta de {{ conta.username }}{% else %}Nova conta{% endif %}</h1>
+<form method="post" class="formulario-estreito">
+  {% csrf_token %}
+  {{ form }}
+  <div class="acoes">
+    <button type="submit">Salvar</button>
+    <a href="{% url 'contas:lista_contas' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

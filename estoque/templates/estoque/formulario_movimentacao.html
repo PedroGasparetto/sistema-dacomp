@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Transação no estoque{% endblock %}
+{% block content %}
+<h1>Transação no estoque</h1>
+<p>Registre uma entrada de reposição ou ajuste o saldo após uma contagem.</p>
+<form method="post" class="formulario-medio" id="formulario-movimentacao">
+  {% csrf_token %}
+  {{ form }}
+  <div class="acoes">
+    <button type="submit">Revisar transação</button>
+    <a href="{% url 'estoque:lista_movimentacoes' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  // Mostra o motivo apenas para ajustes; sem JavaScript o campo continua visível.
+  (function () {
+    const formulario = document.getElementById("formulario-movimentacao");
+    const campoMotivo = formulario.querySelector("[name=motivo]").closest("div");
+    function sincronizar() {
+      const tipo = formulario.querySelector("[name=tipo]:checked");
+      campoMotivo.hidden = !tipo || tipo.value !== "ajuste";
+    }
+    formulario.querySelectorAll("[name=tipo]").forEach((opcao) => opcao.addEventListener("change", sincronizar));
+    sincronizar();
+  })();
+</script>
+{% endblock %}

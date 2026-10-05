@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}{{ produto.nome }}{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>{{ produto.nome }}</h1>
+  {% if produto.ativo %}<span class="selo">Ativo</span>{% else %}<span class="selo selo-inativo">Inativo</span>{% endif %}
+</div>
+
+<article>
+  <dl class="detalhes">
+    <dt>Código interno</dt><dd>{{ produto.codigo }}</dd>
+    <dt>Código de barras</dt><dd>{{ produto.codigo_barras|default:"—" }}</dd>
+    <dt>Preço unitário</dt><dd>{{ produto.preco_unitario|moeda }}</dd>
+    <dt>Saldo em estoque</dt>
+    <dd>{% if produto.controla_estoque %}{{ produto.saldo_estoque }} unidade{{ produto.saldo_estoque|pluralize }}{% else %}Sem controle de estoque (serviço){% endif %}</dd>
+    <dt>Descrição</dt><dd>{{ produto.descricao|default:"—"|linebreaksbr }}</dd>
+    <dt>Última alteração</dt><dd>{{ produto.alterado_em|date:"d/m/Y H:i" }} por {{ produto.alterado_por }}</dd>
+  </dl>
+</article>
+
+<div class="acoes">
+  {% if pode_gerir_produtos %}
+    <a role="button" href="{% url 'catalogo:editar_produto' produto.pk %}">Editar</a>
+    <form method="post" action="{% url 'catalogo:alternar_situacao' produto.pk %}" class="formulario-em-linha">
+      {% csrf_token %}
+      <button type="submit" class="secondary outline">{% if produto.ativo %}Inativar{% else %}Reativar{% endif %}</button>
+    </form>
+  {% endif %}
+  {% if produto.controla_estoque %}
+    <a role="button" class="secondary" href="{% url 'estoque:registrar_movimentacao' %}?produto={{ produto.codigo|urlencode }}">Transação no estoque</a>
+    <a href="{% url 'estoque:lista_movimentacoes' %}?produto={{ produto.codigo|urlencode }}">Ver movimentações</a>
+  {% endif %}
+  <a href="{% url 'catalogo:lista_produtos' %}">Voltar à lista</a>
+</div>
+{% endblock %}

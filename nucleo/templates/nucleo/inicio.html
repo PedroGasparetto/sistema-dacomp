@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Início{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Olá, {{ user.get_short_name|default:user.username }}</h1>
+  <span class="selo">{{ perfis_usuario|join:" · " }}</span>
+</div>
+
+<section class="resumo" aria-label="Resumo">
+  <article>
+    <small>Caixa</small>
+    {% if caixa %}
+      <strong>{{ resumo_caixa.total_vendido|moeda }}</strong>
+      <small>{{ resumo_caixa.quantidade_vendas }} venda{{ resumo_caixa.quantidade_vendas|pluralize }} no {{ caixa }}</small><br>
+      <a href="{% url 'vendas:pdv' %}">Ir para o PDV</a>
+    {% else %}
+      <strong>Fechado</strong>
+      <a href="{% url 'vendas:abrir_caixa' %}">Abrir caixa</a>
+    {% endif %}
+  </article>
+  <article>
+    <small>Produtos ativos</small>
+    <strong>{{ produtos_ativos }}</strong>
+    <a href="{% url 'catalogo:lista_produtos' %}">Consultar produtos</a>
+  </article>
+  <article>
+    <small>Sem saldo em estoque</small>
+    <strong>{{ produtos_sem_saldo }}</strong>
+    <a href="{% url 'estoque:registrar_movimentacao' %}">Registrar entrada</a>
+  </article>
+</section>
+
+<section>
+  <h2>Ações rápidas</h2>
+  <div class="acoes">
+    <a role="button" href="{% url 'vendas:pdv' %}">Nova venda (PDV)</a>
+    {% if pode_gerir_produtos %}
+      <a role="button" href="{% url 'catalogo:cadastrar_produto' %}">Cadastrar produto</a>
+    {% endif %}
+    <a role="button" class="secondary" href="{% url 'estoque:registrar_movimentacao' %}">Transação no estoque</a>
+    <a role="button" class="outline" href="{% url 'estoque:lista_movimentacoes' %}">Movimentações</a>
+  </div>
+</section>
+
+<section>
+  <h2>Últimas movimentações</h2>
+  {% if ultimas_movimentacoes %}
+    <div class="tabela-rolavel">
+      <table class="striped">
+        <thead>
+          <tr><th>Data</th><th>Produto</th><th>Tipo</th><th class="num">Variação</th><th>Responsável</th></tr>
+        </thead>
+        <tbody>
+          {% for movimentacao in ultimas_movimentacoes %}
+            <tr>
+              <td><a href="{{ movimentacao.get_absolute_url }}">{{ movimentacao.realizada_em|date:"d/m/Y H:i" }}</a></td>
+              <td>{{ movimentacao.produto.nome }}</td>
+              <td>{{ movimentacao.get_tipo_display }}</td>
+              <td class="num {% if movimentacao.variacao > 0 %}positivo{% else %}negativo{% endif %}">{{ movimentacao.variacao|stringformat:"+d" }}</td>
+              <td>{{ movimentacao.responsavel }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>Nenhuma movimentação registrada ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

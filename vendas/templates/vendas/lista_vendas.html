@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Vendas{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Vendas</h1>
+  <a role="button" href="{% url 'vendas:pdv' %}">Ir para o PDV</a>
+</div>
+
+<form method="get" class="filtros" aria-label="Filtrar vendas">
+  <label>{{ formulario_filtro.identificador.label }}{{ formulario_filtro.identificador }}</label>
+  <label>{{ formulario_filtro.situacao.label }}{{ formulario_filtro.situacao }}</label>
+  <label>{{ formulario_filtro.operador.label }}{{ formulario_filtro.operador }}</label>
+  <label>{{ formulario_filtro.caixa.label }}{{ formulario_filtro.caixa }}</label>
+  <label>{{ formulario_filtro.inicio.label }}{{ formulario_filtro.inicio }}</label>
+  <label>{{ formulario_filtro.fim.label }}{{ formulario_filtro.fim }}</label>
+  <button type="submit">Filtrar</button>
+</form>
+{% if formulario_filtro.errors %}
+  <p class="msg msg-error" role="alert">{% for erro in formulario_filtro.non_field_errors %}{{ erro }} {% endfor %}{% for campo in formulario_filtro %}{% for erro in campo.errors %}{{ campo.label }}: {{ erro }} {% endfor %}{% endfor %}</p>
+{% endif %}
+
+{% if vendas %}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr><th>Nº</th><th>Data e hora</th><th>Operador</th><th>Caixa</th><th>Situação</th><th>Pagamento</th><th class="num">Total</th></tr>
+      </thead>
+      <tbody>
+        {% for venda in vendas %}
+          <tr>
+            <td><a href="{{ venda.get_absolute_url }}">{{ venda.pk }}</a></td>
+            <td>{{ venda.iniciada_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ venda.operador }}</td>
+            <td>{{ venda.caixa.pk }}</td>
+            <td>{{ venda.get_situacao_display }}</td>
+            <td>{{ venda.get_forma_pagamento_display|default:"—" }}</td>
+            <td class="num">{% if venda.situacao == 'concluida' %}{{ venda.total|moeda }}{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "nucleo/_paginacao.html" %}
+{% elif not formulario_filtro.errors %}
+  <p role="status">Nenhuma venda encontrada para os filtros escolhidos.</p>
+{% endif %}
+{% endblock %}

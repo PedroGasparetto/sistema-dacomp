@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}{{ venda }}{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>{{ venda }}</h1>
+  <span class="selo{% if venda.situacao == 'cancelada' %} selo-inativo{% endif %}">{{ venda.get_situacao_display }}</span>
+</div>
+
+<article>
+  <dl class="detalhes">
+    <dt>Operador</dt><dd>{{ venda.operador }}</dd>
+    <dt>Caixa</dt><dd><a href="{% url 'vendas:detalhe_caixa' venda.caixa.pk %}">{{ venda.caixa }}</a></dd>
+    <dt>Iniciada em</dt><dd>{{ venda.iniciada_em|date:"d/m/Y H:i" }}</dd>
+    {% if venda.concluida_em %}<dt>Concluída em</dt><dd>{{ venda.concluida_em|date:"d/m/Y H:i:s" }}</dd>{% endif %}
+  </dl>
+</article>
+
+<div class="tabela-rolavel">
+  <table class="striped">
+    <thead><tr><th>Produto</th><th class="num">Qtd.</th><th class="num">Preço</th><th class="num">Subtotal</th></tr></thead>
+    <tbody>
+      {% for item in venda.itens.all %}
+        <tr>
+          <td>{{ item.produto.nome }}</td>
+          <td class="num">{{ item.quantidade }}</td>
+          <td class="num">{{ item.preco_unitario|moeda }}</td>
+          <td class="num">{{ item.subtotal|moeda }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4">Venda sem itens.</td></tr>
+      {% endfor %}
+    </tbody>
+    {% if venda.situacao == 'concluida' %}
+      <tfoot>
+        <tr><th colspan="3">Total</th><th class="num">{{ venda.total|moeda }}</th></tr>
+        <tr><td colspan="3">{{ venda.get_forma_pagamento_display }}{% if venda.forma_pagamento == 'dinheiro' %} · recebido {{ venda.valor_recebido|moeda }}{% endif %}</td>
+            <td class="num">{% if venda.forma_pagamento == 'dinheiro' %}Troco {{ venda.troco|moeda }}{% endif %}</td></tr>
+      </tfoot>
+    {% endif %}
+  </table>
+</div>
+
+<div class="acoes">
+  {% if request.GET.pdv %}
+    <a role="button" href="{% url 'vendas:pdv' %}" autofocus>Nova venda</a>
+  {% endif %}
+  <a href="{% url 'vendas:lista_vendas' %}">Consultar vendas</a>
+</div>
+{% endblock %}

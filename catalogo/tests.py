@@ -1,0 +1,95 @@
+from decimal import Decimal
+
+from django.urls import reverse
+
+from catalogo.models import Produto
+from catalogo.servicos import PesquisarPor, buscar_por_codigo, pesquisar_produtos
+
+
+def test_pesquisa_por_nome_codigo_e_codigo_de_barras(produto):
+    assert list(pesquisar_produtos("caneca", PesquisarPor.NOME)) == [produto]
+    assert list(pesquisar_produtos("can-01", PesquisarPor.CODIGO)) == [produto]
+    assert list(pesquisar_produtos("7890000000048", PesquisarPor.CODIGO_BARRAS)) == [produto]
+    assert not pesquisar_produtos("camiseta", PesquisarPor.NOME).exists()
+
+
+def test_pesquisa_oculta_inativos_salvo_quando_solicitado(produto):
+    produto.ativo = False
+    produto.save()
+    assert not pesquisar_produtos("caneca").exists()
+    assert list(pesquisar_produtos("caneca", incluir_inativos=True)) == [produto]
+
+
+def test_buscar_por_codigo_interno_ou_de_barras(produto):
+    assert buscar_por_codigo("can-01") == produto
+    assert buscar_por_codigo("7890000000048") == produto
+    assert buscar_por_codigo("nada") is None
+
+
+def test_lista_de_produtos_tem_dez_por_pagina(client, voluntario, bolsista):
+    for indice in range(12):
+        Produto.objects.create(
+            codigo=f"P{indice:02d}",
+            nome=f"Produto {indice:02d}",
+            preco_unitario=Decimal("1.00"),
+            criado_por=bolsista,
+            alterado_por=bolsista,
+        )
+    client.force_login(voluntario)
+    resposta = client.get(reverse("catalogo:lista_produtos"))
+    assert len(resposta.context["produtos"]) == 10
+    assert resposta.context["page_obj"].paginator.num_pages == 2
+
+
+def test_voluntario_pesquisa_mas_nao_cadastra(client, voluntario):
+    client.force_login(voluntario)
+    assert client.get(reverse("catalogo:lista_produtos")).status_code == 200
+    assert client.get(reverse("catalogo:cadastrar_produto")).status_code == 403
+
+
+def test_bolsista_cadastra_produto_com_rastreabilidade(client, bolsista):
+    client.force_login(bolsista)
+    resposta = client.post(
+        reverse("catalogo:cadastrar_produto"),
+        {
+            "codigo": "cam-p",
+            "nome": "Camiseta P",
+            "preco_unitario": "45.00",
+            "codigo_barras": "",
+            "controla_estoque": "on",
+        },
+    )
+    produto = Produto.objects.get(codigo="CAM-P")
+    assert resposta.status_code == 302
+    assert produto.codigo_barras is None
+    assert produto.criado_por == bolsista
+    assert produto.saldo_estoque == 0
+
+
+def test_inativacao_preserva_o_produto(client, bolsista, produto):
+    client.force_login(bolsista)
+    client.post(reverse("catalogo:alternar_situacao", args=[produto.pk]))
+    produto.refresh_from_db()
+    assert produto.ativo is False
+
+
+def test_nao_deixa_de_controlar_estoque_com_saldo(client, bolsista, produto):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=3)
+    client.force_login(bolsista)
+    resposta = client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {"codigo": produto.codigo, "nome": produto.nome, "preco_unitario": "30.00"},
+    )
+    assert resposta.status_code == 200
+    assert "controla_estoque" in resposta.context["form"].errors
+
+
+def test_edicao_do_cadastro_nao_altera_o_saldo(client, bolsista, produto):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=8)
+    client.force_login(bolsista)
+    client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {"codigo": produto.codigo, "nome": "Caneca nova", "preco_unitario": "32.00", "controla_estoque": "on"},
+    )
+    produto.refresh_from_db()
+    assert (produto.nome, produto.saldo_estoque) == ("Caneca nova", 8)

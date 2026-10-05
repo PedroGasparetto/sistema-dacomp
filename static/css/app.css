@@ -1,0 +1,293 @@
+:root {
+  --pico-font-size: 100%;
+}
+
+.pular-conteudo {
+  position: absolute;
+  left: -9999px;
+}
+.pular-conteudo:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 10;
+  background: var(--pico-background-color);
+  padding: 0.5rem 1rem;
+}
+
+.marca {
+  color: var(--pico-primary);
+}
+
+/* Em telas estreitas o menu quebra em linhas em vez de rolar na horizontal. */
+header nav,
+header nav ul {
+  flex-wrap: wrap;
+}
+
+.cabecalho-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.cabecalho-pagina h1 {
+  margin: 0;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.acoes > * {
+  margin: 0;
+  width: auto;
+}
+
+.formulario-estreito {
+  max-width: 32rem;
+}
+.formulario-medio {
+  max-width: 40rem;
+}
+.cartao-login {
+  max-width: 28rem;
+  margin: 2rem auto;
+}
+
+.formulario-em-linha {
+  margin: 0;
+}
+.botao-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--pico-primary);
+  width: auto;
+}
+
+.msg {
+  padding: 0.75rem 1rem;
+  border-radius: var(--pico-border-radius);
+  border-left: 4px solid;
+}
+.msg-success {
+  background: #e7f6ec;
+  border-color: #2f9e55;
+  color: #1c5c33;
+}
+.msg-error {
+  background: #fdecec;
+  border-color: #d64545;
+  color: #7a1f1f;
+}
+
+/* Classes geradas pelo Django nos formulários. */
+.errorlist {
+  color: #b42318;
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.875rem;
+}
+.errorlist li {
+  list-style: none;
+}
+.helptext {
+  display: block;
+  color: var(--pico-muted-color);
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.selo {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: #eef1f5;
+  color: #334;
+  white-space: nowrap;
+}
+.selo-inativo {
+  background: #fdecec;
+  color: #7a1f1f;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.positivo {
+  color: #1c7c3c;
+}
+.negativo {
+  color: #b42318;
+}
+
+.tabela-rolavel {
+  overflow-x: auto;
+}
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.resumo article {
+  margin: 0;
+}
+.resumo strong {
+  display: block;
+  font-size: 2rem;
+}
+
+dl.detalhes {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1.5rem;
+}
+dl.detalhes dt {
+  font-weight: 600;
+}
+dl.detalhes dd {
+  margin: 0;
+}
+
+.paginacao {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0 1rem;
+  align-items: end;
+}
+.filtros label {
+  margin-bottom: 0;
+}
+.filtro-largo {
+  grid-column: span 2;
+}
+
+.msg-info {
+  background: #eaf2fd;
+  border-color: #2f6fd6;
+  color: #1b3f7a;
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.botao-pequeno {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin: 0;
+  width: auto;
+}
+
+/* PDV ---------------------------------------------------------------- */
+
+.pdv {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .pdv {
+    grid-template-columns: 1fr;
+  }
+  .pdv-resumo {
+    order: -1;
+  }
+}
+
+.pdv-leitura {
+  display: grid;
+  grid-template-columns: 1fr 6rem auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+.pdv-leitura label,
+.pdv-leitura button {
+  margin-bottom: var(--pico-spacing);
+}
+.pdv-leitura input[name="termo"] {
+  font-size: 1.15rem;
+}
+@media (max-width: 576px) {
+  .pdv-leitura {
+    grid-template-columns: 1fr 5rem;
+  }
+  .pdv-leitura button {
+    grid-column: 1 / -1;
+  }
+}
+
+kbd {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  vertical-align: middle;
+}
+
+.pdv-candidatos table {
+  margin: 0;
+}
+
+.pdv-alterar-quantidade {
+  margin: 0;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+.pdv-alterar-quantidade input {
+  width: 5rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  text-align: right;
+  height: auto;
+}
+
+.pdv-vazio {
+  color: var(--pico-muted-color);
+  text-align: center;
+  padding: 2rem 1rem;
+  border: 2px dashed var(--pico-muted-border-color);
+  border-radius: var(--pico-border-radius);
+}
+
+.pdv-resumo article {
+  margin: 0;
+  position: sticky;
+  top: 1rem;
+}
+.pdv-resumo [role="button"],
+.pdv-resumo button {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+.pdv-resumo form {
+  margin: 0;
+}
+.pdv-total {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0.25rem 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--pico-primary);
+}

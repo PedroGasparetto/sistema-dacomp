@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% load l10n %}
+{% block title %}Fechar caixa{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Fechar {{ caixa }}</h1>
+  <span class="selo">Aberto por {{ caixa.aberto_por }} em {{ caixa.aberto_em|date:"d/m/Y H:i" }}</span>
+</div>
+
+{% if resumo.vendas_em_andamento %}
+  <p class="msg msg-error" role="alert">
+    Há {{ resumo.vendas_em_andamento }} venda{{ resumo.vendas_em_andamento|pluralize }} em andamento neste caixa.
+    Conclua ou cancele antes de fechar.
+  </p>
+{% endif %}
+
+<div class="pdv">
+  <section aria-label="Conferência das vendas">
+    <h2>Vendas do período</h2>
+    {% include "vendas/_resumo_caixa.html" %}
+    {% if vendas %}
+      <details>
+        <summary>Ver vendas concluídas ({{ vendas|length }})</summary>
+        <table class="striped">
+          <tbody>
+            {% for venda in vendas %}
+              <tr>
+                <td><a href="{{ venda.get_absolute_url }}">{{ venda }}</a></td>
+                <td>{{ venda.concluida_em|date:"H:i" }}</td>
+                <td>{{ venda.get_forma_pagamento_display }}</td>
+                <td class="num">{{ venda.total|moeda }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </details>
+    {% endif %}
+  </section>
+
+  <aside class="pdv-resumo">
+    <article>
+      <dl class="detalhes">
+        <dt>Valor inicial</dt><dd>{{ caixa.valor_inicial|moeda }}</dd>
+        <dt>Esperado em dinheiro</dt><dd><strong>{{ resumo.valor_esperado|moeda }}</strong></dd>
+      </dl>
+      <form method="post" id="formulario-fechamento" data-esperado="{{ resumo.valor_esperado|unlocalize }}">
+        {% csrf_token %}
+        {{ formulario }}
+        <p>Diferença: <strong id="diferenca">—</strong></p>
+        <button type="submit">Confirmar fechamento</button>
+      </form>
+      <a href="{% url 'vendas:pdv' %}">Voltar ao PDV</a>
+    </article>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    const formulario = document.getElementById("formulario-fechamento");
+    const esperado = parseFloat(formulario.dataset.esperado);
+    const contado = formulario.querySelector("[name=valor_contado]");
+    const saida = document.getElementById("diferenca");
+    const moeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+    function atualizar() {
+      const valor = parseFloat(contado.value);
+      saida.textContent = isNaN(valor) ? "—" : moeda.format(valor - esperado);
+    }
+    contado.addEventListener("input", atualizar);
+    atualizar();
+  })();
+</script>
+{% endblock %}
