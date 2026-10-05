@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{% if produto %}Editar produto{% else %}Cadastrar produto{% endif %}{% endblock %}
+{% block content %}
+<h1>{% if produto %}Editar {{ produto.nome }}{% else %}Cadastrar produto{% endif %}</h1>
+<form method="post" class="formulario-medio">
+  {% csrf_token %}
+  {{ form }}
+  {% if produto %}
+    <p><small>O saldo em estoque ({{ produto.saldo_estoque }}) só é alterado por transações no estoque.</small></p>
+  {% endif %}
+  <div class="acoes">
+    <button type="submit">Salvar</button>
+    <a href="{% if produto %}{{ produto.get_absolute_url }}{% else %}{% url 'catalogo:lista_produtos' %}{% endif %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

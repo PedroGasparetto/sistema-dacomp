@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}{{ caixa }}{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>{{ caixa }}</h1>
+  <span class="selo{% if caixa.situacao == 'fechado' %} selo-inativo{% endif %}">{{ caixa.get_situacao_display }}</span>
+</div>
+
+<article>
+  <dl class="detalhes">
+    <dt>Aberto</dt><dd>{{ caixa.aberto_em|date:"d/m/Y H:i" }} por {{ caixa.aberto_por }}</dd>
+    <dt>Valor inicial</dt><dd>{{ caixa.valor_inicial|moeda }}</dd>
+    {% if caixa.fechado_em %}
+      <dt>Fechado</dt><dd>{{ caixa.fechado_em|date:"d/m/Y H:i" }} por {{ caixa.fechado_por }}</dd>
+      <dt>Esperado em dinheiro</dt><dd>{{ caixa.valor_esperado|moeda }}</dd>
+      <dt>Contado em dinheiro</dt><dd>{{ caixa.valor_contado|moeda }}</dd>
+      <dt>Diferença</dt><dd class="{% if caixa.diferenca < 0 %}negativo{% elif caixa.diferenca > 0 %}positivo{% endif %}">{{ caixa.diferenca|moeda }}</dd>
+      <dt>Justificativa</dt><dd>{{ caixa.justificativa|default:"—" }}</dd>
+    {% endif %}
+  </dl>
+</article>
+
+<h2>Vendas</h2>
+{% include "vendas/_resumo_caixa.html" %}
+
+<div class="acoes">
+  <a href="{% url 'vendas:lista_vendas' %}?caixa={{ caixa.pk }}&situacao=concluida">Ver vendas deste caixa</a>
+  <a href="{% url 'vendas:pdv' %}">Ir para o PDV</a>
+</div>
+{% endblock %}

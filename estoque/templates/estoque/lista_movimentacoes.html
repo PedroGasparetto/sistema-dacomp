@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Movimentações de estoque{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Movimentações de estoque</h1>
+  <a role="button" href="{% url 'estoque:registrar_movimentacao' %}">Nova transação</a>
+</div>
+
+<form method="get" class="filtros" aria-label="Filtrar movimentações">
+  <label>{{ formulario_filtro.produto.label }}
+    <input type="search" name="produto" value="{{ formulario_filtro.produto.value|default:'' }}" placeholder="Nome ou código">
+  </label>
+  <label>{{ formulario_filtro.tipo.label }}{{ formulario_filtro.tipo }}</label>
+  <label>{{ formulario_filtro.inicio.label }}{{ formulario_filtro.inicio }}</label>
+  <label>{{ formulario_filtro.fim.label }}{{ formulario_filtro.fim }}</label>
+  <button type="submit">Filtrar</button>
+</form>
+{% if formulario_filtro.errors %}
+  <p class="msg msg-error" role="alert">{% for erro in formulario_filtro.non_field_errors %}{{ erro }} {% endfor %}{% for campo in formulario_filtro %}{% for erro in campo.errors %}{{ campo.label }}: {{ erro }} {% endfor %}{% endfor %}</p>
+{% endif %}
+
+{% if movimentacoes %}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Data e hora</th><th>Produto</th><th>Tipo</th>
+          <th class="num">Anterior</th><th class="num">Variação</th><th class="num">Resultante</th>
+          <th>Motivo</th><th>Responsável</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for movimentacao in movimentacoes %}
+          <tr>
+            <td><a href="{{ movimentacao.get_absolute_url }}">{{ movimentacao.realizada_em|date:"d/m/Y H:i" }}</a></td>
+            <td>{{ movimentacao.produto.nome }}</td>
+            <td>{{ movimentacao.get_tipo_display }}</td>
+            <td class="num">{{ movimentacao.quantidade_anterior }}</td>
+            <td class="num {% if movimentacao.variacao > 0 %}positivo{% else %}negativo{% endif %}">{{ movimentacao.variacao|stringformat:"+d" }}</td>
+            <td class="num">{{ movimentacao.quantidade_resultante }}</td>
+            <td>{{ movimentacao.get_motivo_display|default:"—" }}</td>
+            <td>{{ movimentacao.responsavel }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "nucleo/_paginacao.html" %}
+{% elif not formulario_filtro.errors %}
+  <p role="status">Não há movimentações para os filtros escolhidos.</p>
+{% endif %}
+{% endblock %}

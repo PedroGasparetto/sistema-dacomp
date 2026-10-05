@@ -1,0 +1,14 @@
+{% load formatacao %}
+<div class="tabela-rolavel">
+  <table>
+    <thead><tr><th>Forma de pagamento</th><th class="num">Vendas</th><th class="num">Valor</th></tr></thead>
+    <tbody>
+      {% for linha in resumo.por_forma %}
+        <tr><td>{{ linha.forma }}</td><td class="num">{{ linha.quantidade }}</td><td class="num">{{ linha.valor|moeda }}</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr><th>Total vendido</th><th class="num">{{ resumo.quantidade_vendas }}</th><th class="num">{{ resumo.total_vendido|moeda }}</th></tr>
+    </tfoot>
+  </table>
+</div>

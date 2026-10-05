@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Contas{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Contas da equipe</h1>
+  <a role="button" href="{% url 'contas:criar_conta' %}">Nova conta</a>
+</div>
+
+<div class="tabela-rolavel">
+  <table class="striped">
+    <thead>
+      <tr><th>Usuário</th><th>Nome</th><th>Perfis</th><th>Situação</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+      {% for conta in contas %}
+        <tr>
+          <td>{{ conta.username }}</td>
+          <td>{{ conta.get_full_name|default:"—" }}</td>
+          <td>{{ conta.nomes_perfis|join:", "|default:"—" }}</td>
+          <td>
+            {% if conta.is_active %}<span class="selo">Ativa</span>{% else %}<span class="selo selo-inativo">Inativa</span>{% endif %}
+          </td>
+          <td class="acoes">
+            <a href="{% url 'contas:editar_conta' conta.pk %}">Editar</a>
+            <a href="{% url 'contas:redefinir_senha' conta.pk %}">Redefinir senha</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "nucleo/_paginacao.html" %}
+{% endblock %}

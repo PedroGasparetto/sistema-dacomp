@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Produtos{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Produtos</h1>
+  {% if pode_gerir_produtos %}
+    <a role="button" href="{% url 'catalogo:cadastrar_produto' %}">Cadastrar produto</a>
+  {% endif %}
+</div>
+
+<form method="get" role="search" class="filtros" aria-label="Pesquisar produtos">
+  <label>{{ formulario_pesquisa.por.label }}{{ formulario_pesquisa.por }}</label>
+  <label class="filtro-largo">{{ formulario_pesquisa.termo.label }}
+    <input type="search" name="termo" value="{{ formulario_pesquisa.termo.value|default:'' }}" placeholder="Nome, código ou código de barras" autofocus>
+  </label>
+  <label><input type="checkbox" name="incluir_inativos" {% if formulario_pesquisa.incluir_inativos.value %}checked{% endif %}> {{ formulario_pesquisa.incluir_inativos.label }}</label>
+  <button type="submit">Pesquisar</button>
+</form>
+
+{% if produtos %}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr><th>Código</th><th>Nome</th><th class="num">Preço</th><th class="num">Saldo</th><th>Situação</th></tr>
+      </thead>
+      <tbody>
+        {% for produto in produtos %}
+          <tr>
+            <td>{{ produto.codigo }}</td>
+            <td><a href="{{ produto.get_absolute_url }}">{{ produto.nome }}</a></td>
+            <td class="num">{{ produto.preco_unitario|moeda }}</td>
+            <td class="num">{% if produto.controla_estoque %}{{ produto.saldo_estoque }}{% else %}<span class="selo">Serviço</span>{% endif %}</td>
+            <td>{% if produto.ativo %}<span class="selo">Ativo</span>{% else %}<span class="selo selo-inativo">Inativo</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "nucleo/_paginacao.html" %}
+{% else %}
+  <p role="status">{% if pesquisou %}Nenhum produto encontrado para a pesquisa.{% else %}Nenhum produto cadastrado.{% endif %}</p>
+{% endif %}
+{% endblock %}
