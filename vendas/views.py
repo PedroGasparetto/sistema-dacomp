@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import DetailView, ListView
 
+from catalogo.models import Produto
+from catalogo.servicos import pesquisar_produtos
 from contas.mixins import PerfilRequeridoMixin
 
 from .forms import (
@@ -43,10 +45,14 @@ def _avisar_erros(request, erro):
 # PDV (UC03 – Registrar Venda) ---------------------------------------------
 
 
+CHAVE_CATEGORIA_PDV = "pdv_categoria"
+
+
 def _renderizar_pdv(request, **extra):
     caixa = obter_caixa_aberto()
     venda = obter_venda_em_andamento(request.user, caixa)
     itens = list(venda.itens.all()) if venda else []
+    categoria = request.session.get(CHAVE_CATEGORIA_PDV, "")
     contexto = {
         "caixa": caixa,
         "venda": venda,
@@ -55,6 +61,10 @@ def _renderizar_pdv(request, **extra):
         "quantidade_itens": sum(item.quantidade for item in itens),
         "formulario_item": FormularioAdicionarItem(),
         "candidatos": [],
+        # Grade de atalhos: itens de bar e café costumam não ter código de barras.
+        "categorias": Produto.Categoria.choices,
+        "categoria_atual": categoria,
+        "atalhos": pesquisar_produtos(categoria=categoria) if caixa else [],
         **extra,
     }
     return render(request, "vendas/pdv.html", contexto)
@@ -62,6 +72,9 @@ def _renderizar_pdv(request, **extra):
 
 class PdvView(PerfilRequeridoMixin, View):
     def get(self, request):
+        if "categoria" in request.GET:
+            categoria = request.GET["categoria"]
+            request.session[CHAVE_CATEGORIA_PDV] = categoria if categoria in Produto.Categoria.values else ""
         return _renderizar_pdv(request)
 
 

@@ -20,6 +20,12 @@ def test_pesquisa_oculta_inativos_salvo_quando_solicitado(produto):
     assert list(pesquisar_produtos("caneca", incluir_inativos=True)) == [produto]
 
 
+def test_pesquisa_por_categoria(produto, servico):
+    Produto.objects.filter(pk=produto.pk).update(categoria=Produto.Categoria.CAFE)
+    assert list(pesquisar_produtos(categoria=Produto.Categoria.CAFE)) == [produto]
+    assert list(pesquisar_produtos(categoria=Produto.Categoria.OUTRO)) == [servico]
+
+
 def test_buscar_por_codigo_interno_ou_de_barras(produto):
     assert buscar_por_codigo("can-01") == produto
     assert buscar_por_codigo("7890000000048") == produto
@@ -52,14 +58,15 @@ def test_bolsista_cadastra_produto_com_rastreabilidade(client, bolsista):
     resposta = client.post(
         reverse("catalogo:cadastrar_produto"),
         {
-            "codigo": "cam-p",
-            "nome": "Camiseta P",
-            "preco_unitario": "45.00",
+            "codigo": "bri-01",
+            "nome": "Brigadeiro",
+            "categoria": "doce",
+            "preco_unitario": "2.50",
             "codigo_barras": "",
             "controla_estoque": "on",
         },
     )
-    produto = Produto.objects.get(codigo="CAM-P")
+    produto = Produto.objects.get(codigo="BRI-01")
     assert resposta.status_code == 302
     assert produto.codigo_barras is None
     assert produto.criado_por == bolsista
@@ -89,7 +96,13 @@ def test_edicao_do_cadastro_nao_altera_o_saldo(client, bolsista, produto):
     client.force_login(bolsista)
     client.post(
         reverse("catalogo:editar_produto", args=[produto.pk]),
-        {"codigo": produto.codigo, "nome": "Caneca nova", "preco_unitario": "32.00", "controla_estoque": "on"},
+        {
+            "codigo": produto.codigo,
+            "nome": "Caneca nova",
+            "categoria": "outro",
+            "preco_unitario": "32.00",
+            "controla_estoque": "on",
+        },
     )
     produto.refresh_from_db()
     assert (produto.nome, produto.saldo_estoque) == ("Caneca nova", 8)

@@ -11,10 +11,12 @@ class PesquisarPor(TextChoices):
     CODIGO_BARRAS = "barras", "Código de barras"
 
 
-def pesquisar_produtos(termo="", por=PesquisarPor.NOME, incluir_inativos=False):
+def pesquisar_produtos(termo="", por=PesquisarPor.NOME, incluir_inativos=False, categoria=""):
     produtos = Produto.objects.all()
     if not incluir_inativos:
         produtos = produtos.filter(ativo=True)
+    if categoria:
+        produtos = produtos.filter(categoria=categoria)
 
     termo = termo.strip()
     if not termo:

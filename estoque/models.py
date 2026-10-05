@@ -15,6 +15,7 @@ class Movimentacao(models.Model):
 
     class MotivoAjuste(models.TextChoices):
         PERDA = "perda", "Perda"
+        VENCIMENTO = "vencimento", "Vencimento"
         AVARIA = "avaria", "Avaria"
         CORRECAO_CONTAGEM = "contagem", "Correção de contagem"
         OUTRO = "outro", "Outro"
@@ -29,7 +30,7 @@ class Movimentacao(models.Model):
     quantidade_anterior = models.PositiveIntegerField("quantidade anterior")
     variacao = models.IntegerField("variação")
     quantidade_resultante = models.PositiveIntegerField("quantidade resultante")
-    motivo = models.CharField("motivo", max_length=10, choices=MotivoAjuste.choices, blank=True)
+    motivo = models.CharField("motivo", max_length=12, choices=MotivoAjuste.choices, blank=True)
     observacao = models.CharField("observação", max_length=255, blank=True)
     responsavel = models.ForeignKey(
         settings.AUTH_USER_MODEL,

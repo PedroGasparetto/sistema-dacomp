@@ -205,7 +205,7 @@ dl.detalhes dd {
 
 .pdv {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+  grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
   gap: 1.5rem;
   align-items: start;
 }
@@ -277,7 +277,7 @@ kbd {
   top: 1rem;
 }
 .pdv-resumo [role="button"],
-.pdv-resumo button {
+.pdv-resumo footer button {
   width: 100%;
   margin-top: 0.75rem;
 }
@@ -290,4 +290,109 @@ kbd {
   margin: 0.25rem 0;
   font-variant-numeric: tabular-nums;
   color: var(--pico-primary);
+}
+
+.pdv-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.pdv-categorias a {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--pico-muted-border-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.pdv-categorias a[aria-current="true"] {
+  background: var(--pico-primary-background);
+  border-color: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+}
+
+.pdv-atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+.pdv-atalhos form {
+  margin: 0;
+}
+.pdv-atalho {
+  width: 100%;
+  height: 100%;
+  min-height: 5.5rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.25rem;
+  text-align: left;
+  background: var(--pico-card-background-color);
+  /* O Pico redefine --pico-color dentro de botões (texto claro); aqui o fundo é claro. */
+  color: var(--pico-contrast);
+  border: 1px solid var(--pico-muted-border-color);
+}
+.pdv-atalho:hover:not([disabled]),
+.pdv-atalho:focus-visible {
+  border-color: var(--pico-primary);
+  background: var(--pico-card-sectioning-background-color);
+}
+.pdv-atalho[disabled] {
+  opacity: 0.5;
+}
+.pdv-atalho-nome {
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+.pdv-atalho-preco {
+  font-weight: 700;
+  color: var(--pico-primary);
+}
+.pdv-atalho small {
+  color: var(--pico-muted-color);
+  font-size: 0.75rem;
+}
+
+.pdv-comanda-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.pdv-comanda {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  max-height: 45vh;
+  overflow-y: auto;
+}
+.pdv-comanda li {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+.pdv-comanda-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pdv-comanda-item small {
+  color: var(--pico-muted-color);
+}
+.pdv-comanda .pdv-alterar-quantidade input {
+  width: 4rem;
+}
+.pdv-comanda-vazia {
+  color: var(--pico-muted-color);
+}
+.pdv-resumo .botao-link {
+  width: auto;
+  margin: 0;
 }
