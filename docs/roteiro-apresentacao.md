@@ -26,7 +26,7 @@ No slide 8, passe para o navegador. Como referência para o ensaio, reserve cerc
 
 ## Demonstração ao vivo
 
-1. **Consultar e abrir o caixa — UC05, UC28 e UC01.** Pesquise `AGU-500` em Produtos e confira o saldo. Na base recém-populada, a água custa R$ 3,00 e tem 36 unidades. Abra o caixa com R$ 50,00 em dinheiro. Mostre que o atendimento fica associado ao operador.
+1. **Consultar e abrir o caixa — UC05, UC28 e UC01.** Em Produtos, escolha **Código interno** no campo **Pesquisar por**, pesquise `AGU-500` e confira o saldo. Na base recém-populada, a água custa R$ 3,00 e tem 36 unidades. Abra o caixa com R$ 50,00 em dinheiro. Mostre que o atendimento fica associado ao operador.
 2. **Registrar a venda e receber — UC03 e UC12.** No PDV, adicione duas águas e um café pequeno (`CAF-P`). Confira o total de R$ 8,50. Finalize em dinheiro, informe R$ 10,00 e confirme o recebimento. O resumo deve mostrar troco de R$ 1,50. Explique que o café está cadastrado sem controle de estoque.
 3. **Conferir e movimentar o estoque — UC29, UC23 e UC24.** Em Estoque, filtre pela água. A baixa da venda deve mostrar 36 → 34, com variação de -2 e identificação do responsável. Registre uma entrada de cinco águas, revise e confirme: o saldo passa de 34 para 39. Abra os detalhes da movimentação. Se o saldo inicial for outro, use o valor consultado e acompanhe as mesmas variações.
 4. **Consultar vendas e fechar o caixa — UC49 e UC02.** Abra a consulta de vendas e os detalhes da venda realizada. No fechamento, confira os totais por forma de pagamento e o dinheiro esperado. Se esta foi a única venda do caixa, o esperado é R$ 58,50. Informe esse valor, revise e confirme. Mostre o caixa fechado.
@@ -41,4 +41,4 @@ Se houver tempo, apresente um ajuste de contagem, com motivo, ou o bloqueio de u
 - Abrir os slides e o sistema antes de começar a exposição.
 - Demonstrar o sistema ao vivo. O enunciado não permite substituir a demonstração por vídeo.
 
-Na revisão da Etapa 2, os 50 testes passaram em um banco SQLite separado. A execução com PostgreSQL pelo Docker precisa ser conferida na máquina da apresentação, pois o Docker Desktop do ambiente de revisão apresentou uma falha de inicialização.
+Na revisão da Etapa 2, os 56 testes passaram com PostgreSQL 17 no Docker. A verificação do Django não apontou problemas e não há alterações de modelos sem migração. O roteiro completo também foi conferido no navegador, em uma base de demonstração separada: venda de R$ 8,50, troco de R$ 1,50, baixa de duas águas, reposição de cinco e fechamento com R$ 58,50, sem diferença. Antes da aula, ensaie na máquina da apresentação e confira os dados iniciais, pois repetir o roteiro altera o estoque e mantém o histórico de vendas.
