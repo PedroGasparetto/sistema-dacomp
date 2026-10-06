@@ -17,22 +17,22 @@
         <mxCell id="xh6z0~mypQA~" value="UC07 Consultar Vendas" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="930.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
-        <mxCell id="k6IAdNEuoYQs" value="UC15 Manter Contas" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="k6IAdNEuoYQs" value="UC15 Manter Contas" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="1690.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
         <mxCell id="psPsC_wM1dxs" value="Operador" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
           <mxGeometry x="280.0" y="470.0" width="170.0" height="270.0" as="geometry" />
         </mxCell>
-        <mxCell id="Dh6z8CZOkMG~" value="UC14 Gerar Relatórios&lt;br&gt;Básicos" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="Dh6z8CZOkMG~" value="UC14 Gerar Relatórios&lt;br&gt;Básicos" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="1080.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
-        <mxCell id="~PQs.f-q7K-M" value="UC09 Consultar Movimentação&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="~PQs.f-q7K-M" value="UC09 Consultar Movimentação&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="1230.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
         <mxCell id="IIPs8venDMao" value="UC04 Fechar Caixa" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="630.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
-        <mxCell id="PKQsHiOY1Acx" value="UC12 Registrar Ajuste&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="PKQsHiOY1Acx" value="UC12 Registrar Ajuste&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="1500.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
         <mxCell id="XvPs30puw-N2" value="Voluntário" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
@@ -41,7 +41,7 @@
         <mxCell id="SjbtvnSI96ht" value="UC13 Manter Cadastro&lt;br&gt;de Produtos" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="1530.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
-        <mxCell id="~LQsvNAhdn-M" value="UC10 Realizar Transação&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="~LQsvNAhdn-M" value="UC10 Realizar Transação&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="1380.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
         <mxCell id="_Dat4Y4HIX-b" value="UC01 Autenticar Usuário" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
@@ -50,7 +50,7 @@
         <mxCell id="eLPsUOVQXkzY" value="UC06 Receber Pagamento" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="780.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
-        <mxCell id="CKQsv3ry8phB" value="UC11 Registrar Entrada&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="CKQsv3ry8phB" value="UC11 Registrar Entrada&lt;br&gt;no Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="1350.0" width="500.0" height="145.0" as="geometry" />
         </mxCell>
         <mxCell id="uQQsV0My~asZ" value="UC08 Consultar Saldo&lt;br&gt;do Estoque" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
@@ -59,7 +59,7 @@
         <mxCell id="yIPsX3_nqRL_" value="UC03 Abrir Caixa" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="800.0" y="480.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
-        <mxCell id="QsJAjYq880T-" value="UC16 Registrar Devolução&lt;br&gt;Etapa 3" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
+        <mxCell id="QsJAjYq880T-" value="UC16 Registrar Devolução&lt;br&gt;Etapa 3" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ebf2fc;strokeColor=#1855a3;strokeWidth=2;ellipse;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="930.0" width="500.0" height="120.0" as="geometry" />
         </mxCell>
         <mxCell id="WGPssc1aOKGi" value="UC02 Consultar Produto" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;ellipse;" vertex="1" parent="1">
@@ -71,14 +71,14 @@
         <mxCell id="wGatXrAQoVyj" value="Sistema de Controle de Vendas e Estoque da Lojinha do DACOMP" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="700.0" y="90.0" width="1500.0" height="60.0" as="geometry" />
         </mxCell>
-        <mxCell id="HNHA0q~dXq-h" value="UC07 e UC08&lt;br&gt;Ponto de extensão: Gerar relatório&lt;br&gt;Dois relatórios: Vendas e Posição de Estoque.&lt;br&gt;UC16 estende UC07 no ponto Registrar devolução.&lt;br&gt;Relatórios e devoluções estão previstos para a Etapa 3." style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=note;align=left;spacing=15;fontSize=25;" vertex="1" parent="1">
+        <mxCell id="HNHA0q~dXq-h" value="UC14 estende UC07 e UC08&lt;br&gt;no ponto Gerar relatório:&lt;br&gt;Vendas e Posição de Estoque.&lt;br&gt;UC16 estende UC07 no ponto&lt;br&gt;Registrar devolução.&lt;br&gt;&lt;br&gt;Previstos para a Etapa 3 (azul):&lt;br&gt;UC09 a UC12, UC14, UC15 e UC16.&lt;br&gt;Na Etapa 2, o saldo é editado em UC13.&lt;br&gt;Contas são preparadas pelo terminal." style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=note;align=left;spacing=15;fontSize=25;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="260.0" width="500.0" height="350.0" as="geometry" />
         </mxCell>
         <mxCell id="ni6zg8X6VZ7E" value="Dinheiro, PIX, crédito ou débito.&lt;br&gt;Troco calculado para dinheiro." style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="1650.0" y="675.0" width="500.0" height="85.0" as="geometry" />
         </mxCell>
-        <mxCell id="bKatqrx8aPXh" value="Perfis de acesso fixos&lt;br&gt;• Diretoria, Bolsista e Voluntário herdam as operações de Operador.&lt;br&gt;• Diretoria e Bolsista mantêm produtos.&lt;br&gt;• Somente a Diretoria mantém as contas internas.&lt;br&gt;• As operações protegidas exigem autenticação." style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=note;align=left;spacing=15;fontSize=25;" vertex="1" parent="1">
-          <mxGeometry x="20.0" y="97.0" width="550.0" height="280.0" as="geometry" />
+        <mxCell id="bKatqrx8aPXh" value="Perfis de acesso fixos&lt;br&gt;Diretoria, Bolsista e Voluntário herdam as operações de Operador.&lt;br&gt;Diretoria e Bolsista mantêm produtos.&lt;br&gt;UC15 prevê a gestão de contas pela Diretoria na Etapa 3.&lt;br&gt;Operações da interface exigem autenticação." style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#333333;strokeWidth=2;shape=note;align=left;spacing=15;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="20.0" y="120.0" width="550.0" height="234.0" as="geometry" />
         </mxCell>
         <mxCell id="gL6zy~W1a6Kt" value="«include»" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="1325.0" y="710.0" width="170.0" height="55.0" as="geometry" />
@@ -226,112 +226,79 @@
         <mxCell id="aNHAkk3tZr-h" value="" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#000000;strokeColor=#000000;strokeWidth=2;fillColor=none;container=1;" vertex="1" parent="1">
           <mxGeometry x="50.0" y="-50.0" width="1520.0" height="1560.0" as="geometry" />
         </mxCell>
-        <mxCell id="estoque" value="&amp;gt;&lt;br&gt;estoque&lt;br&gt;Entradas, ajustes, baixas por venda e histórico" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="1130.0" y="430.0" width="360.0" height="200.0" as="geometry" />
+        <mxCell id="vendas" value="«package»&lt;br&gt;vendas&lt;br&gt;PDV, pagamento e caixa" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="630.0" y="430.0" width="360.0" height="160.0" as="geometry" />
         </mxCell>
-        <mxCell id="vendas" value="&amp;gt;&lt;br&gt;vendas&lt;br&gt;PDV, pagamento, abertura e fechamento de caixa e consultas" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="630.0" y="430.0" width="360.0" height="200.0" as="geometry" />
+        <mxCell id="catalogo" value="«package»&lt;br&gt;catalogo&lt;br&gt;Produtos, pesquisa,&lt;br&gt;saldo e baixa na venda" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1130.0" y="790.0" width="360.0" height="160.0" as="geometry" />
         </mxCell>
-        <mxCell id="catalogo" value="&amp;gt;&lt;br&gt;catalogo&lt;br&gt;Cadastro, pesquisa e saldo dos produtos e serviços" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="1130.0" y="830.0" width="360.0" height="200.0" as="geometry" />
+        <mxCell id="contas" value="«package»&lt;br&gt;contas&lt;br&gt;Autenticação e perfis&lt;br&gt;Contas pelo terminal" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="630.0" y="1150.0" width="360.0" height="160.0" as="geometry" />
         </mxCell>
-        <mxCell id="contas" value="&amp;gt;&lt;br&gt;contas&lt;br&gt;Autenticação, contas internas e perfis fixos" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="630.0" y="1230.0" width="360.0" height="200.0" as="geometry" />
-        </mxCell>
-        <mxCell id="config" value="&amp;gt;&lt;br&gt;config&lt;br&gt;Configurações e rotas da aplicação" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
+        <mxCell id="config" value="«package»&lt;br&gt;config&lt;br&gt;Configurações e rotas" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="630.0" y="30.0" width="360.0" height="200.0" as="geometry" />
         </mxCell>
-        <mxCell id="nucleo" value="&amp;gt;&lt;br&gt;nucleo&lt;br&gt;Página inicial, paginação, formatação e dados de demonstração" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
-          <mxGeometry x="130.0" y="430.0" width="360.0" height="200.0" as="geometry" />
-        </mxCell>
-        <mxCell id="dep12" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="estoque" target="catalogo">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1370.0" y="631.0" as="sourcePoint" />
-            <mxPoint x="1370.0" y="829.0" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="dep13" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="estoque" target="contas">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1491.0" y="530.0" as="sourcePoint" />
-            <mxPoint x="991.0" y="1363.3333333333333" as="targetPoint" />
-          </mxGeometry>
+        <mxCell id="nucleo" value="«package»&lt;br&gt;nucleo&lt;br&gt;Página inicial e utilidades" style="whiteSpace=wrap;html=1;fontFamily=Arial;fontSize=28;fillColor=#f0f5f2;strokeColor=#254c42;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="130.0" y="430.0" width="360.0" height="160.0" as="geometry" />
         </mxCell>
         <mxCell id="dep14" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="catalogo" target="contas">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="1310.0" y="1031.0" as="sourcePoint" />
-            <mxPoint x="991.0" y="1296.6666666666667" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="dep9" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="vendas" target="estoque">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="991.0" y="496.66666666666663" as="sourcePoint" />
-            <mxPoint x="1129.0" y="496.66666666666663" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="dep7" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="nucleo" target="estoque">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="400.0" y="631.0" as="sourcePoint" />
-            <mxPoint x="1250.0" y="631.0" as="targetPoint" />
+            <mxPoint x="1310.0" y="951.0" as="sourcePoint" />
+            <mxPoint x="991.0" y="1230.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep8" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="nucleo" target="contas">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="220.0" y="631.0" as="sourcePoint" />
-            <mxPoint x="629.0" y="1296.6666666666667" as="targetPoint" />
+            <mxPoint x="250.0" y="591.0" as="sourcePoint" />
+            <mxPoint x="629.0" y="1203.3333333333335" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep5" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="nucleo" target="vendas">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="491.0" y="530.0" as="sourcePoint" />
-            <mxPoint x="629.0" y="530.0" as="targetPoint" />
+            <mxPoint x="491.0" y="510.0" as="sourcePoint" />
+            <mxPoint x="629.0" y="510.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep6" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="nucleo" target="catalogo">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="310.0" y="631.0" as="sourcePoint" />
-            <mxPoint x="1129.0" y="963.3333333333333" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="dep3" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="config" target="estoque">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="900.0" y="230.99999999999997" as="sourcePoint" />
-            <mxPoint x="1310.0" y="429.0" as="targetPoint" />
+            <mxPoint x="370.0" y="591.0" as="sourcePoint" />
+            <mxPoint x="1129.0" y="896.6666666666666" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep4" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="config" target="vendas">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="810.0" y="230.99999999999997" as="sourcePoint" />
-            <mxPoint x="810.0" y="429.0" as="targetPoint" />
+            <mxPoint x="870.0" y="230.99999999999997" as="sourcePoint" />
+            <mxPoint x="870.0" y="429.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep1" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="config" target="contas">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="629.0" y="130.0" as="sourcePoint" />
-            <mxPoint x="629.0" y="1363.3333333333333" as="targetPoint" />
+            <mxPoint x="629.0" y="1256.6666666666665" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep2" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="config" target="catalogo">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="991.0" y="130.0" as="sourcePoint" />
-            <mxPoint x="1491.0" y="930.0" as="targetPoint" />
+            <mxPoint x="1310.0" y="789.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep0" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="config" target="nucleo">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="720.0" y="230.99999999999997" as="sourcePoint" />
+            <mxPoint x="750.0" y="230.99999999999997" as="sourcePoint" />
             <mxPoint x="310.0" y="429.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep10" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="vendas" target="catalogo">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="991.0" y="563.3333333333333" as="sourcePoint" />
-            <mxPoint x="1129.0" y="896.6666666666666" as="targetPoint" />
+            <mxPoint x="991.0" y="510.0" as="sourcePoint" />
+            <mxPoint x="1129.0" y="843.3333333333333" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="dep11" value="" edge="1" parent="1" style="html=1;fontFamily=Arial;fontSize=25;strokeColor=#333333;strokeWidth=2;endArrow=none;startArrow=none;dashed=1;endArrow=open;endFill=0;edgeStyle=orthogonalEdgeStyle;rounded=0;" source="vendas" target="contas">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="810.0" y="631.0" as="sourcePoint" />
-            <mxPoint x="810.0" y="1229.0" as="targetPoint" />
+            <mxPoint x="810.0" y="591.0" as="sourcePoint" />
+            <mxPoint x="810.0" y="1149.0" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>

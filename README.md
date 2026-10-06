@@ -47,7 +47,7 @@ Docker Desktop não está aberto.
 
 ### 3. Subir o sistema
 
-Na pasta do projeto (depois de `git clone https://github.com/gbtaffarel/trab_eng_soft.git`):
+Na pasta do projeto (depois de `git clone https://github.com/PedroGasparetto/sistema-dacomp.git`):
 
 ```bash
 docker compose up --build -d
@@ -122,7 +122,7 @@ Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote seg
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
 | `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 |
-| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) | UC02, UC13 |
+| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) e baixa automática nas vendas | UC02, UC08, UC13 |
 | `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
@@ -132,8 +132,11 @@ cadastro do produto e baixada automaticamente quando uma venda é concluída (`c
 Venda, pagamento e baixa de estoque são gravados em uma única transação (RNF01): se faltar saldo, nada é
 registrado. As listagens usam 10 registros por página.
 
-Simplificação desta etapa: as movimentações de estoque (entradas, ajustes e histórico) não foram
-implementadas; o saldo é mantido diretamente no cadastro.
+O [diagrama de pacotes e a descrição das camadas](docs/arquitetura.md) detalham essas responsabilidades.
+
+Simplificação desta etapa: as movimentações de estoque (entradas, ajustes e histórico) foram
+retiradas da implementação; o saldo é mantido diretamente no cadastro. UC08 corresponde à consulta
+de saldo nas listas e nos detalhes do catálogo, sem uma tela independente.
 
 ### PDV
 
@@ -147,4 +150,15 @@ finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o tr
 caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
 esperado.
 
-Próximo pacote previsto: `relatorios` (UC50).
+O modelo prevê para a Etapa 3 as movimentações e seu histórico (UC09 a UC12), a gestão de contas
+pela interface da Diretoria (UC15), os relatórios (UC14) e a devolução com estorno (UC16).
+UC14 contempla somente **Vendas** e **Posição de Estoque**, a partir das consultas UC07 e UC08.
+UC16 estende UC07 após a consulta dos detalhes da venda. A devolução permanece apenas no modelo,
+conforme o recorte da entrega. O cancelamento de uma venda em andamento já está disponível e ocorre
+antes do pagamento e da baixa do saldo.
+
+### Apresentação da Etapa 2
+
+O [roteiro da apresentação](docs/roteiro-apresentacao.md) descreve a preparação dos dados,
+a demonstração ao vivo e os resultados esperados. O [projeto editável dos diagramas](docs/diagramas/Diagramas_DACOMP.drawio)
+reúne os casos de uso e os pacotes em duas páginas e pode ser aberto no diagrams.net.
