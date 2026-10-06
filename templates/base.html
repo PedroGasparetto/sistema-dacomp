@@ -30,7 +30,6 @@
               <li><a href="{% url 'vendas:pdv' %}" class="barra-pdv" {% if request.resolver_match.url_name == 'pdv' %}aria-current="page"{% endif %}>PDV</a></li>
               <li><a href="{% url 'vendas:lista_vendas' %}" {% if secao == 'vendas' and request.resolver_match.url_name != 'pdv' %}aria-current="page"{% endif %}>Vendas</a></li>
               <li><a href="{% url 'catalogo:lista_produtos' %}" {% if secao == 'catalogo' %}aria-current="page"{% endif %}>Produtos</a></li>
-              <li><a href="{% url 'estoque:lista_movimentacoes' %}" {% if secao == 'estoque' %}aria-current="page"{% endif %}>Estoque</a></li>
             {% endif %}
           </ul>
         </nav>

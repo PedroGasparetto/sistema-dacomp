@@ -1,5 +1,7 @@
-"""Consultas de produtos reutilizadas pelo catálogo, pelo estoque e pelas vendas."""
+"""Consultas e regras de produtos reutilizadas pelo catálogo e pelas vendas."""
 
+from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.db.models import TextChoices
 
 from .models import Produto
@@ -37,3 +39,23 @@ def buscar_por_codigo(valor):
         Produto.objects.filter(codigo__iexact=valor).first()
         or Produto.objects.filter(codigo_barras=valor).first()
     )
+
+
+@transaction.atomic
+def baixar_saldo(*, produto, quantidade):
+    """Baixa do estoque ao concluir uma venda (passo do caso de uso Registrar Venda).
+
+    Deve ser chamada dentro da transação da venda: se faltar saldo para
+    qualquer item, a venda inteira é desfeita.
+    """
+    produto_bloqueado = Produto.objects.select_for_update().get(pk=produto.pk)
+    if not produto_bloqueado.controla_estoque:
+        return produto_bloqueado
+    if quantidade > produto_bloqueado.saldo_estoque:
+        raise ValidationError(
+            f"Saldo insuficiente de {produto_bloqueado.nome}: "
+            f"disponível {produto_bloqueado.saldo_estoque}, na venda {quantidade}."
+        )
+    produto_bloqueado.saldo_estoque -= quantidade
+    produto_bloqueado.save(update_fields=["saldo_estoque"])
+    return produto_bloqueado

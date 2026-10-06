@@ -2,7 +2,7 @@ from django.views.generic import TemplateView
 
 from catalogo.models import Produto
 from contas.mixins import PerfilRequeridoMixin
-from estoque.models import Movimentacao
+from vendas.models import Venda
 from vendas.servicos import obter_caixa_aberto, resumir_caixa
 
 
@@ -14,7 +14,7 @@ class InicioView(PerfilRequeridoMixin, TemplateView):
         contexto["caixa"] = caixa = obter_caixa_aberto()
         contexto["resumo_caixa"] = resumir_caixa(caixa) if caixa else None
         contexto["produtos_ativos"] = Produto.objects.filter(ativo=True).count()
-        contexto["ultimas_movimentacoes"] = Movimentacao.objects.select_related(
-            "produto", "responsavel"
-        )[:5]
+        contexto["ultimas_vendas"] = Venda.objects.filter(
+            situacao=Venda.Situacao.CONCLUIDA
+        ).select_related("operador")[:5]
         return contexto

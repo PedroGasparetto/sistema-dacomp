@@ -19,7 +19,6 @@ INSTALLED_APPS = [
     "nucleo",
     "contas",
     "catalogo",
-    "estoque",
     "vendas",
 ]
 

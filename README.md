@@ -83,7 +83,7 @@ docker compose exec web python manage.py changepassword ana
 ```
 
 Perfis: `diretoria`, `bolsista` e `voluntario`. Diretoria e Bolsista mantêm o cadastro de produtos;
-os três perfis operam o PDV, o caixa e o estoque.
+os três perfis operam o PDV e o caixa.
 
 ### 5. Uso no dia a dia
 
@@ -122,16 +122,18 @@ Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote seg
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
 | `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 |
-| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo e lucro) | UC02, UC13 |
-| `estoque`  | Entradas, ajustes, saldo e histórico de movimentações        | UC08, UC09, UC10 (UC11, UC12) |
+| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) | UC02, UC13 |
 | `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
-Dependências: `vendas → estoque → catalogo → contas`; `nucleo` usa todos. O saldo de um produto só é
-alterado pelo `estoque.servicos` (entradas, ajustes e baixas de venda), sempre junto com o registro da
-movimentação. Ao concluir uma venda, venda, pagamento e baixa de estoque são gravados em uma única
-transação (RNF01). As listagens usam 10 registros por página.
+Dependências: `vendas → catalogo → contas`; `nucleo` usa todos. A quantidade em estoque é informada no
+cadastro do produto e baixada automaticamente quando uma venda é concluída (`catalogo.servicos.baixar_saldo`).
+Venda, pagamento e baixa de estoque são gravados em uma única transação (RNF01): se faltar saldo, nada é
+registrado. As listagens usam 10 registros por página.
+
+Simplificação desta etapa: as movimentações de estoque (entradas, ajustes e histórico) não foram
+implementadas; o saldo é mantido diretamente no cadastro.
 
 ### PDV
 
