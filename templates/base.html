@@ -1,52 +1,65 @@
-{% load static %}<!doctype html>
+{% load estaticos %}<!doctype html>
 <html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Início{% endblock %} · Lojinha do DACOMP</title>
+  <title>{% block title %}Início{% endblock %} · Lojinha DAcomp</title>
+  <link rel="icon" type="image/png" href="{% estatico 'img/favicon.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="stylesheet" href="{% estatico 'css/app.css' %}">
 </head>
-<body>
+<body class="{% block classe_corpo %}{% endblock %}">
   <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
-  <header class="container">
-    <nav aria-label="Navegação principal">
-      <ul>
-        <li><a href="{% url 'nucleo:inicio' %}" class="marca"><strong>Lojinha do DACOMP</strong></a></li>
-      </ul>
-      {% if user.is_authenticated %}
-        <ul>
-          {% if eh_operador %}
-            <li><a href="{% url 'vendas:pdv' %}"><strong>PDV</strong></a></li>
-            <li><a href="{% url 'vendas:lista_vendas' %}">Vendas</a></li>
-            <li><a href="{% url 'catalogo:lista_produtos' %}">Produtos</a></li>
-            <li><a href="{% url 'estoque:lista_movimentacoes' %}">Estoque</a></li>
-          {% endif %}
-          {% if pode_gerir_contas %}
-            <li><a href="{% url 'contas:lista_contas' %}">Contas</a></li>
-          {% endif %}
-          <li>
-            <details class="dropdown">
-              <summary>{{ user.get_short_name|default:user.username }}</summary>
-              <ul dir="rtl">
-                <li><small dir="ltr">{{ perfis_usuario|join:", "|default:"Sem perfil" }}</small></li>
-                <li><a href="{% url 'contas:alterar_senha' %}">Alterar senha</a></li>
-                <li>
-                  <form method="post" action="{% url 'contas:sair' %}" class="formulario-em-linha">
-                    {% csrf_token %}
-                    <button type="submit" class="botao-link">Sair</button>
-                  </form>
-                </li>
-              </ul>
-            </details>
-          </li>
-        </ul>
-      {% endif %}
-    </nav>
-  </header>
+  {% block barra %}
+  {% with secao=request.resolver_match.app_name %}
+  <header class="barra-app">
+    <div class="container barra-app-conteudo">
+      <a href="{% url 'nucleo:inicio' %}" class="barra-marca" aria-label="Lojinha DAcomp, página inicial">
+        <img src="{% estatico 'img/marca-dacomp.png' %}" alt="" width="36" height="36">
+        <span class="barra-marca-texto"><strong>DAcomp</strong><small>Lojinha</small></span>
+      </a>
 
-  <main class="container" id="conteudo">
+      {% if user.is_authenticated %}
+        <nav class="barra-nav" aria-label="Navegação principal">
+          <ul>
+            {% if eh_operador %}
+              <li><a href="{% url 'vendas:pdv' %}" class="barra-pdv" {% if request.resolver_match.url_name == 'pdv' %}aria-current="page"{% endif %}>PDV</a></li>
+              <li><a href="{% url 'vendas:lista_vendas' %}" {% if secao == 'vendas' and request.resolver_match.url_name != 'pdv' %}aria-current="page"{% endif %}>Vendas</a></li>
+              <li><a href="{% url 'catalogo:lista_produtos' %}" {% if secao == 'catalogo' %}aria-current="page"{% endif %}>Produtos</a></li>
+              <li><a href="{% url 'estoque:lista_movimentacoes' %}" {% if secao == 'estoque' %}aria-current="page"{% endif %}>Estoque</a></li>
+            {% endif %}
+            {% if pode_gerir_contas %}
+              <li><a href="{% url 'contas:lista_contas' %}" {% if secao == 'contas' and request.resolver_match.url_name != 'alterar_senha' %}aria-current="page"{% endif %}>Contas</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+        <details class="dropdown barra-usuario">
+            <summary>
+              <span class="avatar" aria-hidden="true">{{ user.get_short_name|default:user.username|slice:":1"|upper }}</span>
+              <span class="barra-usuario-nome">{{ user.get_short_name|default:user.username }}</span>
+            </summary>
+            <ul dir="rtl">
+              <li dir="ltr"><small>{{ perfis_usuario|join:" · "|default:"Sem perfil" }}</small></li>
+              <li dir="ltr"><a href="{% url 'contas:alterar_senha' %}">Alterar senha</a></li>
+              <li dir="ltr">
+                <form method="post" action="{% url 'contas:sair' %}" class="formulario-em-linha">
+                  {% csrf_token %}
+                  <button type="submit" class="botao-link">Sair</button>
+                </form>
+              </li>
+            </ul>
+          </details>
+      {% endif %}
+    </div>
+  </header>
+  {% endwith %}
+  {% endblock %}
+
+  <main class="container conteudo-principal" id="conteudo">
     {% if messages %}
       {% for mensagem in messages %}
         <p class="msg msg-{{ mensagem.tags }}" role="status">{{ mensagem }}</p>
@@ -55,9 +68,13 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="container">
-    <small>Sistema de Controle de Vendas e Estoque · INF01127 Engenharia de Software · UFRGS</small>
+  {% block rodape %}
+  <footer class="rodape">
+    <div class="container">
+      <small>Lojinha DAcomp · Sistema de Controle de Vendas e Estoque · INF01127 Engenharia de Software · UFRGS</small>
+    </div>
   </footer>
+  {% endblock %}
   {% block scripts %}{% endblock %}
 </body>
 </html>

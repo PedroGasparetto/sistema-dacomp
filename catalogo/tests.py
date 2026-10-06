@@ -4,6 +4,10 @@ from django.urls import reverse
 
 from catalogo.models import Produto
 from catalogo.servicos import PesquisarPor, buscar_por_codigo, pesquisar_produtos
+from catalogo.validadores import gtin_valido
+
+# Campos fiscais obrigatórios no formulário, com os valores padrão.
+FISCAIS = {"cfop": "5102", "unidade_comercial": "UN", "origem": "0", "csosn": "102"}
 
 
 def test_pesquisa_por_nome_codigo_e_codigo_de_barras(produto):
@@ -64,6 +68,7 @@ def test_bolsista_cadastra_produto_com_rastreabilidade(client, bolsista):
             "preco_unitario": "2.50",
             "codigo_barras": "",
             "controla_estoque": "on",
+            **FISCAIS,
         },
     )
     produto = Produto.objects.get(codigo="BRI-01")
@@ -85,7 +90,7 @@ def test_nao_deixa_de_controlar_estoque_com_saldo(client, bolsista, produto):
     client.force_login(bolsista)
     resposta = client.post(
         reverse("catalogo:editar_produto", args=[produto.pk]),
-        {"codigo": produto.codigo, "nome": produto.nome, "preco_unitario": "30.00"},
+        {"codigo": produto.codigo, "nome": produto.nome, "preco_unitario": "30.00", **FISCAIS},
     )
     assert resposta.status_code == 200
     assert "controla_estoque" in resposta.context["form"].errors
@@ -102,7 +107,64 @@ def test_edicao_do_cadastro_nao_altera_o_saldo(client, bolsista, produto):
             "categoria": "outro",
             "preco_unitario": "32.00",
             "controla_estoque": "on",
+            **FISCAIS,
         },
     )
     produto.refresh_from_db()
     assert (produto.nome, produto.saldo_estoque) == ("Caneca nova", 8)
+
+
+# Dados fiscais e de reposição --------------------------------------------------
+
+
+def test_gtin_confere_digito_verificador():
+    assert gtin_valido("7890000000048")
+    assert gtin_valido("2000000000015")
+    assert not gtin_valido("7890000000049")
+    assert not gtin_valido("12345")
+
+
+def _cadastrar(client, **campos):
+    dados = {"codigo": "REF", "nome": "Refrigerante", "categoria": "bebida", "preco_unitario": "5.00", **FISCAIS}
+    return client.post(reverse("catalogo:cadastrar_produto"), {**dados, **campos})
+
+
+def test_cadastro_normaliza_codigos_fiscais(client, bolsista):
+    client.force_login(bolsista)
+    resposta = _cadastrar(client, ncm="2202.10.00", cest="03.007.00", codigo_barras="2000000000015")
+    assert resposta.status_code == 302
+    produto = Produto.objects.get(codigo="REF")
+    assert (produto.ncm, produto.cest, produto.codigo_barras) == ("22021000", "0300700", "2000000000015")
+
+
+def test_cadastro_rejeita_codigos_fiscais_invalidos(client, bolsista):
+    client.force_login(bolsista)
+    resposta = _cadastrar(client, ncm="2202100", codigo_barras="2000000000016", cfop="1102")
+    erros = resposta.context["form"].errors
+    assert {"ncm", "codigo_barras", "cfop"} <= set(erros)
+    assert not Produto.objects.exists()
+
+
+def test_margem_e_estoque_minimo(produto):
+    produto.preco_custo = Decimal("12.00")
+    produto.estoque_minimo = 5
+    produto.saldo_estoque = 3
+    assert produto.margem_percentual == Decimal("60")
+    assert produto.abaixo_do_minimo
+    assert produto.gtin_nota == "7890000000048"
+
+
+def test_filtro_de_itens_para_repor(produto, servico):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=10, estoque_minimo=5)
+    assert not pesquisar_produtos(para_repor=True).exists()
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=4)
+    assert list(pesquisar_produtos(para_repor=True)) == [produto]  # serviço não entra
+
+
+def test_custo_e_margem_aparecem_so_para_gestores(client, voluntario, bolsista, produto):
+    Produto.objects.filter(pk=produto.pk).update(preco_custo=Decimal("12.00"))
+    url = reverse("catalogo:detalhe_produto", args=[produto.pk])
+    client.force_login(voluntario)
+    assert "Preço de custo" not in client.get(url).content.decode()
+    client.force_login(bolsista)
+    assert "Preço de custo" in client.get(url).content.decode()

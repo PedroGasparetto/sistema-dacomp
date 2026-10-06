@@ -7,18 +7,52 @@
   {% if produto.ativo %}<span class="selo">Ativo</span>{% else %}<span class="selo selo-inativo">Inativo</span>{% endif %}
 </div>
 
-<article>
-  <dl class="detalhes">
-    <dt>Código interno</dt><dd>{{ produto.codigo }}</dd>
-    <dt>Categoria</dt><dd>{{ produto.get_categoria_display }}</dd>
-    <dt>Código de barras</dt><dd>{{ produto.codigo_barras|default:"—" }}</dd>
-    <dt>Preço unitário</dt><dd>{{ produto.preco_unitario|moeda }}</dd>
-    <dt>Saldo em estoque</dt>
-    <dd>{% if produto.controla_estoque %}{{ produto.saldo_estoque }} unidade{{ produto.saldo_estoque|pluralize }}{% else %}Sem controle de estoque (serviço){% endif %}</dd>
-    <dt>Descrição</dt><dd>{{ produto.descricao|default:"—"|linebreaksbr }}</dd>
-    <dt>Última alteração</dt><dd>{{ produto.alterado_em|date:"d/m/Y H:i" }} por {{ produto.alterado_por }}</dd>
-  </dl>
-</article>
+<div class="grade-detalhes">
+  <article>
+    <header><strong>Identificação</strong></header>
+    <dl class="detalhes">
+      <dt>Código interno</dt><dd>{{ produto.codigo }}</dd>
+      <dt>Categoria</dt><dd>{{ produto.get_categoria_display }}</dd>
+      <dt>Marca</dt><dd>{{ produto.marca|default:"—" }}</dd>
+      <dt>Fornecedor</dt><dd>{{ produto.fornecedor|default:"—" }}</dd>
+      <dt>Descrição</dt><dd>{{ produto.descricao|default:"—"|linebreaksbr }}</dd>
+    </dl>
+  </article>
+
+  <article>
+    <header><strong>Preço e estoque</strong></header>
+    <dl class="detalhes">
+      <dt>Preço de venda</dt><dd>{{ produto.preco_unitario|moeda }}</dd>
+      {% if pode_gerir_produtos %}
+        <dt>Preço de custo</dt><dd>{{ produto.preco_custo|moeda }}</dd>
+        <dt>Margem</dt><dd>{% if produto.margem_percentual is not None %}{{ produto.margem_percentual|floatformat:1 }}%{% else %}—{% endif %}</dd>
+      {% endif %}
+      <dt>Saldo em estoque</dt>
+      <dd>
+        {% if produto.controla_estoque %}
+          {{ produto.saldo_estoque }} unidade{{ produto.saldo_estoque|pluralize }}
+          {% if produto.abaixo_do_minimo %}<span class="selo selo-alerta">Abaixo do mínimo</span>{% endif %}
+        {% else %}Sem controle de estoque{% endif %}
+      </dd>
+      {% if produto.controla_estoque %}<dt>Estoque mínimo</dt><dd>{{ produto.estoque_minimo }}</dd>{% endif %}
+    </dl>
+  </article>
+
+  <article>
+    <header><strong>Dados fiscais</strong></header>
+    <dl class="detalhes">
+      <dt>GTIN/EAN</dt><dd>{{ produto.gtin_nota }}</dd>
+      <dt>NCM</dt><dd>{{ produto.ncm|ncm|default:"—" }}</dd>
+      <dt>CEST</dt><dd>{{ produto.cest|cest|default:"—" }}</dd>
+      <dt>CFOP de venda</dt><dd>{{ produto.cfop }}</dd>
+      <dt>Unidade</dt><dd>{{ produto.get_unidade_comercial_display }}</dd>
+      <dt>Origem</dt><dd>{{ produto.get_origem_display }}</dd>
+      <dt>CSOSN</dt><dd>{{ produto.get_csosn_display }}</dd>
+    </dl>
+  </article>
+</div>
+
+<p><small>Última alteração em {{ produto.alterado_em|date:"d/m/Y H:i" }} por {{ produto.alterado_por }}.</small></p>
 
 <div class="acoes">
   {% if pode_gerir_produtos %}
