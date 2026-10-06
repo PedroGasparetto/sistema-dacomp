@@ -626,6 +626,13 @@ kbd {
   height: 3rem;
   margin: 0;
 }
+/* Espaço entre o rótulo ("Produto", "Qtd.") e o campo. */
+.pdv-leitura label input {
+  margin-top: 0.5rem;
+}
+.pdv-leitura kbd {
+  margin-left: 0.25rem;
+}
 /* O Pico redefine --pico-border-radius como 5rem em campos de busca (formato de
    pílula); aqui o raio é o mesmo dos outros campos. */
 .pdv-leitura input[type="search"] {
