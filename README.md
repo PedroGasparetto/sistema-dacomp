@@ -1,4 +1,4 @@
-# trab_eng_soft
+# Sistema da Lojinha do DACOMP
 
 Repositório para elaboração do trabalho da cadeira INF01127 - Engenharia de Software.
 
@@ -47,7 +47,7 @@ Docker Desktop não está aberto.
 
 ### 3. Subir o sistema
 
-Na pasta do projeto (depois de `git clone https://github.com/gbtaffarel/trab_eng_soft.git`):
+Na pasta do projeto (depois de `git clone https://github.com/PedroGasparetto/sistema-dacomp.git`):
 
 ```bash
 docker compose up --build -d
@@ -94,8 +94,9 @@ continuam lá entre um `down` e outro `up`.
 
 ## Arquitetura
 
-Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote segue
-`models.py` (entidades) → `servicos.py` (regras de negócio) → `forms.py`/`views.py` (controle) → `templates/` (apresentação).
+Monólito Django em camadas, dividido em pacotes por subsistema. Os templates apresentam as telas,
+os formulários e as views conduzem as ações, os serviços concentram as regras de negócio e os
+modelos representam os dados. A autenticação e o controle de acesso ficam em `contas`.
 
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
@@ -106,7 +107,13 @@ Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote seg
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
-Dependências: `vendas → estoque → catalogo → contas`; `nucleo` usa todos. O saldo de um produto só é
+As regras de vendas usam `catalogo` para identificar produtos e `estoque` para registrar as baixas.
+O pacote `estoque` usa o cadastro de `catalogo`. As interfaces dos módulos usam `contas` para
+autenticação e autorização, e os modelos vinculam o responsável à conta interna. `nucleo` consulta
+catálogo, estoque e vendas na página inicial. `config` reúne as configurações e registra as rotas.
+O diagrama de pacotes e a descrição das camadas estão em [docs/arquitetura.md](docs/arquitetura.md).
+
+O saldo de um produto só é
 alterado pelo `estoque.servicos` (entradas, ajustes e baixas de venda), sempre junto com o registro da
 movimentação. Ao concluir uma venda, venda, pagamento e baixa de estoque são gravados em uma única
 transação (RNF01). As listagens usam 10 registros por página.
@@ -123,4 +130,11 @@ finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o tr
 caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
 esperado.
 
-Próximo pacote previsto: `relatorios` (UC50).
+Para a Etapa 2, já estão implementados catálogo, estoque, vendas, pagamentos e caixa.
+O próximo pacote previsto é `relatorios` (UC50), para a Etapa 3. As consultas em tela já funcionam.
+
+### Apresentação da Etapa 2
+
+O [roteiro da apresentação](docs/roteiro-apresentacao.md) descreve a preparação dos dados,
+a demonstração ao vivo e os resultados esperados. O [projeto editável dos diagramas](docs/diagramas/Diagramas_DACOMP.drawio)
+reúne os casos de uso e os pacotes em duas páginas e pode ser aberto no diagrams.net.
