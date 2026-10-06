@@ -24,11 +24,6 @@
     <strong>{{ produtos_ativos }}</strong>
     <a href="{% url 'catalogo:lista_produtos' %}">Consultar produtos</a>
   </article>
-  <article>
-    <small>Itens para repor</small>
-    <strong>{{ produtos_para_repor }}</strong>
-    <a href="{% url 'catalogo:lista_produtos' %}?para_repor=on">Ver itens para repor</a>
-  </article>
 </section>
 
 <section>
@@ -38,34 +33,33 @@
     {% if pode_gerir_produtos %}
       <a role="button" href="{% url 'catalogo:cadastrar_produto' %}">Cadastrar produto</a>
     {% endif %}
-    <a role="button" class="secondary" href="{% url 'estoque:registrar_movimentacao' %}">Transação no estoque</a>
-    <a role="button" class="outline" href="{% url 'estoque:lista_movimentacoes' %}">Movimentações</a>
+    <a role="button" class="outline" href="{% url 'vendas:lista_vendas' %}">Consultar vendas</a>
   </div>
 </section>
 
 <section>
-  <h2>Últimas movimentações</h2>
-  {% if ultimas_movimentacoes %}
+  <h2>Últimas vendas</h2>
+  {% if ultimas_vendas %}
     <div class="tabela-rolavel">
       <table class="striped">
         <thead>
-          <tr><th>Data</th><th>Produto</th><th>Tipo</th><th class="num">Variação</th><th>Responsável</th></tr>
+          <tr><th>Nº</th><th>Concluída em</th><th>Operador</th><th>Pagamento</th><th class="num">Total</th></tr>
         </thead>
         <tbody>
-          {% for movimentacao in ultimas_movimentacoes %}
+          {% for venda in ultimas_vendas %}
             <tr>
-              <td><a href="{{ movimentacao.get_absolute_url }}">{{ movimentacao.realizada_em|date:"d/m/Y H:i" }}</a></td>
-              <td>{{ movimentacao.produto.nome }}</td>
-              <td>{{ movimentacao.get_tipo_display }}</td>
-              <td class="num {% if movimentacao.variacao > 0 %}positivo{% else %}negativo{% endif %}">{{ movimentacao.variacao|stringformat:"+d" }}</td>
-              <td>{{ movimentacao.responsavel }}</td>
+              <td><a href="{{ venda.get_absolute_url }}">{{ venda.pk }}</a></td>
+              <td>{{ venda.concluida_em|date:"d/m/Y H:i" }}</td>
+              <td>{{ venda.operador }}</td>
+              <td>{{ venda.get_forma_pagamento_display }}</td>
+              <td class="num">{{ venda.total|moeda }}</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   {% else %}
-    <p>Nenhuma movimentação registrada ainda.</p>
+    <p>Nenhuma venda concluída ainda.</p>
   {% endif %}
 </section>
 {% endblock %}

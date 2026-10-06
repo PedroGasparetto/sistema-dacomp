@@ -29,7 +29,6 @@ class ListaProdutosView(PerfilRequeridoMixin, ListView):
                 dados["por"] or PesquisarPor.NOME,
                 dados["incluir_inativos"],
                 dados["categoria"],
-                dados["para_repor"],
             )
         return pesquisar_produtos()
 
@@ -37,7 +36,7 @@ class ListaProdutosView(PerfilRequeridoMixin, ListView):
         contexto = super().get_context_data(**kwargs)
         contexto["formulario_pesquisa"] = self.formulario_pesquisa
         contexto["pesquisou"] = any(
-            self.request.GET.get(campo) for campo in ("termo", "categoria", "para_repor")
+            self.request.GET.get(campo) for campo in ("termo", "categoria")
         )
         return contexto
 
@@ -74,7 +73,7 @@ class EditarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, UpdateView):
     success_message = "Produto %(nome)s atualizado."
 
     def form_valid(self, form):
-        # Grava só os campos do cadastro: o saldo pertence às movimentações de estoque.
+        # Grava só os campos do formulário, sem sobrescrever outros dados do produto.
         self.object = form.save(commit=False)
         self.object.alterado_por = self.request.user
         self.object.save(update_fields=[*form.Meta.fields, "alterado_por", "alterado_em"])

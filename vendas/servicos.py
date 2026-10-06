@@ -5,8 +5,7 @@ from django.db import transaction
 from django.db.models import Count, Sum
 from django.utils import timezone
 
-from catalogo.servicos import PesquisarPor, buscar_por_codigo, pesquisar_produtos
-from estoque.servicos import registrar_baixa_por_venda
+from catalogo.servicos import PesquisarPor, baixar_saldo, buscar_por_codigo, pesquisar_produtos
 
 from .models import ZERO, Caixa, ItemVenda, Venda
 
@@ -215,12 +214,7 @@ def concluir_venda(*, venda, forma_pagamento, valor_recebido=None):
     valor_recebido, troco = calcular_troco(total, forma_pagamento, valor_recebido)
 
     for item in venda.itens.select_related("produto"):
-        registrar_baixa_por_venda(
-            produto=item.produto,
-            quantidade=item.quantidade,
-            usuario=venda.operador,
-            referencia=str(venda),
-        )
+        baixar_saldo(produto=item.produto, quantidade=item.quantidade)
 
     venda.total = total
     venda.forma_pagamento = forma_pagamento

@@ -15,39 +15,26 @@
       <dt>Categoria</dt><dd>{{ produto.get_categoria_display }}</dd>
       <dt>Marca</dt><dd>{{ produto.marca|default:"—" }}</dd>
       <dt>Fornecedor</dt><dd>{{ produto.fornecedor|default:"—" }}</dd>
+      <dt>Código de barras</dt><dd>{{ produto.codigo_barras|default:"—" }}</dd>
       <dt>Descrição</dt><dd>{{ produto.descricao|default:"—"|linebreaksbr }}</dd>
     </dl>
   </article>
 
   <article>
-    <header><strong>Preço e estoque</strong></header>
+    <header><strong>Venda e estoque</strong></header>
     <dl class="detalhes">
-      <dt>Preço de venda</dt><dd>{{ produto.preco_unitario|moeda }}</dd>
+      <dt>Preço de venda</dt><dd>{{ produto.preco_unitario|moeda }} / {{ produto.get_unidade_display|lower }}</dd>
       {% if pode_gerir_produtos %}
         <dt>Preço de custo</dt><dd>{{ produto.preco_custo|moeda }}</dd>
-        <dt>Margem</dt><dd>{% if produto.margem_percentual is not None %}{{ produto.margem_percentual|floatformat:1 }}%{% else %}—{% endif %}</dd>
+        <dt>Lucro por unidade</dt><dd>{{ produto.lucro_unitario|moeda }}</dd>
+        <dt>Margem de lucro</dt><dd>{% if produto.margem_percentual is not None %}{{ produto.margem_percentual|floatformat:1 }}%{% else %}—{% endif %}</dd>
       {% endif %}
       <dt>Saldo em estoque</dt>
       <dd>
         {% if produto.controla_estoque %}
-          {{ produto.saldo_estoque }} unidade{{ produto.saldo_estoque|pluralize }}
-          {% if produto.abaixo_do_minimo %}<span class="selo selo-alerta">Abaixo do mínimo</span>{% endif %}
+          {{ produto.saldo_estoque }}
         {% else %}Sem controle de estoque{% endif %}
       </dd>
-      {% if produto.controla_estoque %}<dt>Estoque mínimo</dt><dd>{{ produto.estoque_minimo }}</dd>{% endif %}
-    </dl>
-  </article>
-
-  <article>
-    <header><strong>Dados fiscais</strong></header>
-    <dl class="detalhes">
-      <dt>GTIN/EAN</dt><dd>{{ produto.gtin_nota }}</dd>
-      <dt>NCM</dt><dd>{{ produto.ncm|ncm|default:"—" }}</dd>
-      <dt>CEST</dt><dd>{{ produto.cest|cest|default:"—" }}</dd>
-      <dt>CFOP de venda</dt><dd>{{ produto.cfop }}</dd>
-      <dt>Unidade</dt><dd>{{ produto.get_unidade_comercial_display }}</dd>
-      <dt>Origem</dt><dd>{{ produto.get_origem_display }}</dd>
-      <dt>CSOSN</dt><dd>{{ produto.get_csosn_display }}</dd>
     </dl>
   </article>
 </div>
@@ -61,10 +48,6 @@
       {% csrf_token %}
       <button type="submit" class="secondary outline">{% if produto.ativo %}Inativar{% else %}Reativar{% endif %}</button>
     </form>
-  {% endif %}
-  {% if produto.controla_estoque %}
-    <a role="button" class="secondary" href="{% url 'estoque:registrar_movimentacao' %}?produto={{ produto.codigo|urlencode }}">Transação no estoque</a>
-    <a href="{% url 'estoque:lista_movimentacoes' %}?produto={{ produto.codigo|urlencode }}">Ver movimentações</a>
   {% endif %}
   <a href="{% url 'catalogo:lista_produtos' %}">Voltar à lista</a>
 </div>

@@ -5,8 +5,6 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from catalogo.models import Produto
-from estoque.models import Movimentacao
-from estoque.servicos import registrar_movimentacao
 from vendas.models import Caixa, Venda
 from vendas.servicos import (
     abrir_caixa,
@@ -27,8 +25,8 @@ def caixa(voluntario):
 
 
 @pytest.fixture
-def produto_com_saldo(produto, bolsista):
-    registrar_movimentacao(tipo=Movimentacao.Tipo.ENTRADA, produto=produto, quantidade=5, usuario=bolsista)
+def produto_com_saldo(produto):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=5)
     produto.refresh_from_db()
     return produto
 
@@ -101,8 +99,6 @@ def test_venda_em_dinheiro_calcula_troco_e_baixa_estoque(caixa, voluntario, prod
     assert venda.troco == Decimal("39.00")
     produto_com_saldo.refresh_from_db()
     assert produto_com_saldo.saldo_estoque == 3
-    baixa = Movimentacao.objects.get(tipo=Movimentacao.Tipo.VENDA)
-    assert (baixa.variacao, baixa.observacao) == (-2, str(venda))
     assert resumir_caixa(caixa)["valor_esperado"] == Decimal("111.00")
 
 
@@ -117,21 +113,18 @@ def test_dinheiro_insuficiente_mantem_venda_em_andamento(caixa, voluntario, prod
     assert produto_com_saldo.saldo_estoque == 5
 
 
-def test_saldo_insuficiente_na_conclusao_desfaz_tudo(caixa, voluntario, produto_com_saldo, bolsista):
+def test_saldo_insuficiente_na_conclusao_desfaz_tudo(caixa, voluntario, produto_com_saldo, servico):
     venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=servico, quantidade=2)
     adicionar_item(venda=venda, produto=produto_com_saldo, quantidade=4)
-    registrar_movimentacao(
-        tipo=Movimentacao.Tipo.AJUSTE,
-        produto=produto_com_saldo,
-        quantidade=1,
-        motivo=Movimentacao.MotivoAjuste.PERDA,
-        usuario=bolsista,
-    )
+    # Alguém reduz o saldo no cadastro enquanto a venda está em andamento.
+    Produto.objects.filter(pk=produto_com_saldo.pk).update(saldo_estoque=1)
     with pytest.raises(ValidationError):
         concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
     venda.refresh_from_db()
+    produto_com_saldo.refresh_from_db()
     assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
-    assert not Movimentacao.objects.filter(tipo=Movimentacao.Tipo.VENDA).exists()
+    assert produto_com_saldo.saldo_estoque == 1
 
 
 def test_preco_da_venda_e_preservado(caixa, voluntario, produto_com_saldo):
@@ -180,7 +173,8 @@ def test_item_preparado_na_hora_e_vendido_sem_estoque(caixa, voluntario, servico
     venda = iniciar_ou_retomar_venda(voluntario)
     adicionar_item(venda=venda, produto=servico, quantidade=10)
     concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
-    assert not Movimentacao.objects.exists()
+    servico.refresh_from_db()
+    assert servico.saldo_estoque == 0
 
 
 def test_fluxo_completo_no_pdv(client, caixa, voluntario, produto_com_saldo):

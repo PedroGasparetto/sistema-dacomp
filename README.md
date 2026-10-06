@@ -1,4 +1,4 @@
-# Sistema da Lojinha do DACOMP
+# trab_eng_soft
 
 Repositório para elaboração do trabalho da cadeira INF01127 - Engenharia de Software.
 
@@ -47,7 +47,7 @@ Docker Desktop não está aberto.
 
 ### 3. Subir o sistema
 
-Na pasta do projeto (depois de `git clone https://github.com/PedroGasparetto/sistema-dacomp.git`):
+Na pasta do projeto (depois de `git clone https://github.com/gbtaffarel/trab_eng_soft.git`):
 
 ```bash
 docker compose up --build -d
@@ -63,7 +63,29 @@ docker compose exec web python manage.py popular_demo --senha <escolha-uma-senha
 
 Acesse http://localhost:8000 e entre com `diretoria`, `bolsista` ou `voluntario` e a senha escolhida.
 
-### 4. Uso no dia a dia
+### 4. Contas da equipe
+
+Não há tela de gestão de contas: elas são administradas pela linha de comando.
+
+```bash
+# Criar conta (a senha é pedida no terminal); repita --perfil para acumular papéis
+docker compose exec web python manage.py criar_conta ana --perfil diretoria --perfil bolsista --nome Ana
+
+# Alterar os perfis de uma conta existente
+docker compose exec web python manage.py criar_conta ana --perfil voluntario
+
+# Desativar ou reativar o acesso
+docker compose exec web python manage.py criar_conta ana --desativar
+docker compose exec web python manage.py criar_conta ana --reativar
+
+# Trocar a senha
+docker compose exec web python manage.py changepassword ana
+```
+
+Perfis: `diretoria`, `bolsista` e `voluntario`. Diretoria e Bolsista mantêm o cadastro de produtos;
+os três perfis operam o PDV e o caixa.
+
+### 5. Uso no dia a dia
 
 | Para…                                   | Comando                                                         |
 |-----------------------------------------|-----------------------------------------------------------------|
@@ -94,29 +116,24 @@ continuam lá entre um `down` e outro `up`.
 
 ## Arquitetura
 
-Monólito Django em camadas, dividido em pacotes por subsistema. Os templates apresentam as telas,
-os formulários e as views conduzem as ações, os serviços concentram as regras de negócio e os
-modelos representam os dados. A autenticação e o controle de acesso ficam em `contas`.
+Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote segue
+`models.py` (entidades) → `servicos.py` (regras de negócio) → `forms.py`/`views.py` (controle) → `templates/` (apresentação).
 
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
-| `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e contas da equipe | UC01, UC15 |
-| `catalogo` | Cadastro e pesquisa de produtos e serviços                   | UC13, UC02, UC08    |
-| `estoque`  | Entradas, ajustes e histórico de movimentações               | UC10 (UC11, UC12), UC09 |
+| `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 |
+| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) | UC02, UC13 |
 | `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
-As regras de vendas usam `catalogo` para identificar produtos e `estoque` para registrar as baixas.
-O pacote `estoque` usa o cadastro de `catalogo`. As interfaces dos módulos usam `contas` para
-autenticação e autorização, e os modelos vinculam o responsável à conta interna. `nucleo` consulta
-catálogo, estoque e vendas na página inicial. `config` reúne as configurações e registra as rotas.
-O diagrama de pacotes e a descrição das camadas estão em [docs/arquitetura.md](docs/arquitetura.md).
+Dependências: `vendas → catalogo → contas`; `nucleo` usa todos. A quantidade em estoque é informada no
+cadastro do produto e baixada automaticamente quando uma venda é concluída (`catalogo.servicos.baixar_saldo`).
+Venda, pagamento e baixa de estoque são gravados em uma única transação (RNF01): se faltar saldo, nada é
+registrado. As listagens usam 10 registros por página.
 
-O saldo de um produto só é
-alterado pelo `estoque.servicos` (entradas, ajustes e baixas de venda), sempre junto com o registro da
-movimentação. Ao concluir uma venda, venda, pagamento e baixa de estoque são gravados em uma única
-transação (RNF01). As listagens usam 10 registros por página.
+Simplificação desta etapa: as movimentações de estoque (entradas, ajustes e histórico) não foram
+implementadas; o saldo é mantido diretamente no cadastro.
 
 ### PDV
 
@@ -130,15 +147,4 @@ finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o tr
 caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
 esperado.
 
-Para a Etapa 2, já estão implementados catálogo, estoque, vendas, pagamentos e caixa.
-Somente a Diretoria mantém as contas internas da equipe (UC15).
-UC14 prevê dois relatórios para a Etapa 3: Vendas e Posição de Estoque. As consultas em tela já funcionam.
-UC16 Registrar Devolução também está especificado no modelo para a Etapa 3; ainda não há registro de
-devoluções ou estornos de vendas concluídas no sistema. Antes do recebimento, uma venda em andamento
-pode ser cancelada sem pagamento ou baixa de estoque.
-
-### Apresentação da Etapa 2
-
-O [roteiro da apresentação](docs/roteiro-apresentacao.md) descreve a preparação dos dados,
-a demonstração ao vivo e os resultados esperados. O [projeto editável dos diagramas](docs/diagramas/Diagramas_DACOMP.drawio)
-reúne os casos de uso e os pacotes em duas páginas e pode ser aberto no diagrams.net.
+Próximo pacote previsto: `relatorios` (UC50).
