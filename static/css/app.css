@@ -610,18 +610,33 @@ kbd {
   }
 }
 
+/* Busca, quantidade e botão com a mesma altura e alinhados pela base. */
 .pdv-leitura {
   display: grid;
   grid-template-columns: 1fr 6rem auto;
   gap: 0.75rem;
   align-items: end;
+  margin-bottom: 1.25rem;
 }
-.pdv-leitura label,
+.pdv-leitura label {
+  margin: 0;
+}
+.pdv-leitura input,
 .pdv-leitura button {
-  margin-bottom: var(--pico-spacing);
+  height: 3rem;
+  margin: 0;
 }
-.pdv-leitura input[name="termo"] {
-  font-size: 1.15rem;
+/* O Pico redefine --pico-border-radius como 5rem em campos de busca (formato de
+   pílula); aqui o raio é o mesmo dos outros campos. */
+.pdv-leitura input[type="search"] {
+  --pico-border-radius: 0.6rem;
+}
+.pdv-leitura input[name="quantidade"] {
+  text-align: center;
+}
+.pdv-leitura button {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 @media (max-width: 1100px) {
   .pdv-leitura {
