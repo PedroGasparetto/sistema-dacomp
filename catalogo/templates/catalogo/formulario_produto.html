@@ -4,7 +4,13 @@
 <h1>{% if produto %}Editar {{ produto.nome }}{% else %}Cadastrar produto{% endif %}</h1>
 <form method="post" class="formulario-medio">
   {% csrf_token %}
-  {{ form }}
+  {{ form.non_field_errors }}
+  {% for titulo, campos in form.grupos %}
+    <fieldset class="grupo-formulario">
+      <legend>{{ titulo }}</legend>
+      {% for campo in campos %}{{ campo.as_field_group }}{% endfor %}
+    </fieldset>
+  {% endfor %}
   {% if produto %}
     <p><small>O saldo em estoque ({{ produto.saldo_estoque }}) só é alterado por transações no estoque.</small></p>
   {% endif %}

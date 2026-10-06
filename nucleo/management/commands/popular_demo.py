@@ -20,27 +20,40 @@ USUARIOS_DEMO = [
 
 Categoria = Produto.Categoria
 
-# código, nome, categoria, preço, controla estoque, código de barras, saldo inicial
+PREPARO = "Preparo próprio"
+PARCEIRO = "Padaria parceira (exemplo)"
+
+# Códigos de barras com prefixo 2 (uso interno), para não coincidirem com produtos reais.
+# NCM preenchido apenas em itens industrializados; a classificação fiscal deve ser
+# confirmada com a contabilidade do DACOMP.
 PRODUTOS_DEMO = [
-    ("CAF-P", "Café coado (pequeno)", Categoria.CAFE, "2.50", False, None, 0),
-    ("CAF-G", "Café coado (grande)", Categoria.CAFE, "4.00", False, None, 0),
-    ("CAF-LEI", "Café com leite", Categoria.CAFE, "4.50", False, None, 0),
-    ("CHA-01", "Chá (sachê)", Categoria.CAFE, "2.00", True, None, 40),
-    ("CHOC-Q", "Chocolate quente", Categoria.CAFE, "5.00", False, None, 0),
-    ("REF-LAT", "Refrigerante lata 350 ml", Categoria.BEBIDA, "5.00", True, "7894900011517", 48),
-    ("AGU-500", "Água mineral 500 ml", Categoria.BEBIDA, "3.00", True, "7896065200019", 36),
-    ("AGU-GAS", "Água com gás 500 ml", Categoria.BEBIDA, "3.50", True, "7896065200026", 12),
-    ("SUC-CX", "Suco de caixinha 200 ml", Categoria.BEBIDA, "3.50", True, "7891098000019", 24),
-    ("ENE-LAT", "Energético lata 250 ml", Categoria.BEBIDA, "9.00", True, "9002490100070", 0),
-    ("SAL-ASS", "Salgado assado", Categoria.LANCHE, "6.00", True, None, 20),
-    ("PAO-QJ", "Pão de queijo", Categoria.LANCHE, "3.00", True, None, 30),
-    ("SAN-NAT", "Sanduíche natural", Categoria.LANCHE, "8.00", True, None, 8),
-    ("BIS-REC", "Biscoito recheado", Categoria.LANCHE, "4.00", True, "7896004000014", 18),
-    ("CHO-BAR", "Chocolate em barra", Categoria.DOCE, "6.00", True, "7891000100103", 15),
-    ("BOL-FAT", "Fatia de bolo", Categoria.DOCE, "5.00", True, None, 10),
-    ("BRI-01", "Brigadeiro", Categoria.DOCE, "2.50", True, None, 25),
-    ("PAC-01", "Paçoca", Categoria.DOCE, "1.00", True, "7896336000010", 50),
-    ("IMP-PB", "Impressão preto e branco (página)", Categoria.OUTRO, "0.25", False, None, 0),
+    # código, nome, categoria, venda, custo, controla estoque, mínimo, saldo inicial, extras
+    ("CAF-P", "Café coado (pequeno)", Categoria.CAFE, "2.50", "0.60", False, 0, 0, {"fornecedor": PREPARO}),
+    ("CAF-G", "Café coado (grande)", Categoria.CAFE, "4.00", "1.00", False, 0, 0, {"fornecedor": PREPARO}),
+    ("CAF-LEI", "Café com leite", Categoria.CAFE, "4.50", "1.30", False, 0, 0, {"fornecedor": PREPARO}),
+    ("CHA-01", "Chá (sachê)", Categoria.CAFE, "2.00", "0.50", True, 10, 40, {"ncm": "09023000"}),
+    ("CHOC-Q", "Chocolate quente", Categoria.CAFE, "5.00", "1.60", False, 0, 0, {"fornecedor": PREPARO}),
+    ("REF-LAT", "Refrigerante lata 350 ml", Categoria.BEBIDA, "5.00", "2.60", True, 12, 48,
+     {"codigo_barras": "2000000000015", "ncm": "22021000"}),
+    ("AGU-500", "Água mineral 500 ml", Categoria.BEBIDA, "3.00", "1.10", True, 12, 36,
+     {"codigo_barras": "2000000000022", "ncm": "22011000"}),
+    ("AGU-GAS", "Água com gás 500 ml", Categoria.BEBIDA, "3.50", "1.40", True, 6, 4,
+     {"codigo_barras": "2000000000039", "ncm": "22011000"}),
+    ("SUC-CX", "Suco de caixinha 200 ml", Categoria.BEBIDA, "3.50", "1.70", True, 12, 24,
+     {"codigo_barras": "2000000000046", "ncm": "22029900"}),
+    ("ENE-LAT", "Energético lata 250 ml", Categoria.BEBIDA, "9.00", "5.20", True, 6, 0,
+     {"codigo_barras": "2000000000053", "ncm": "22029900"}),
+    ("SAL-ASS", "Salgado assado", Categoria.LANCHE, "6.00", "3.50", True, 10, 20, {"fornecedor": PARCEIRO}),
+    ("PAO-QJ", "Pão de queijo", Categoria.LANCHE, "3.00", "1.40", True, 10, 30, {"fornecedor": PARCEIRO}),
+    ("SAN-NAT", "Sanduíche natural", Categoria.LANCHE, "8.00", "4.80", True, 5, 8, {"fornecedor": PARCEIRO}),
+    ("BIS-REC", "Biscoito recheado", Categoria.LANCHE, "4.00", "2.10", True, 6, 18,
+     {"codigo_barras": "2000000000060", "ncm": "19053100"}),
+    ("CHO-BAR", "Chocolate em barra", Categoria.DOCE, "6.00", "3.40", True, 6, 15,
+     {"codigo_barras": "2000000000077", "ncm": "18063210"}),
+    ("BOL-FAT", "Fatia de bolo", Categoria.DOCE, "5.00", "2.50", True, 4, 10, {"fornecedor": PARCEIRO}),
+    ("BRI-01", "Brigadeiro", Categoria.DOCE, "2.50", "1.00", True, 10, 25, {"fornecedor": PARCEIRO}),
+    ("PAC-01", "Paçoca", Categoria.DOCE, "1.00", "0.40", True, 20, 50, {"codigo_barras": "2000000000084"}),
+    ("IMP-PB", "Impressão preto e branco (página)", Categoria.OUTRO, "0.25", "0.08", False, 0, 0, {}),
 ]
 
 
@@ -62,17 +75,21 @@ class Command(BaseCommand):
             self.stdout.write(f"{'Criada' if criado else 'Atualizada'} a conta {username}")
 
         autor = Usuario.objects.get(username="bolsista")
-        for codigo, nome, categoria, preco, controla_estoque, codigo_barras, saldo_inicial in PRODUTOS_DEMO:
+        for (
+            codigo, nome, categoria, preco, custo, controla_estoque, minimo, saldo_inicial, extras
+        ) in PRODUTOS_DEMO:
             produto, criado = Produto.objects.get_or_create(
                 codigo=codigo,
                 defaults={
                     "nome": nome,
                     "categoria": categoria,
                     "preco_unitario": Decimal(preco),
+                    "preco_custo": Decimal(custo),
                     "controla_estoque": controla_estoque,
-                    "codigo_barras": codigo_barras,
+                    "estoque_minimo": minimo,
                     "criado_por": autor,
                     "alterado_por": autor,
+                    **extras,
                 },
             )
             if criado and saldo_inicial:

@@ -1,5 +1,70 @@
-:root {
+/* Tema da Lojinha DAcomp ------------------------------------------------
+   Cores tiradas do logo: carvão do fundo e lilás dos traços. O roxo escuro
+   é a versão do lilás com contraste suficiente para texto branco. */
+
+:root[data-theme="light"] {
+  --marca-carvao: #1e1e1e;
+  --marca-carvao-2: #2a2a2a;
+  --marca-lilas: #e2a6ec;
+  --marca-roxo: #7e3a93;
+  --marca-roxo-escuro: #642c76;
+  --marca-roxo-claro: #f5eaf8;
+  --fundo-pagina: #f6f5f8;
+  --borda-suave: #e6e3ea;
+  --texto-suave: #6b6573;
+  --sombra-cartao: 0 1px 2px rgba(30, 30, 30, 0.04), 0 4px 16px rgba(30, 30, 30, 0.06);
+
+  --pico-font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --pico-font-size: 100%;
+  --pico-line-height: 1.5;
+  --pico-border-radius: 0.6rem;
+  --pico-background-color: var(--fundo-pagina);
+  --pico-color: #2b2730;
+  --pico-h1-color: #1e1a22;
+  --pico-h2-color: #1e1a22;
+  --pico-muted-color: var(--texto-suave);
+  --pico-muted-border-color: var(--borda-suave);
+  --pico-primary: var(--marca-roxo);
+  --pico-primary-background: var(--marca-roxo);
+  --pico-primary-border: var(--marca-roxo);
+  --pico-primary-underline: rgba(126, 58, 147, 0.4);
+  --pico-primary-hover: var(--marca-roxo-escuro);
+  --pico-primary-hover-background: var(--marca-roxo-escuro);
+  --pico-primary-hover-border: var(--marca-roxo-escuro);
+  --pico-primary-hover-underline: var(--marca-roxo-escuro);
+  --pico-primary-focus: rgba(126, 58, 147, 0.25);
+  --pico-primary-inverse: #fff;
+  --pico-card-background-color: #fff;
+  --pico-card-sectioning-background-color: #faf9fb;
+  --pico-card-box-shadow: var(--sombra-cartao);
+  --pico-form-element-focus-color: var(--marca-roxo);
+  --pico-table-border-color: var(--borda-suave);
+  --pico-table-row-stripped-background-color: #faf8fb;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.conteudo-principal {
+  flex: 1;
+  padding-top: 1.75rem;
+  padding-bottom: 2.5rem;
+}
+
+h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+article {
+  border: 1px solid var(--borda-suave);
 }
 
 .pular-conteudo {
@@ -9,20 +74,238 @@
 .pular-conteudo:focus {
   left: 1rem;
   top: 1rem;
-  z-index: 10;
-  background: var(--pico-background-color);
+  z-index: 20;
+  background: #fff;
   padding: 0.5rem 1rem;
 }
 
-.marca {
-  color: var(--pico-primary);
+/* Barra superior ---------------------------------------------------------- */
+
+.barra-app {
+  background: var(--marca-carvao);
+  border-bottom: 3px solid var(--marca-lilas);
+  padding: 0;
+}
+.barra-app-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  min-height: 4rem;
+}
+.barra-marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+.barra-marca img {
+  border-radius: 0.4rem;
+}
+.barra-marca-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.barra-marca-texto strong {
+  color: #fff;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+.barra-marca-texto small {
+  color: var(--marca-lilas);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
-/* Em telas estreitas o menu quebra em linhas em vez de rolar na horizontal. */
-header nav,
-header nav ul {
-  flex-wrap: wrap;
+.barra-nav {
+  margin-left: auto;
+  padding: 0;
 }
+.barra-app .barra-nav > ul {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+}
+/* Abaixo de 1024px o container do Pico tem no máximo 700px: marca e usuário ficam
+   na primeira linha e os links numa faixa própria. */
+@media (max-width: 1023px) {
+  .barra-app-conteudo {
+    padding-top: 0.6rem;
+  }
+  .barra-nav {
+    order: 3;
+    width: 100%;
+    margin: 0 0 0.5rem;
+  }
+  .barra-nav > ul {
+    flex-wrap: wrap;
+  }
+  .barra-app .barra-nav > ul a {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+  }
+  .barra-usuario {
+    margin-left: auto;
+  }
+  .barra-usuario-nome {
+    display: none;
+  }
+}
+.barra-nav > ul li {
+  list-style: none;
+  padding: 0;
+}
+.barra-nav > ul a {
+  display: block;
+  /* O Pico aplica margens negativas a links dentro de <nav>; aqui o espaçamento é próprio. */
+  margin: 0;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.5rem;
+  color: #d8d4dc;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+.barra-nav > ul a:hover {
+  color: #fff;
+  background: var(--marca-carvao-2);
+}
+.barra-nav > ul a[aria-current="page"] {
+  color: #fff;
+  background: var(--marca-carvao-2);
+  box-shadow: inset 0 -2px 0 var(--marca-lilas);
+}
+.barra-nav > ul a.barra-pdv {
+  background: var(--marca-lilas);
+  color: var(--marca-carvao);
+  font-weight: 700;
+}
+.barra-nav > ul a.barra-pdv:hover,
+.barra-nav > ul a.barra-pdv[aria-current="page"] {
+  background: #fff;
+  color: var(--marca-carvao);
+  box-shadow: none;
+}
+
+.barra-usuario {
+  margin: 0;
+}
+/* Seletor mais específico que o "details.dropdown > summary" do Pico. */
+.barra-app .barra-usuario > summary:not([role]) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: auto;
+  padding: 0.3rem 0.6rem 0.3rem 0.3rem;
+  border: 1px solid #3a3a3a;
+  border-radius: 999px;
+  background: var(--marca-carvao-2);
+  color: #fff;
+}
+.barra-app .barra-usuario > summary:not([role])::after {
+  filter: invert(1);
+}
+.barra-app .barra-usuario > summary:not([role]):focus,
+.barra-app .barra-usuario[open] > summary:not([role]) {
+  border-color: var(--marca-lilas);
+  box-shadow: none;
+}
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  background: var(--marca-lilas);
+  color: var(--marca-carvao);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.barra-usuario > ul {
+  min-width: 12rem;
+}
+.barra-usuario small {
+  color: var(--texto-suave);
+}
+
+/* Rodapé ------------------------------------------------------------------- */
+
+.rodape {
+  border-top: 1px solid var(--borda-suave);
+  padding: 1rem 0;
+  background: #fff;
+}
+.rodape small {
+  color: var(--texto-suave);
+}
+
+/* Login ---------------------------------------------------------------------- */
+
+.pagina-login {
+  background: var(--marca-carvao);
+}
+.pagina-login .conteudo-principal {
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+.login {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 56rem;
+}
+.login-marca {
+  text-align: center;
+  color: #cfcad4;
+}
+.login-marca img {
+  max-width: 100%;
+  height: auto;
+}
+.login-marca p {
+  margin-top: 1rem;
+  letter-spacing: 0.04em;
+  color: #cfcad4;
+}
+.login-cartao {
+  margin: 0;
+  border: none;
+  border-top: 4px solid var(--marca-lilas);
+  padding: 2rem;
+}
+.login-cartao header {
+  background: none;
+  border: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.login-cartao h1 {
+  margin-bottom: 0.25rem;
+}
+.login-cartao header p {
+  color: var(--texto-suave);
+  margin: 0;
+  font-size: 0.95rem;
+}
+@media (max-width: 768px) {
+  .login {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .login-marca img {
+    width: 180px;
+  }
+}
+
+/* Estrutura das páginas ------------------------------------------------------- */
 
 .cabecalho-pagina {
   display: flex;
@@ -30,7 +313,7 @@ header nav ul {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 .cabecalho-pagina h1 {
   margin: 0;
@@ -51,7 +334,7 @@ header nav ul {
   max-width: 32rem;
 }
 .formulario-medio {
-  max-width: 40rem;
+  max-width: 44rem;
 }
 .cartao-login {
   max-width: 28rem;
@@ -70,23 +353,32 @@ header nav ul {
   width: auto;
 }
 
+/* Mensagens ------------------------------------------------------------------ */
+
 .msg {
   padding: 0.75rem 1rem;
   border-radius: var(--pico-border-radius);
-  border-left: 4px solid;
+  border: 1px solid;
+  border-left-width: 4px;
 }
 .msg-success {
-  background: #e7f6ec;
+  background: #ecf7f0;
   border-color: #2f9e55;
   color: #1c5c33;
 }
 .msg-error {
-  background: #fdecec;
+  background: #fdeeee;
   border-color: #d64545;
   color: #7a1f1f;
 }
+.msg-info {
+  background: var(--marca-roxo-claro);
+  border-color: var(--marca-roxo);
+  color: var(--marca-roxo-escuro);
+}
 
-/* Classes geradas pelo Django nos formulários. */
+/* Formulários (classes geradas pelo Django) ------------------------------------ */
+
 .errorlist {
   color: #b42318;
   list-style: none;
@@ -100,28 +392,80 @@ header nav ul {
 .helptext {
   display: block;
   color: var(--pico-muted-color);
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   margin-top: -0.5rem;
   margin-bottom: 0.75rem;
 }
 
+.grupo-formulario {
+  background: #fff;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--pico-border-radius);
+  box-shadow: var(--sombra-cartao);
+  padding: 1.25rem 1.25rem 0.25rem;
+  margin-bottom: 1.25rem;
+}
+.grupo-formulario legend {
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--marca-roxo);
+  padding: 0 0.4rem;
+  margin-left: -0.4rem;
+}
+
+/* Selos ------------------------------------------------------------------------- */
+
 .selo {
   display: inline-block;
-  padding: 0.1rem 0.5rem;
+  padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  font-size: 0.8rem;
-  background: #eef1f5;
-  color: #334;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: #efedf2;
+  color: #47404e;
   white-space: nowrap;
 }
 .selo-inativo {
   background: #fdecec;
   color: #7a1f1f;
 }
+.selo-alerta {
+  background: #fff1d6;
+  color: #7a4a00;
+}
+
+/* Tabelas ------------------------------------------------------------------------ */
+
+.tabela-rolavel {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--pico-border-radius);
+  box-shadow: var(--sombra-cartao);
+  margin-bottom: 1rem;
+}
+.tabela-rolavel table {
+  margin: 0;
+}
+.tabela-rolavel thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-suave);
+  background: #faf9fb;
+}
+.tabela-rolavel th,
+.tabela-rolavel td {
+  padding: 0.7rem 1rem;
+}
 
 .num {
   text-align: right;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .positivo {
   color: #1c7c3c;
@@ -130,30 +474,60 @@ header nav ul {
   color: #b42318;
 }
 
-.tabela-rolavel {
-  overflow-x: auto;
-}
+/* Painéis e detalhes -------------------------------------------------------------- */
 
 .resumo {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 .resumo article {
   margin: 0;
+  border-top: 3px solid var(--marca-lilas);
+}
+.resumo article > small:first-child {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-suave);
 }
 .resumo strong {
   display: block;
   font-size: 2rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.grade-detalhes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+.grade-detalhes article {
+  margin: 0;
+}
+.grade-detalhes article > header {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--marca-roxo);
 }
 
 dl.detalhes {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: 0.4rem 1.5rem;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
 }
 dl.detalhes dt {
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--texto-suave);
 }
 dl.detalhes dd {
   margin: 0;
@@ -164,6 +538,8 @@ dl.detalhes dd {
   gap: 1rem;
   align-items: center;
   justify-content: center;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
 }
 
 .filtros {
@@ -171,18 +547,28 @@ dl.detalhes dd {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0 1rem;
   align-items: end;
+  background: #fff;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--pico-border-radius);
+  padding: 1rem 1rem 0;
+  margin-bottom: 1.25rem;
 }
 .filtros label {
   margin-bottom: 0;
 }
+.filtros button {
+  margin-bottom: var(--pico-spacing);
+}
 .filtro-largo {
   grid-column: span 2;
 }
-
-.msg-info {
-  background: #eaf2fd;
-  border-color: #2f6fd6;
-  color: #1b3f7a;
+@media (max-width: 576px) {
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+  .filtro-largo {
+    grid-column: auto;
+  }
 }
 
 .visualmente-oculto {
@@ -201,7 +587,13 @@ dl.detalhes dd {
   width: auto;
 }
 
-/* PDV ---------------------------------------------------------------- */
+kbd {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  vertical-align: middle;
+}
+
+/* PDV ------------------------------------------------------------------------------ */
 
 .pdv {
   display: grid;
@@ -231,19 +623,13 @@ dl.detalhes dd {
 .pdv-leitura input[name="termo"] {
   font-size: 1.15rem;
 }
-@media (max-width: 576px) {
+@media (max-width: 1100px) {
   .pdv-leitura {
     grid-template-columns: 1fr 5rem;
   }
   .pdv-leitura button {
     grid-column: 1 / -1;
   }
-}
-
-kbd {
-  font-size: 0.7rem;
-  padding: 0.1rem 0.35rem;
-  vertical-align: middle;
 }
 
 .pdv-candidatos table {
@@ -267,14 +653,16 @@ kbd {
   color: var(--pico-muted-color);
   text-align: center;
   padding: 2rem 1rem;
-  border: 2px dashed var(--pico-muted-border-color);
+  border: 2px dashed var(--borda-suave);
   border-radius: var(--pico-border-radius);
+  background: #fff;
 }
 
 .pdv-resumo article {
   margin: 0;
   position: sticky;
   top: 1rem;
+  border-top: 4px solid var(--marca-lilas);
 }
 .pdv-resumo [role="button"],
 .pdv-resumo footer button {
@@ -285,11 +673,12 @@ kbd {
   margin: 0;
 }
 .pdv-total {
-  font-size: 2.5rem;
+  font-size: 2.6rem;
   font-weight: 700;
   margin: 0.25rem 0;
   font-variant-numeric: tabular-nums;
-  color: var(--pico-primary);
+  letter-spacing: -0.02em;
+  color: var(--marca-carvao);
 }
 
 .pdv-categorias {
@@ -300,21 +689,28 @@ kbd {
   margin-bottom: 1rem;
 }
 .pdv-categorias a {
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 0.95rem;
   border-radius: 999px;
-  border: 1px solid var(--pico-muted-border-color);
+  border: 1px solid var(--borda-suave);
+  background: #fff;
+  color: #47404e;
   text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 500;
+}
+.pdv-categorias a:hover {
+  border-color: var(--marca-roxo);
+  color: var(--marca-roxo);
 }
 .pdv-categorias a[aria-current="true"] {
-  background: var(--pico-primary-background);
-  border-color: var(--pico-primary-background);
-  color: var(--pico-primary-inverse);
+  background: var(--marca-carvao);
+  border-color: var(--marca-carvao);
+  color: #fff;
 }
 
 .pdv-atalhos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.75rem;
 }
 .pdv-atalhos form {
@@ -323,34 +719,43 @@ kbd {
 .pdv-atalho {
   width: 100%;
   height: 100%;
-  min-height: 5.5rem;
+  min-height: 6rem;
   margin: 0;
+  padding: 0.85rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.25rem;
   text-align: left;
-  background: var(--pico-card-background-color);
+  background: #fff;
   /* O Pico redefine --pico-color dentro de botões (texto claro); aqui o fundo é claro. */
   color: var(--pico-contrast);
-  border: 1px solid var(--pico-muted-border-color);
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--pico-border-radius);
+  box-shadow: var(--sombra-cartao);
+  transition: border-color 0.15s, transform 0.1s;
 }
 .pdv-atalho:hover:not([disabled]),
 .pdv-atalho:focus-visible {
-  border-color: var(--pico-primary);
-  background: var(--pico-card-sectioning-background-color);
+  border-color: var(--marca-roxo);
+  background: var(--marca-roxo-claro);
+}
+.pdv-atalho:active:not([disabled]) {
+  transform: scale(0.98);
 }
 .pdv-atalho[disabled] {
   opacity: 0.5;
+  box-shadow: none;
 }
 .pdv-atalho-nome {
   font-size: 0.95rem;
+  font-weight: 500;
   line-height: 1.25;
 }
 .pdv-atalho-preco {
   font-weight: 700;
-  color: var(--pico-primary);
+  color: var(--marca-roxo);
 }
 .pdv-atalho small {
   color: var(--pico-muted-color);
@@ -375,8 +780,8 @@ kbd {
   grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 0.5rem;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--pico-muted-border-color);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--borda-suave);
 }
 .pdv-comanda-item {
   display: flex;

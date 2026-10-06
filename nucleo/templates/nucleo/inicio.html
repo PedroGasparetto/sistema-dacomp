@@ -25,9 +25,9 @@
     <a href="{% url 'catalogo:lista_produtos' %}">Consultar produtos</a>
   </article>
   <article>
-    <small>Sem saldo em estoque</small>
-    <strong>{{ produtos_sem_saldo }}</strong>
-    <a href="{% url 'estoque:registrar_movimentacao' %}">Registrar entrada</a>
+    <small>Itens para repor</small>
+    <strong>{{ produtos_para_repor }}</strong>
+    <a href="{% url 'catalogo:lista_produtos' %}?para_repor=on">Ver itens para repor</a>
   </article>
 </section>
 

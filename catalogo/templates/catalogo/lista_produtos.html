@@ -9,13 +9,14 @@
   {% endif %}
 </div>
 
-<form method="get" role="search" class="filtros" aria-label="Pesquisar produtos">
+<form method="get" class="filtros" aria-label="Pesquisar produtos">
   <label>{{ formulario_pesquisa.categoria.label }}{{ formulario_pesquisa.categoria }}</label>
   <label>{{ formulario_pesquisa.por.label }}{{ formulario_pesquisa.por }}</label>
   <label class="filtro-largo">{{ formulario_pesquisa.termo.label }}
     <input type="search" name="termo" value="{{ formulario_pesquisa.termo.value|default:'' }}" placeholder="Nome, código ou código de barras" autofocus>
   </label>
   <label><input type="checkbox" name="incluir_inativos" {% if formulario_pesquisa.incluir_inativos.value %}checked{% endif %}> {{ formulario_pesquisa.incluir_inativos.label }}</label>
+  <label><input type="checkbox" name="para_repor" {% if formulario_pesquisa.para_repor.value %}checked{% endif %}> {{ formulario_pesquisa.para_repor.label }}</label>
   <button type="submit">Pesquisar</button>
 </form>
 
@@ -32,7 +33,12 @@
             <td><a href="{{ produto.get_absolute_url }}">{{ produto.nome }}</a></td>
             <td>{{ produto.get_categoria_display }}</td>
             <td class="num">{{ produto.preco_unitario|moeda }}</td>
-            <td class="num">{% if produto.controla_estoque %}{{ produto.saldo_estoque }}{% else %}<span class="selo">Serviço</span>{% endif %}</td>
+            <td class="num">
+              {% if produto.controla_estoque %}
+                {% if produto.abaixo_do_minimo or produto.saldo_estoque == 0 %}<span class="selo selo-alerta" title="Abaixo do estoque mínimo ({{ produto.estoque_minimo }})">Repor</span>{% endif %}
+                {{ produto.saldo_estoque }}
+              {% else %}<span class="selo">Sem estoque</span>{% endif %}
+            </td>
             <td>{% if produto.ativo %}<span class="selo">Ativo</span>{% else %}<span class="selo selo-inativo">Inativo</span>{% endif %}</td>
           </tr>
         {% endfor %}

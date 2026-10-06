@@ -1,20 +1,33 @@
 {% extends "base.html" %}
+{% load estaticos %}
 {% block title %}Entrar{% endblock %}
+{% block classe_corpo %}pagina-login{% endblock %}
+{% block barra %}{% endblock %}
+{% block rodape %}{% endblock %}
 {% block content %}
-<article class="cartao-login">
-  <header><h1>Entrar</h1></header>
-  <p>Acesso restrito à equipe da lojinha: Diretoria, Bolsistas e Voluntários.</p>
-  <form method="post">
-    {% csrf_token %}
-    {% if form.non_field_errors %}
-      <p class="msg msg-error" role="alert">Usuário ou senha inválidos.</p>
-    {% endif %}
-    <label for="{{ form.username.id_for_label }}">Usuário</label>
-    {{ form.username }}
-    <label for="{{ form.password.id_for_label }}">Senha</label>
-    {{ form.password }}
-    <input type="hidden" name="next" value="{{ next }}">
-    <button type="submit">Entrar</button>
-  </form>
-</article>
+<div class="login">
+  <section class="login-marca" aria-hidden="true">
+    <img src="{% estatico 'img/logo-dacomp.png' %}" alt="" width="245" height="128">
+    <p>Lojinha do Diretório Acadêmico da Computação</p>
+  </section>
+
+  <article class="login-cartao">
+    <header>
+      <h1>Entrar</h1>
+      <p>Acesso da equipe da lojinha: Diretoria, Bolsistas e Voluntários.</p>
+    </header>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <p class="msg msg-error" role="alert">Usuário ou senha inválidos.</p>
+      {% endif %}
+      <label for="{{ form.username.id_for_label }}">Usuário</label>
+      {{ form.username }}
+      <label for="{{ form.password.id_for_label }}">Senha</label>
+      {{ form.password }}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit">Entrar</button>
+    </form>
+  </article>
+</div>
 {% endblock %}
