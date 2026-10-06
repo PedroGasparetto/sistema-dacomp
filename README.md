@@ -100,10 +100,10 @@ modelos representam os dados. A autenticação e o controle de acesso ficam em `
 
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
-| `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e contas da equipe | UC43, Manter Contas |
-| `catalogo` | Cadastro e pesquisa de produtos e serviços                   | UC47, UC05          |
-| `estoque`  | Entradas, ajustes e histórico de movimentações               | UC23 (UC24, UC25), UC29 |
-| `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC01, UC02, UC03, UC12, UC49 |
+| `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e contas da equipe | UC01, UC15 |
+| `catalogo` | Cadastro e pesquisa de produtos e serviços                   | UC13, UC02, UC08    |
+| `estoque`  | Entradas, ajustes e histórico de movimentações               | UC10 (UC11, UC12), UC09 |
+| `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
@@ -131,7 +131,11 @@ caixa confere as vendas por forma de pagamento e exige justificativa quando o va
 esperado.
 
 Para a Etapa 2, já estão implementados catálogo, estoque, vendas, pagamentos e caixa.
-O próximo pacote previsto é `relatorios` (UC50), para a Etapa 3. As consultas em tela já funcionam.
+Somente a Diretoria mantém as contas internas da equipe (UC15).
+UC14 prevê dois relatórios para a Etapa 3: Vendas e Posição de Estoque. As consultas em tela já funcionam.
+UC16 Registrar Devolução também está especificado no modelo para a Etapa 3; ainda não há registro de
+devoluções ou estornos de vendas concluídas no sistema. Antes do recebimento, uma venda em andamento
+pode ser cancelada sem pagamento ou baixa de estoque.
 
 ### Apresentação da Etapa 2
 

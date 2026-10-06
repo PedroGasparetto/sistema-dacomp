@@ -25,7 +25,7 @@ def calcular_novo_saldo(tipo, saldo_atual, quantidade):
 
 
 def validar_movimentacao(*, tipo, produto, quantidade, motivo=""):
-    """Valida uma entrada ou um ajuste (UC23, sequências alternativas A1 e A2)."""
+    """Valida uma entrada ou um ajuste (UC10, sequências alternativas A1 e A2)."""
     erros = {}
 
     if not produto.controla_estoque:
@@ -49,7 +49,7 @@ def validar_movimentacao(*, tipo, produto, quantidade, motivo=""):
 
 @transaction.atomic
 def registrar_movimentacao(*, tipo, produto, quantidade, usuario, motivo="", observacao=""):
-    """UC23 – registra a movimentação e atualiza o saldo em uma única operação."""
+    """UC10 – registra a movimentação e atualiza o saldo em uma única operação."""
     if tipo not in (Tipo.ENTRADA, Tipo.AJUSTE):
         raise ValueError("Use esta função apenas para entradas e ajustes.")
 
@@ -69,7 +69,7 @@ def registrar_movimentacao(*, tipo, produto, quantidade, usuario, motivo="", obs
 
 @transaction.atomic
 def registrar_baixa_por_venda(*, produto, quantidade, usuario, referencia):
-    """Baixa automática ao concluir uma venda (passo do UC03, não um caso de uso próprio).
+    """Baixa automática ao concluir uma venda (passo do UC05, não um caso de uso próprio).
 
     Deve ser chamada dentro da transação da venda: se faltar saldo para
     qualquer item, a venda inteira é desfeita.
@@ -109,7 +109,7 @@ def _gravar_movimentacao(produto_bloqueado, *, tipo, novo_saldo, usuario, motivo
 
 
 def filtrar_movimentacoes(*, termo_produto="", tipo="", inicio=None, fim=None):
-    """UC29 – filtros por produto, tipo e período."""
+    """UC09 – filtros por produto, tipo e período."""
     movimentacoes = Movimentacao.objects.select_related("produto", "responsavel")
 
     termo_produto = termo_produto.strip()

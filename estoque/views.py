@@ -12,7 +12,7 @@ from .servicos import calcular_novo_saldo, filtrar_movimentacoes, registrar_movi
 
 
 class RegistrarMovimentacaoView(PerfilRequeridoMixin, FormView):
-    """UC23 – Realizar Transação no Estoque.
+    """UC10 – Realizar Transação no Estoque.
 
     Segue o fluxo essencial: o operador informa os dados, o sistema apresenta
     o resumo (quantidade anterior, variação e resultante) e só registra após
@@ -71,7 +71,7 @@ class RegistrarMovimentacaoView(PerfilRequeridoMixin, FormView):
 
 
 class ListaMovimentacoesView(PerfilRequeridoMixin, ListView):
-    """UC29 – Consultar Movimentação no Estoque."""
+    """UC09 – Consultar Movimentação no Estoque."""
 
     template_name = "estoque/lista_movimentacoes.html"
     context_object_name = "movimentacoes"

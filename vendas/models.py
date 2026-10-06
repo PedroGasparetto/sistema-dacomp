@@ -11,7 +11,7 @@ ZERO = Decimal("0.00")
 
 
 class Caixa(models.Model):
-    """Período de atendimento da lojinha (UC01 – Abrir Caixa, UC02 – Fechar Caixa)."""
+    """Período de atendimento da lojinha (UC03 – Abrir Caixa, UC04 – Fechar Caixa)."""
 
     class Situacao(models.TextChoices):
         ABERTO = "aberto", "Aberto"
@@ -61,7 +61,7 @@ class Caixa(models.Model):
 
 
 class Venda(models.Model):
-    """UC03 – Registrar Venda."""
+    """UC05 – Registrar Venda."""
 
     class Situacao(models.TextChoices):
         EM_ANDAMENTO = "andamento", "Em andamento"

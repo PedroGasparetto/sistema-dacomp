@@ -42,7 +42,7 @@ def _avisar_erros(request, erro):
         messages.error(request, mensagem)
 
 
-# PDV (UC03 – Registrar Venda) ---------------------------------------------
+# PDV (UC05 – Registrar Venda) ---------------------------------------------
 
 
 CHAVE_CATEGORIA_PDV = "pdv_categoria"
@@ -158,7 +158,7 @@ class CancelarVendaView(PerfilRequeridoMixin, View):
 
 
 class PagamentoView(PerfilRequeridoMixin, View):
-    """UC12 – Receber Pagamento, incluído na finalização do UC03."""
+    """UC06 – Receber Pagamento, incluído na finalização do UC05."""
 
     template_name = "vendas/pagamento.html"
 
@@ -201,7 +201,7 @@ class PagamentoView(PerfilRequeridoMixin, View):
         )
 
 
-# Caixa (UC01 e UC02) ---------------------------------------------------------
+# Caixa (UC03 e UC04) ---------------------------------------------------------
 
 
 class AbrirCaixaView(PerfilRequeridoMixin, View):
@@ -262,7 +262,7 @@ class FecharCaixaView(PerfilRequeridoMixin, View):
         return self._renderizar(request, caixa, formulario)
 
     def _renderizar(self, request, caixa, formulario):
-        # Inclusão do UC49: vendas concluídas do caixa atual.
+        # Inclusão do UC07: vendas concluídas do caixa atual.
         vendas = filtrar_vendas(caixa=caixa.pk, situacao=Venda.Situacao.CONCLUIDA)
         return render(
             request,
@@ -280,7 +280,7 @@ class DetalheCaixaView(PerfilRequeridoMixin, DetailView):
         return {**super().get_context_data(**kwargs), "resumo": resumir_caixa(self.object)}
 
 
-# Consulta de vendas (UC49) ---------------------------------------------------
+# Consulta de vendas (UC07) ---------------------------------------------------
 
 
 class ListaVendasView(PerfilRequeridoMixin, ListView):

@@ -24,6 +24,7 @@ Os arquivos `models.py` definem as entidades e seus vínculos no banco. Os arqui
 Nas vendas, `vendas.servicos` consulta o catálogo e chama `estoque.servicos` para registrar a baixa dos produtos físicos. O estoque bloqueia a atualização concorrente do produto durante a transação, verifica o saldo e registra os valores anterior e posterior da movimentação. Serviços cadastrados sem controle de estoque permanecem nos itens da venda, sem baixa de quantidade.
 
 As interfaces usam `contas` para identificar o operador e aplicar as permissões. Diretoria e Bolsistas mantêm o cadastro de produtos. Os três perfis fixos compartilham as operações de atendimento, caixa e estoque.
+Somente a Diretoria pode consultar, criar, editar e inativar as contas internas, atribuir os perfis fixos e redefinir senhas (UC15).
 
 ## Tecnologias
 
@@ -36,4 +37,6 @@ As interfaces usam `contas` para identificar o operador e aplicar as permissões
 
 ## Recorte da Etapa 2
 
-Catálogo, estoque, vendas, pagamentos e caixa já têm implementação. O sistema registra dinheiro, PIX, crédito ou débito conforme a confirmação do operador, sem integração com bancos ou operadoras. A geração dos relatórios básicos, UC50, fica prevista para a Etapa 3. As consultas em tela já funcionam.
+Catálogo, estoque, vendas, pagamentos, caixa e manutenção de contas já têm implementação. O sistema registra dinheiro, PIX, crédito ou débito conforme a confirmação do operador, sem integração com bancos ou operadoras. UC14 prevê dois relatórios para a Etapa 3: Vendas e Posição de Estoque. As consultas em tela já funcionam.
+
+UC16 Registrar Devolução está especificado como extensão opcional de UC07 Consultar Vendas e será implementado na Etapa 3. O modelo prevê o retorno de itens, o registro do estorno e a atualização conjunta do estoque e do caixa. Essas operações ainda não fazem parte do código. O cancelamento de uma venda em andamento, antes do recebimento, já está disponível.
