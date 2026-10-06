@@ -63,7 +63,29 @@ docker compose exec web python manage.py popular_demo --senha <escolha-uma-senha
 
 Acesse http://localhost:8000 e entre com `diretoria`, `bolsista` ou `voluntario` e a senha escolhida.
 
-### 4. Uso no dia a dia
+### 4. Contas da equipe
+
+Não há tela de gestão de contas: elas são administradas pela linha de comando.
+
+```bash
+# Criar conta (a senha é pedida no terminal); repita --perfil para acumular papéis
+docker compose exec web python manage.py criar_conta ana --perfil diretoria --perfil bolsista --nome Ana
+
+# Alterar os perfis de uma conta existente
+docker compose exec web python manage.py criar_conta ana --perfil voluntario
+
+# Desativar ou reativar o acesso
+docker compose exec web python manage.py criar_conta ana --desativar
+docker compose exec web python manage.py criar_conta ana --reativar
+
+# Trocar a senha
+docker compose exec web python manage.py changepassword ana
+```
+
+Perfis: `diretoria`, `bolsista` e `voluntario`. Diretoria e Bolsista mantêm o cadastro de produtos;
+os três perfis operam o PDV, o caixa e o estoque.
+
+### 5. Uso no dia a dia
 
 | Para…                                   | Comando                                                         |
 |-----------------------------------------|-----------------------------------------------------------------|
@@ -99,10 +121,10 @@ Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote seg
 
 | Pacote     | Responsabilidade                                            | Casos de uso        |
 |------------|-------------------------------------------------------------|---------------------|
-| `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e contas da equipe | UC43, Manter Contas |
-| `catalogo` | Cadastro e pesquisa de produtos e serviços                   | UC47, UC05          |
-| `estoque`  | Entradas, ajustes e histórico de movimentações               | UC23 (UC24, UC25), UC29 |
-| `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC01, UC02, UC03, UC12, UC49 |
+| `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 |
+| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo e lucro) | UC02, UC13 |
+| `estoque`  | Entradas, ajustes, saldo e histórico de movimentações        | UC08, UC09, UC10 (UC11, UC12) |
+| `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
