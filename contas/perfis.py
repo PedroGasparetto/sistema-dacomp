@@ -13,6 +13,7 @@ TODOS_PERFIS = (DIRETORIA, BOLSISTA, VOLUNTARIO)
 # "Operador" nos casos de uso: atividades comuns aos três perfis.
 PERFIS_OPERADOR = TODOS_PERFIS
 PERFIS_GESTAO_PRODUTOS = (DIRETORIA, BOLSISTA)
+PERFIS_GESTAO_CONTAS = (DIRETORIA,)
 
 
 def possui_algum_perfil(usuario, perfis_permitidos):

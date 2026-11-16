@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Caixa, ItemVenda, Venda
+from .models import Caixa, Devolucao, ItemDevolucao, ItemVenda, Venda
 
 
 class ItemVendaInline(admin.TabularInline):
@@ -32,6 +32,31 @@ class VendaAdmin(admin.ModelAdmin):
 class CaixaAdmin(admin.ModelAdmin):
     list_display = ("id", "situacao", "aberto_em", "aberto_por", "fechado_em", "valor_esperado", "valor_contado")
     list_filter = ("situacao",)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class ItemDevolucaoInline(admin.TabularInline):
+    model = ItemDevolucao
+    extra = 0
+    readonly_fields = ("item_venda", "quantidade")
+    can_delete = False
+
+
+@admin.register(Devolucao)
+class DevolucaoAdmin(admin.ModelAdmin):
+    """Somente leitura: devoluções são registradas pela tela da venda (UC16)."""
+
+    list_display = ("id", "realizada_em", "venda", "operador", "forma_estorno", "valor_estornado")
+    list_filter = ("forma_estorno",)
+    inlines = [ItemDevolucaoInline]
 
     def has_add_permission(self, request):
         return False

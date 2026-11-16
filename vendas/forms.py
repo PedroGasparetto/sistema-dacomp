@@ -73,3 +73,42 @@ class FormularioFiltroVendas(forms.Form):
         if inicio and fim and inicio > fim:
             raise forms.ValidationError("A data inicial deve ser anterior ou igual à data final.")
         return dados
+
+
+class FormularioDevolucao(forms.Form):
+    """UC16 – quantidade a devolver de cada item ainda devolvível e o motivo."""
+
+    motivo = forms.CharField(
+        label="Motivo da devolução",
+        max_length=255,
+        help_text="Por exemplo: produto com defeito, troca de sabor, cobrança em dobro.",
+    )
+
+    def __init__(self, *args, itens, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.itens = itens
+        for item in itens:
+            self.fields[self._nome(item)] = forms.IntegerField(
+                label=item.produto.nome,
+                min_value=0,
+                max_value=item.quantidade_devolvivel,
+                initial=0,
+                required=False,
+            )
+        self.order_fields([*(self._nome(item) for item in itens), "motivo"])
+
+    @staticmethod
+    def _nome(item):
+        return f"item_{item.pk}"
+
+    def linhas(self):
+        return [(item, self[self._nome(item)]) for item in self.itens]
+
+    def quantidades(self):
+        return {item.pk: self.cleaned_data.get(self._nome(item)) or 0 for item in self.itens}
+
+    def clean(self):
+        dados = super().clean()
+        if not self.errors and not any(self.quantidades().values()):
+            raise forms.ValidationError("Informe a quantidade de pelo menos um item a devolver.")
+        return dados

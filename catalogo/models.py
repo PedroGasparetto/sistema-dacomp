@@ -10,8 +10,8 @@ class Produto(models.Model):
     """Produto ou serviço oferecido pela lojinha (seção C.3 do relatório).
 
     A maior parte do catálogo é de bar e café: bebidas, lanches e doces.
-    O saldo em estoque é informado no cadastro e baixado automaticamente
-    quando uma venda é concluída.
+    O saldo em estoque não é editável pelo cadastro: ele só muda pelas
+    movimentações de estoque (app `estoque`).
     """
 
     class Categoria(models.TextChoices):
@@ -77,11 +77,7 @@ class Produto(models.Model):
         default=True,
         help_text="Desmarque para itens preparados na hora (como café coado) e para serviços.",
     )
-    saldo_estoque = models.PositiveIntegerField(
-        "quantidade em estoque",
-        default=0,
-        help_text="Quantidade disponível para venda; diminui automaticamente a cada venda concluída.",
-    )
+    saldo_estoque = models.PositiveIntegerField("saldo em estoque", default=0, editable=False)
 
     criado_em = models.DateTimeField("criado em", auto_now_add=True)
     criado_por = models.ForeignKey(

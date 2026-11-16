@@ -73,7 +73,7 @@ class EditarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, UpdateView):
     success_message = "Produto %(nome)s atualizado."
 
     def form_valid(self, form):
-        # Grava só os campos do formulário, sem sobrescrever outros dados do produto.
+        # Grava só os campos do cadastro: o saldo pertence às movimentações de estoque.
         self.object = form.save(commit=False)
         self.object.alterado_por = self.request.user
         self.object.save(update_fields=[*form.Meta.fields, "alterado_por", "alterado_em"])

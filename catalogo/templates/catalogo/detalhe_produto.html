@@ -49,6 +49,10 @@
       <button type="submit" class="secondary outline">{% if produto.ativo %}Inativar{% else %}Reativar{% endif %}</button>
     </form>
   {% endif %}
+  {% if produto.controla_estoque %}
+    <a role="button" class="secondary" href="{% url 'estoque:registrar_movimentacao' %}?produto={{ produto.codigo|urlencode }}">Transação no estoque</a>
+    <a href="{% url 'estoque:lista_movimentacoes' %}?produto={{ produto.codigo|urlencode }}">Ver movimentações</a>
+  {% endif %}
   <a href="{% url 'catalogo:lista_produtos' %}">Voltar à lista</a>
 </div>
 {% endblock %}

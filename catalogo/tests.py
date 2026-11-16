@@ -84,24 +84,33 @@ def test_inativacao_preserva_o_produto(client, bolsista, produto):
     assert produto.ativo is False
 
 
-def test_quantidade_em_estoque_e_informada_no_cadastro(client, bolsista, produto):
+def test_nao_deixa_de_controlar_estoque_com_saldo(client, bolsista, produto):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=3)
     client.force_login(bolsista)
-    dados = {"codigo": produto.codigo, "nome": produto.nome, "categoria": "outro", "preco_unitario": "30.00",
-             "controla_estoque": "on", "saldo_estoque": "12", **OBRIGATORIOS}
-    client.post(reverse("catalogo:editar_produto", args=[produto.pk]), dados)
-    produto.refresh_from_db()
-    assert produto.saldo_estoque == 12
+    resposta = client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {"codigo": produto.codigo, "nome": produto.nome, "preco_unitario": "30.00", **OBRIGATORIOS},
+    )
+    assert resposta.status_code == 200
+    assert "controla_estoque" in resposta.context["form"].errors
 
 
-def test_item_sem_controle_de_estoque_fica_sem_saldo(client, bolsista, produto):
+def test_edicao_do_cadastro_nao_altera_o_saldo(client, bolsista, produto):
     Produto.objects.filter(pk=produto.pk).update(saldo_estoque=8)
     client.force_login(bolsista)
-    dados = {"codigo": produto.codigo, "nome": produto.nome, "categoria": "cafe", "preco_unitario": "3.00",
-             "saldo_estoque": "8", **OBRIGATORIOS}
-    resposta = client.post(reverse("catalogo:editar_produto", args=[produto.pk]), dados)
+    client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {
+            "codigo": produto.codigo,
+            "nome": "Caneca nova",
+            "categoria": "outro",
+            "preco_unitario": "32.00",
+            "controla_estoque": "on",
+            **OBRIGATORIOS,
+        },
+    )
     produto.refresh_from_db()
-    assert resposta.status_code == 302
-    assert (produto.controla_estoque, produto.saldo_estoque) == (False, 0)
+    assert (produto.nome, produto.saldo_estoque) == ("Caneca nova", 8)
 
 
 # Venda e lucro ------------------------------------------------------

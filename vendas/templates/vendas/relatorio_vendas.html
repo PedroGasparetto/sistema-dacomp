@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Relatório de vendas{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Relatório de vendas</h1>
+  <span class="selo">Gerado em {% now "d/m/Y H:i" %}</span>
+</div>
+
+<p class="filtros-aplicados">
+  Vendas concluídas{% if filtros.inicio or filtros.fim %} de {{ filtros.inicio|date:"d/m/Y"|default:"início" }} até {{ filtros.fim|date:"d/m/Y"|default:"hoje" }}{% endif %}{% if filtros.operador %} · operador {{ filtros.operador }}{% endif %}{% if filtros.caixa %} · caixa nº {{ filtros.caixa }}{% endif %}{% if filtros.identificador %} · venda nº {{ filtros.identificador }}{% endif %}.
+</p>
+
+<section class="resumo" aria-label="Totais">
+  <article><small>Vendas</small><strong>{{ relatorio.quantidade_vendas }}</strong></article>
+  <article><small>Total vendido</small><strong>{{ relatorio.total_vendido|moeda }}</strong></article>
+  <article><small>Estornado em devoluções</small><strong>{{ relatorio.total_estornado|moeda }}</strong></article>
+  <article><small>Total líquido</small><strong>{{ relatorio.total_liquido|moeda }}</strong></article>
+</section>
+
+<h2>Por forma de pagamento</h2>
+<div class="tabela-rolavel">
+  <table>
+    <thead><tr><th>Forma de pagamento</th><th class="num">Vendas</th><th class="num">Valor</th></tr></thead>
+    <tbody>
+      {% for linha in relatorio.por_forma %}
+        <tr><td>{{ linha.forma }}</td><td class="num">{{ linha.quantidade }}</td><td class="num">{{ linha.valor|moeda }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2>Vendas</h2>
+{% if relatorio.vendas %}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr><th>Nº</th><th>Concluída em</th><th>Operador</th><th>Caixa</th><th>Pagamento</th><th class="num">Total</th><th class="num">Devolvido</th></tr>
+      </thead>
+      <tbody>
+        {% for venda in relatorio.vendas %}
+          <tr>
+            <td><a href="{{ venda.get_absolute_url }}">{{ venda.pk }}</a></td>
+            <td>{{ venda.concluida_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ venda.operador }}</td>
+            <td>{{ venda.caixa.pk }}</td>
+            <td>{{ venda.get_forma_pagamento_display }}</td>
+            <td class="num">{{ venda.total|moeda }}</td>
+            <td class="num">{% if venda.total_devolvido %}{{ venda.total_devolvido|moeda }}{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p role="status">Nenhuma venda concluída para os filtros escolhidos.</p>
+{% endif %}
+
+<div class="acoes nao-imprimir">
+  <button type="button" onclick="window.print()">Imprimir</button>
+  <a href="{% url 'vendas:lista_vendas' %}{% if consulta %}?{{ consulta }}{% endif %}">Voltar à consulta</a>
+</div>
+{% endblock %}

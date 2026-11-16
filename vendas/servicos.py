@@ -1,13 +1,17 @@
-"""Regras de negócio do caixa e das vendas (UC01, UC02, UC03, UC12 e UC49)."""
+"""Regras de negócio do caixa, das vendas e das devoluções (UC01, UC02, UC03, UC12, UC16, UC49 e UC50)."""
 
+from datetime import timedelta
+
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Count, Sum
 from django.utils import timezone
 
-from catalogo.servicos import PesquisarPor, baixar_saldo, buscar_por_codigo, pesquisar_produtos
+from catalogo.servicos import PesquisarPor, buscar_por_codigo, pesquisar_produtos
+from estoque.servicos import registrar_baixa_por_venda, registrar_recomposicao_por_devolucao
 
-from .models import ZERO, Caixa, ItemVenda, Venda
+from .models import ZERO, Caixa, Devolucao, ItemDevolucao, ItemVenda, Venda
 
 Situacao = Venda.Situacao
 FormaPagamento = Venda.FormaPagamento
@@ -46,11 +50,22 @@ def resumir_caixa(caixa):
         for forma in FormaPagamento
     ]
     recebido_em_dinheiro = totais.get(FormaPagamento.DINHEIRO, {}).get("valor") or ZERO
+    total_vendido = sum((linha["valor"] for linha in por_forma), ZERO)
+
+    # Estornos das devoluções feitas neste caixa (UC16); em dinheiro, saem da gaveta.
+    estornos = {
+        linha["forma_estorno"]: linha["valor"] or ZERO
+        for linha in caixa.devolucoes.values("forma_estorno").annotate(valor=Sum("valor_estornado"))
+    }
+    total_estornado = sum(estornos.values(), ZERO)
     return {
         "por_forma": por_forma,
         "quantidade_vendas": sum(linha["quantidade"] for linha in por_forma),
-        "total_vendido": sum((linha["valor"] for linha in por_forma), ZERO),
-        "valor_esperado": caixa.valor_inicial + recebido_em_dinheiro,
+        "total_vendido": total_vendido,
+        "quantidade_devolucoes": caixa.devolucoes.count(),
+        "total_estornado": total_estornado,
+        "total_liquido": total_vendido - total_estornado,
+        "valor_esperado": caixa.valor_inicial + recebido_em_dinheiro - estornos.get(FormaPagamento.DINHEIRO, ZERO),
         "vendas_em_andamento": caixa.vendas.filter(situacao=Situacao.EM_ANDAMENTO).count(),
     }
 
@@ -214,7 +229,12 @@ def concluir_venda(*, venda, forma_pagamento, valor_recebido=None):
     valor_recebido, troco = calcular_troco(total, forma_pagamento, valor_recebido)
 
     for item in venda.itens.select_related("produto"):
-        baixar_saldo(produto=item.produto, quantidade=item.quantidade)
+        registrar_baixa_por_venda(
+            produto=item.produto,
+            quantidade=item.quantidade,
+            usuario=venda.operador,
+            referencia=str(venda),
+        )
 
     venda.total = total
     venda.forma_pagamento = forma_pagamento
@@ -224,6 +244,86 @@ def concluir_venda(*, venda, forma_pagamento, valor_recebido=None):
     venda.concluida_em = timezone.now()
     venda.save()
     return venda
+
+
+# Devolução (UC16) ------------------------------------------------------------
+
+
+def prazo_devolucao(venda):
+    """Último momento em que a venda aceita devolução."""
+    return venda.concluida_em + timedelta(days=settings.PRAZO_DEVOLUCAO_DIAS)
+
+
+def motivo_devolucao_bloqueada(venda, agora=None):
+    """Por que a venda não aceita devolução agora, ou None se aceita.
+
+    Sequências alternativas do UC16: venda não concluída, fora do prazo,
+    sem itens a devolver ou caixa fechado.
+    """
+    if venda.situacao != Situacao.CONCLUIDA:
+        return "Só vendas concluídas podem ter devolução."
+    if (agora or timezone.now()) > prazo_devolucao(venda):
+        return f"O prazo de {settings.PRAZO_DEVOLUCAO_DIAS} dias para devolução desta venda terminou."
+    if not any(item.quantidade_devolvivel > 0 for item in venda.itens.all()):
+        return "Todos os itens desta venda já foram devolvidos."
+    if obter_caixa_aberto() is None:
+        return "Abra o caixa para registrar a devolução e fazer o estorno."
+    return None
+
+
+@transaction.atomic
+def registrar_devolucao(*, venda, quantidades, motivo, usuario):
+    """UC16 – Registrar Devolução.
+
+    `quantidades` relaciona o id de cada item da venda à quantidade devolvida.
+    O estorno usa a mesma forma de pagamento da venda e o preço praticado nela.
+    Devolução, estorno e recomposição do estoque são gravados juntos (RNF01).
+    """
+    venda = Venda.objects.select_for_update().get(pk=venda.pk)
+    bloqueio = motivo_devolucao_bloqueada(venda)
+    if bloqueio:
+        raise ValidationError(bloqueio)
+
+    motivo = motivo.strip()
+    if not motivo:
+        raise ValidationError({"motivo": "Informe o motivo da devolução."})
+
+    itens = {item.pk: item for item in venda.itens.select_related("produto")}
+    devolvidos = []
+    for item_pk, quantidade in quantidades.items():
+        item = itens.get(int(item_pk))
+        if item is None:
+            raise ValidationError("Item não pertence a esta venda.")
+        if quantidade < 0:
+            raise ValidationError("A quantidade devolvida não pode ser negativa.")
+        if quantidade > item.quantidade_devolvivel:
+            raise ValidationError(
+                f"{item.produto.nome}: é possível devolver no máximo {item.quantidade_devolvivel}."
+            )
+        if quantidade:
+            devolvidos.append((item, quantidade))
+    if not devolvidos:
+        raise ValidationError("Informe a quantidade de pelo menos um item a devolver.")
+
+    caixa = Caixa.objects.select_for_update().get(pk=obter_caixa_aberto().pk)
+    valor = sum((item.preco_unitario * quantidade for item, quantidade in devolvidos), ZERO)
+    if venda.forma_pagamento == FormaPagamento.DINHEIRO and valor > resumir_caixa(caixa)["valor_esperado"]:
+        raise ValidationError("Não há dinheiro suficiente no caixa para este estorno.")
+
+    devolucao = Devolucao.objects.create(
+        venda=venda,
+        caixa=caixa,
+        operador=usuario,
+        motivo=motivo,
+        forma_estorno=venda.forma_pagamento,
+        valor_estornado=valor,
+    )
+    for item, quantidade in devolvidos:
+        ItemDevolucao.objects.create(devolucao=devolucao, item_venda=item, quantidade=quantidade)
+        registrar_recomposicao_por_devolucao(
+            produto=item.produto, quantidade=quantidade, usuario=usuario, referencia=f"{devolucao} da {venda}"
+        )
+    return devolucao
 
 
 # Consulta ------------------------------------------------------------------
@@ -245,3 +345,37 @@ def filtrar_vendas(*, identificador=None, situacao="", operador=None, caixa=None
     if fim:
         vendas = vendas.filter(iniciada_em__date__lte=fim)
     return vendas
+
+
+def gerar_relatorio_vendas(**filtros):
+    """UC50 – relatório das vendas filtradas na consulta (UC49).
+
+    Considera apenas vendas concluídas e desconta os estornos das devoluções.
+    Nenhum registro é alterado.
+    """
+    filtros["situacao"] = Situacao.CONCLUIDA
+    vendas = filtrar_vendas(**filtros).prefetch_related("devolucoes").order_by("concluida_em", "id")
+    totais = {
+        linha["forma_pagamento"]: linha
+        for linha in vendas.values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
+    }
+    por_forma = [
+        {
+            "forma": forma.label,
+            "quantidade": totais.get(forma.value, {}).get("quantidade", 0),
+            "valor": totais.get(forma.value, {}).get("valor") or ZERO,
+        }
+        for forma in FormaPagamento
+    ]
+    total_vendido = sum((linha["valor"] for linha in por_forma), ZERO)
+    total_estornado = (
+        Devolucao.objects.filter(venda__in=vendas).aggregate(valor=Sum("valor_estornado"))["valor"] or ZERO
+    )
+    return {
+        "vendas": list(vendas),
+        "por_forma": por_forma,
+        "quantidade_vendas": sum(linha["quantidade"] for linha in por_forma),
+        "total_vendido": total_vendido,
+        "total_estornado": total_estornado,
+        "total_liquido": total_vendido - total_estornado,
+    }

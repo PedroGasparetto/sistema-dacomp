@@ -30,6 +30,10 @@
               <li><a href="{% url 'vendas:pdv' %}" class="barra-pdv" {% if request.resolver_match.url_name == 'pdv' %}aria-current="page"{% endif %}>PDV</a></li>
               <li><a href="{% url 'vendas:lista_vendas' %}" {% if secao == 'vendas' and request.resolver_match.url_name != 'pdv' %}aria-current="page"{% endif %}>Vendas</a></li>
               <li><a href="{% url 'catalogo:lista_produtos' %}" {% if secao == 'catalogo' %}aria-current="page"{% endif %}>Produtos</a></li>
+              <li><a href="{% url 'estoque:lista_movimentacoes' %}" {% if secao == 'estoque' %}aria-current="page"{% endif %}>Estoque</a></li>
+            {% endif %}
+            {% if pode_gerir_contas %}
+              <li><a href="{% url 'contas:lista_contas' %}" {% if secao == 'contas' and request.resolver_match.url_name != 'alterar_senha' %}aria-current="page"{% endif %}>Contas</a></li>
             {% endif %}
           </ul>
         </nav>
@@ -40,6 +44,7 @@
             </summary>
             <ul dir="rtl">
               <li dir="ltr"><small>{{ perfis_usuario|join:" · "|default:"Sem perfil" }}</small></li>
+              <li dir="ltr"><a href="{% url 'contas:alterar_senha' %}">Alterar senha</a></li>
               <li dir="ltr">
                 <form method="post" action="{% url 'contas:sair' %}" class="formulario-em-linha">
                   {% csrf_token %}

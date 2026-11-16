@@ -819,3 +819,25 @@ kbd {
   width: auto;
   margin: 0;
 }
+
+/* Devolução (UC16) */
+.campo-quantidade input {
+  width: 5rem;
+  margin: 0;
+}
+
+/* Relatórios (UC50): imprime só o conteúdo, sem barra, rodapé e botões. */
+.filtros-aplicados {
+  color: var(--pico-muted-color);
+}
+@media print {
+  .barra-app,
+  .rodape,
+  .pular-conteudo,
+  .nao-imprimir {
+    display: none !important;
+  }
+  .tabela-rolavel {
+    overflow: visible;
+  }
+}
