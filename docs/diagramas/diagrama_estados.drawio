@@ -1,0 +1,84 @@
+<mxfile host="app.diagrams.net" modified="2026-11-17T19:53:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+  <diagram id="diagrama-estados-lojinha" name="Máquinas de Estado">
+    <mxGraphModel dx="1250" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="620" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Seção Caixa -->
+        <mxCell id="box_caixa" value="Ciclo de Vida do Caixa" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;dashed=1;fillColor=#fafafa;strokeColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="30" y="30" width="1140" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="c_init" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="70" y="110" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="c_aberto" value="Aberto" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="95" width="150" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="c_fechado" value="Fechado" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="95" width="150" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="c_final" value="" style="ellipse;html=1;shape=doubleEllipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1095" y="109" width="26" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_t1" value="abrir_caixa (valor_inicial >= 0)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="c_init" target="c_aberto">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_t2" value="fechar_caixa (sem venda em andamento;&#xa;justificativa se diferença != 0)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="c_aberto" target="c_fechado">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c_t3" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="c_fechado" target="c_final">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Seção Venda -->
+        <mxCell id="box_venda" value="Ciclo de Vida da Venda" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;dashed=1;fillColor=#fafafa;strokeColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="30" y="250" width="1140" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="v_init" value="" style="ellipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="70" y="405" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="v_and" value="Em andamento" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="390" width="170" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="v_conc" value="Concluída" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="310" width="150" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="v_canc" value="Cancelada" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="480" width="150" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="v_final1" value="" style="ellipse;html=1;shape=doubleEllipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1095" y="324" width="26" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="v_final2" value="" style="ellipse;html=1;shape=doubleEllipse;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1095" y="494" width="26" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="v_t1" value="iniciar_ou_retomar_venda&#xa;(exige Caixa aberto)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v_init" target="v_and">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_loop" value="adicionar_item / alterar_quantidade / remover_item" style="edgeStyle=orthogonalEdgeStyle;exitX=0.25;exitY=0;entryX=0.75;entryY=0;endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v_and" target="v_and">
+          <mxGeometry y="12" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="383" y="340" />
+              <mxPoint x="468" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v_t2" value="concluir_venda (transação atômica + baixa estoque)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v_and" target="v_conc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_t3" value="cancelar_venda (não altera estoque)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="v_and" target="v_canc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_t4" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="v_conc" target="v_final1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_t5" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="v_canc" target="v_final2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -37,14 +37,9 @@ Todo o projeto roda em containers Docker (**Python 3.13 + Django** e **PostgreSQ
 
 Nunca trabalhe diretamente na branch `main`. Use o fluxo abaixo para cada nova tarefa, correção ou caso de uso:
 
-```mermaid
-flowchart LR
-    A["Atualizar main"] --> B["Criar branch (ex: feat/nome)"]
-    B --> C["Implementar + Escrever testes"]
-    C --> D["Rodar pytest"]
-    D --> E["Commit e Push"]
-    E --> F["Abrir Pull Request para main"]
-```
+![Fluxo de Trabalho com Git](docs/diagramas/fluxo_git_contribuicao.drawio.svg)
+
+*(Arquivo fonte editável: [docs/diagramas/fluxo_git_contribuicao.drawio](docs/diagramas/fluxo_git_contribuicao.drawio))*
 
 1. **Atualize a `main` local:**
    ```bash

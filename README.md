@@ -119,15 +119,7 @@ continuam lá entre um `down` e outro `up`.
 Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote segue
 `models.py` (entidades) → `servicos.py` (regras de negócio) → `forms.py`/`views.py` (controle) → `templates/` (apresentação).
 
-```mermaid
-flowchart LR
-    nucleo["nucleo (início, demo, formatação)"] --> vendas["vendas (PDV, caixa, pagamento)"]
-    nucleo --> catalogo["catalogo (produtos e estoque)"]
-    nucleo --> contas["contas (usuários e perfis)"]
-    vendas --> catalogo
-    vendas --> contas
-    catalogo --> contas
-```
+![Diagrama de Pacotes e Arquitetura](docs/diagramas/diagrama_de_pacotes.drawio.svg)
 
 | Pacote     | Responsabilidade                                            | Casos de uso (UC01–UC17) |
 |------------|-------------------------------------------------------------|--------------------------|
@@ -162,6 +154,7 @@ Próximo pacote previsto: `relatorios` (UC50).
 ## Documentação e Contribuição
 
 - **[Guia de Contribuição](CONTRIBUTING.md)** — fluxo de branches/PRs, convenções de código, migrações e execução de testes.
-- **[Arquitetura do Sistema](docs/arquitetura.md)** — diagrama em camadas, modelo entidade-relacionamento (DER), matriz de perfis e mapa de rotas.
+- **[Arquitetura do Sistema](docs/arquitetura.md)** — diagrama de pacotes, modelo entidade-relacionamento (DER), diagrama de classes de projeto, matriz de perfis e mapa de rotas.
 - **[Fluxos de Negócio](docs/fluxos.md)** — máquinas de estado (`Caixa` e `Venda`) e diagramas de sequência (PDV atômico e fechamento de caixa).
+- **[Diagramas editáveis](docs/diagramas/)** — fontes `.drawio` e `.drawio.svg` com diagrama embutido.
 - **[Casos de Uso](doc/casos_de_uso.md)** — especificação e diagrama de casos de uso.

@@ -8,39 +8,9 @@ O **Sistema de Controle de Vendas e Estoque da Lojinha do DACOMP** é um monóli
 
 Cada subsistema segue o fluxo de responsabilidades `templates/` → `views.py` / `forms.py` → `servicos.py` → `models.py`.
 
-```mermaid
-flowchart TD
-    Usuario(["Operador / Diretoria / Bolsista"]) --> Config["config (settings.py e urls.py)"]
+![Diagrama de Pacotes e Arquitetura](diagramas/diagrama_de_pacotes.drawio.svg)
 
-    subgraph Apps["Subsistema / Pacotes Django"]
-        Nucleo["nucleo (InicioView, templatetags, popular_demo)"]
-        Vendas["vendas (Caixa, Venda, ItemVenda, PDV)"]
-        Catalogo["catalogo (Produto, pesquisa, baixar_saldo)"]
-        Contas["contas (Usuario, Perfis, PerfilRequeridoMixin, criar_conta)"]
-    end
-
-    Config --> Nucleo
-    Config --> Vendas
-    Config --> Catalogo
-    Config --> Contas
-
-    Nucleo --> Vendas
-    Nucleo --> Catalogo
-    Nucleo --> Contas
-
-    Vendas --> Catalogo
-    Vendas --> Contas
-    Catalogo --> Contas
-
-    subgraph Camadas["Padrão Interno por Pacote"]
-        T["templates/ (Apresentação HTML)"] --> V["views.py e forms.py (Controle HTTP)"]
-        V --> S["servicos.py (Regras de Negócio e Transações)"]
-        S --> M["models.py (Entidades e Constraints)"]
-    end
-
-    Apps --> Camadas
-    M --> DB[("PostgreSQL 17")]
-```
+*(Arquivo fonte editável: [diagrama_de_pacotes.drawio](diagramas/diagrama_de_pacotes.drawio))*
 
 ### Responsabilidade de cada pacote
 
@@ -64,75 +34,9 @@ O diagrama abaixo representa as entidades persistidas no PostgreSQL e suas princ
 - **`apenas_um_caixa_aberto`**: `UniqueConstraint` parcial garantindo que exista no máximo um `Caixa` com `situacao = "aberto"` por vez.
 - **`produto_unico_por_venda`**: `UniqueConstraint` em `(venda, produto)` em `ItemVenda` (itens repetidos no PDV incrementam a `quantidade` do mesmo registro).
 
-```mermaid
-erDiagram
-    USUARIO ||--o{ PRODUTO : "cria / altera"
-    USUARIO ||--o{ CAIXA : "abre / fecha"
-    USUARIO ||--o{ VENDA : "opera"
-    CAIXA ||--o{ VENDA : "agrupa"
-    VENDA ||--|{ ITEM_VENDA : "contem"
-    PRODUTO ||--o{ ITEM_VENDA : "compoe"
+![Diagrama Entidade-Relacionamento](diagramas/diagrama_er.drawio.svg)
 
-    USUARIO {
-        bigint id PK
-        string username UK
-        string first_name
-        string last_name
-        string email
-        boolean is_active
-        boolean is_superuser
-    }
-
-    PRODUTO {
-        bigint id PK
-        string codigo UK
-        string nome
-        string categoria
-        string codigo_barras UK
-        string unidade
-        decimal preco_unitario
-        decimal preco_custo
-        boolean ativo
-        boolean controla_estoque
-        int saldo_estoque
-        bigint criado_por_id FK
-        bigint alterado_por_id FK
-    }
-
-    CAIXA {
-        bigint id PK
-        string situacao "aberto | fechado"
-        decimal valor_inicial
-        bigint aberto_por_id FK
-        datetime aberto_em
-        bigint fechado_por_id FK
-        datetime fechado_em
-        decimal valor_esperado
-        decimal valor_contado
-        string justificativa
-    }
-
-    VENDA {
-        bigint id PK
-        bigint caixa_id FK
-        bigint operador_id FK
-        string situacao "andamento | concluida | cancelada"
-        datetime iniciada_em
-        datetime concluida_em
-        decimal total
-        string forma_pagamento "dinheiro | pix | credito | debito"
-        decimal valor_recebido
-        decimal troco
-    }
-
-    ITEM_VENDA {
-        bigint id PK
-        bigint venda_id FK
-        bigint produto_id FK
-        int quantidade
-        decimal preco_unitario "preco congelado na venda"
-    }
-```
+*(Arquivo fonte editável: [diagrama_er.drawio](diagramas/diagrama_er.drawio))*
 
 ---
 
@@ -140,98 +44,9 @@ erDiagram
 
 Em conformidade com os requisitos da **Etapa 3**, o diagrama abaixo apresenta as classes de domínio e seus serviços com **tipos, restrições, métodos/operações e navegabilidade definida**.
 
-```mermaid
-classDiagram
-    direction TB
+![Diagrama de Classes de Projeto](diagramas/diagrama_de_classes.drawio.svg)
 
-    class Usuario {
-        +int id
-        +str username
-        +str first_name
-        +str last_name
-        +str email
-        +bool is_active
-        +bool is_superuser
-        +nomes_perfis() list~str~
-        +__str__() str
-    }
-
-    class Produto {
-        +int id
-        +str codigo
-        +str nome
-        +Categoria categoria
-        +str codigo_barras
-        +Unidade unidade
-        +Decimal preco_unitario
-        +Decimal preco_custo
-        +bool ativo
-        +bool controla_estoque
-        +int saldo_estoque
-        +lucro_unitario() Decimal
-        +margem_percentual() Decimal
-        +get_absolute_url() str
-    }
-
-    class Caixa {
-        +int id
-        +Situacao situacao
-        +Decimal valor_inicial
-        +datetime aberto_em
-        +datetime fechado_em
-        +Decimal valor_esperado
-        +Decimal valor_contado
-        +str justificativa
-        +diferenca() Decimal
-    }
-
-    class Venda {
-        +int id
-        +Situacao situacao
-        +datetime iniciada_em
-        +datetime concluida_em
-        +Decimal total
-        +FormaPagamento forma_pagamento
-        +Decimal valor_recebido
-        +Decimal troco
-        +total_itens() Decimal
-        +get_absolute_url() str
-    }
-
-    class ItemVenda {
-        +int id
-        +int quantidade
-        +Decimal preco_unitario
-        +subtotal() Decimal
-    }
-
-    class ServicoCatalogo {
-        +pesquisar_produtos(termo: str, por: PesquisarPor, incluir_inativos: bool, categoria: str) QuerySet~Produto~
-        +buscar_por_codigo(valor: str) Produto
-        +baixar_saldo(produto: Produto, quantidade: int) Produto
-    }
-
-    class ServicoVendas {
-        +abrir_caixa(usuario: Usuario, valor_inicial: Decimal) Caixa
-        +resumir_caixa(caixa: Caixa) dict
-        +fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal, justificativa: str) Caixa
-        +iniciar_ou_retomar_venda(usuario: Usuario) Venda
-        +adicionar_item(venda: Venda, produto: Produto, quantidade: int) ItemVenda
-        +concluir_venda(venda: Venda, forma_pagamento: str, valor_recebido: Decimal) Venda
-        +cancelar_venda(venda: Venda) Venda
-    }
-
-    Produto "*" --> "1" Usuario : criado_por / alterado_por
-    Caixa "*" --> "1" Usuario : aberto_por / fechado_por
-    Venda "*" --> "1" Caixa : caixa
-    Venda "*" --> "1" Usuario : operador
-    Venda "1" *-- "0..*" ItemVenda : itens
-    ItemVenda "*" --> "1" Produto : produto
-    ServicoCatalogo ..> Produto : consulta e atualiza saldo
-    ServicoVendas ..> Caixa : gerencia
-    ServicoVendas ..> Venda : gerencia
-    ServicoVendas ..> ServicoCatalogo : chama baixar_saldo
-```
+*(Arquivo fonte editável: [diagrama_de_classes.drawio](diagramas/diagrama_de_classes.drawio))*
 
 ### Documentação das Principais Operações
 
