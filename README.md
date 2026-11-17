@@ -119,11 +119,21 @@ continuam lá entre um `down` e outro `up`.
 Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote segue
 `models.py` (entidades) → `servicos.py` (regras de negócio) → `forms.py`/`views.py` (controle) → `templates/` (apresentação).
 
-| Pacote     | Responsabilidade                                            | Casos de uso        |
-|------------|-------------------------------------------------------------|---------------------|
-| `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 |
+```mermaid
+flowchart LR
+    nucleo["nucleo (início, demo, formatação)"] --> vendas["vendas (PDV, caixa, pagamento)"]
+    nucleo --> catalogo["catalogo (produtos e estoque)"]
+    nucleo --> contas["contas (usuários e perfis)"]
+    vendas --> catalogo
+    vendas --> contas
+    catalogo --> contas
+```
+
+| Pacote     | Responsabilidade                                            | Casos de uso (UC01–UC17) |
+|------------|-------------------------------------------------------------|--------------------------|
+| `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 (UC15 via CLI) |
 | `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) | UC02, UC13 |
-| `vendas`   | PDV, abertura e fechamento de caixa, pagamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07 |
+| `vendas`   | PDV, abertura e fechamento de caixa, pagamento, cancelamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07, UC17 |
 | `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
 | `config`   | Configurações e rotas do projeto                              | —                   |
 
@@ -148,3 +158,10 @@ caixa confere as vendas por forma de pagamento e exige justificativa quando o va
 esperado.
 
 Próximo pacote previsto: `relatorios` (UC50).
+
+## Documentação e Contribuição
+
+- **[Guia de Contribuição](CONTRIBUTING.md)** — fluxo de branches/PRs, convenções de código, migrações e execução de testes.
+- **[Arquitetura do Sistema](docs/arquitetura.md)** — diagrama em camadas, modelo entidade-relacionamento (DER), matriz de perfis e mapa de rotas.
+- **[Fluxos de Negócio](docs/fluxos.md)** — máquinas de estado (`Caixa` e `Venda`) e diagramas de sequência (PDV atômico e fechamento de caixa).
+- **[Casos de Uso](doc/casos_de_uso.md)** — especificação e diagrama de casos de uso.
