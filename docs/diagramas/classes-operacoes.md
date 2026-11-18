@@ -19,7 +19,11 @@ A notação segue os slides "Diagrama de Classes" da disciplina:
 - atributo: `[visibilidade] nome [multiplicidade] : tipo [= valor inicial] [{propriedades}]`;
 - operação: `[visibilidade] nome (parâmetros) : tipo de retorno`;
 - `/nome` indica atributo derivado; `{frozen}`, valor que não muda depois de criado;
-- sublinhado indica operação ou atributo de classe; itálico, classe abstrata (`AbstractUser`).
+- sublinhado indica operação ou atributo de classe.
+
+As classes do Django que o sistema reaproveita (`AbstractUser`, `Group`) não aparecem nos
+diagramas: os atributos herdados que o sistema usa estão na própria classe `Usuario`, e os
+perfis aparecem como o atributo `perfis`.
 
 Os serviços são módulos Python e aparecem nos diagramas como classes `<<serviço>>` cujas
 operações são operações de classe (sublinhadas):

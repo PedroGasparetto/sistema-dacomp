@@ -8,9 +8,7 @@ title Lojinha do DACOMP — Diagrama de classes (1/5): visão geral das entidade
 hide members
 
 package "contas" {
-  abstract class AbstractUser <<Django>>
   class Usuario
-  class Perfil <<Django Group>>
 }
 
 package "catalogo" {
@@ -29,8 +27,6 @@ package "vendas" {
   class ItemDevolucao
 }
 
-AbstractUser <|-right- Usuario
-Usuario "0..*" -right-> "0..3" Perfil : possui >
 
 Caixa "1" -right- "0..*" Venda : registra >
 Venda "1" -right- "0..*" Devolucao : devoluções

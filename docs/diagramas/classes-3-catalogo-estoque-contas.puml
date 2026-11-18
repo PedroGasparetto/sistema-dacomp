@@ -1,7 +1,7 @@
 @startuml classes-3-catalogo-estoque-contas
 ' Diagrama de classes de projeto (3/5) — atributos dos pacotes catalogo, estoque e contas.
 ' Notação dos slides: nome [multiplicidade] : tipo = valor inicial {propriedades};
-' /nome = derivado; {frozen} = não muda depois de criado; itálico = classe abstrata.
+' /nome = derivado; {frozen} = não muda depois de criado.
 !include estilo.iuml
 
 title Lojinha do DACOMP — Diagrama de classes (3/5): pacotes catalogo, estoque e contas
@@ -71,25 +71,18 @@ package "estoque" {
 }
 
 package "contas" {
-  abstract class AbstractUser <<Django>> {
+  class Usuario {
     + username : Texto {único}
     + first_name : Texto
     + last_name : Texto
     + email : Texto
     + is_active : Booleano = verdadeiro
+    + perfis [0..3] : Texto {Diretoria | Bolsista | Voluntário}
     + check_password (senha : Texto) : Booleano
-  }
-  class Usuario {
-    + /nomes_perfis [0..3] : Texto
     + get_full_name () : Texto
-  }
-  class Perfil <<Django Group>> {
-    + name : Texto {Diretoria | Bolsista | Voluntário}
   }
 }
 
-AbstractUser <|-down- Usuario
-Usuario "0..*" -right-> "0..3" Perfil : possui >
 Movimentacao "0..*" -left-> "1" Produto : altera saldo de >
 Movimentacao "0..*" -down-> "1" Usuario : responsavel
 Produto "0..*" -down-> "1" Usuario : criado_por,\nalterado_por
