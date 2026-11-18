@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load formatacao %}
+{% load l10n %}
 {% block title %}PDV{% endblock %}
 {% block content %}
 {% if not caixa %}
@@ -118,13 +119,37 @@
           </ul>
         {% else %}
           <p class="pdv-comanda-vazia">Toque em um produto ou leia o código de barras para iniciar a venda.</p>
+          {% if ultima_venda %}
+            <p class="pdv-ultima-venda">
+              <small>Última venda: <a href="{{ ultima_venda.get_absolute_url }}">{{ ultima_venda }}</a>
+              · {{ ultima_venda.total|moeda }}{% if ultima_venda.troco %} · troco {{ ultima_venda.troco|moeda }}{% endif %}</small>
+            </p>
+          {% endif %}
         {% endif %}
 
         <footer>
           <small>Total</small>
           <p class="pdv-total">{{ total|moeda }}</p>
           {% if venda and itens %}
-            <a role="button" id="pdv-finalizar" href="{% url 'vendas:pagamento' venda.pk %}">Finalizar venda <kbd>F4</kbd></a>
+            {# UC12 – Receber Pagamento: forma e troco na própria tela, sem página extra. #}
+            <form method="post" action="{% url 'vendas:pagamento' venda.pk %}" id="pdv-pagamento"
+                  class="pdv-pagamento" data-total="{{ total|unlocalize }}" autocomplete="off">
+              {% csrf_token %}
+              {{ formulario_pagamento.non_field_errors }}
+              <fieldset class="pdv-formas" aria-label="{{ formulario_pagamento.forma_pagamento.label }}">
+                {% for opcao in formulario_pagamento.forma_pagamento %}
+                  <label class="pdv-forma">{{ opcao.tag }} {{ opcao.choice_label }}</label>
+                {% endfor %}
+              </fieldset>
+              {{ formulario_pagamento.forma_pagamento.errors }}
+              <div id="campo-valor-recebido" class="pdv-recebido">
+                <label for="{{ formulario_pagamento.valor_recebido.id_for_label }}">Recebido (R$)</label>
+                {{ formulario_pagamento.valor_recebido }}
+                <p>Troco <strong id="troco">—</strong></p>
+              </div>
+              {{ formulario_pagamento.valor_recebido.errors }}
+              <button type="submit" id="pdv-finalizar">Confirmar pagamento <kbd>F4</kbd></button>
+            </form>
           {% endif %}
           {% if venda %}
             <form method="post" action="{% url 'vendas:cancelar_venda' venda.pk %}"
@@ -141,18 +166,47 @@
 {% endblock %}
 {% block scripts %}
 <script>
-  // Atalhos do PDV: F2 volta ao campo de produto; F4 finaliza a venda.
+  // Atalhos do PDV: F2 volta ao campo de produto; F4 confirma o pagamento.
   document.addEventListener("keydown", (evento) => {
     if (evento.key === "F2") {
       evento.preventDefault();
       document.getElementById("pdv-termo")?.focus();
     } else if (evento.key === "F4") {
-      const finalizar = document.getElementById("pdv-finalizar");
-      if (finalizar) {
+      const formulario = document.getElementById("pdv-pagamento");
+      if (formulario) {
         evento.preventDefault();
-        finalizar.click();
+        formulario.requestSubmit();
       }
     }
   });
+
+  // Mostra a quantia recebida só para dinheiro e calcula o troco (o servidor recalcula ao confirmar).
+  (function () {
+    const formulario = document.getElementById("pdv-pagamento");
+    if (!formulario) return;
+    const total = parseFloat(formulario.dataset.total);
+    const campo = document.getElementById("campo-valor-recebido");
+    const entrada = formulario.querySelector("[name=valor_recebido]");
+    const troco = document.getElementById("troco");
+    const moeda = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+    function sincronizar() {
+      const forma = formulario.querySelector("[name=forma_pagamento]:checked");
+      const emDinheiro = forma && forma.value === "dinheiro";
+      campo.hidden = !emDinheiro;
+      entrada.required = emDinheiro;
+      const recebido = parseFloat(entrada.value);
+      if (!emDinheiro || isNaN(recebido)) {
+        troco.textContent = "—";
+      } else if (recebido < total) {
+        troco.textContent = "quantia insuficiente";
+      } else {
+        troco.textContent = moeda.format(recebido - total);
+      }
+    }
+    formulario.addEventListener("input", sincronizar);
+    formulario.addEventListener("change", sincronizar);
+    sincronizar();
+  })();
 </script>
 {% endblock %}

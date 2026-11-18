@@ -841,3 +841,58 @@ kbd {
     overflow: visible;
   }
 }
+
+/* Pagamento no próprio PDV (UC12): formas como botões de alternância e troco ao lado. */
+.pdv-formas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  border: 0;
+}
+.pdv-forma {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--borda-suave);
+  border-radius: var(--pico-border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+}
+.pdv-forma input {
+  margin: 0;
+}
+.pdv-forma:has(input:checked) {
+  border-color: var(--marca-lilas);
+  background: color-mix(in srgb, var(--marca-lilas) 10%, #fff);
+}
+.pdv-recebido {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+.pdv-recebido label {
+  margin: 0;
+}
+.pdv-recebido input {
+  margin: 0;
+  text-align: right;
+}
+.pdv-recebido p {
+  grid-column: 1 / -1;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  font-variant-numeric: tabular-nums;
+}
+.pdv-ultima-venda {
+  margin: 0.5rem 0 0;
+  color: var(--pico-muted-color);
+}

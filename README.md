@@ -103,6 +103,13 @@ O código da pasta é montado dentro do container: ao salvar um arquivo, o servi
 sem precisar reconstruir. Os dados do banco ficam no volume `sistema-dacomp_dados_postgres` e
 continuam lá entre um `down` e outro `up`.
 
+### Instalação na rede local do DA
+
+O `docker-compose.yml` acima é para desenvolvimento (só abre no próprio computador). Para usar o
+sistema nos computadores do DAcomp, siga [docs/instalacao-rede-local.md](docs/instalacao-rede-local.md):
+um computador roda o sistema com `docker-compose.rede-local.yml` e os outros acessam pelo navegador.
+O sistema não depende de internet: CSS e fontes ficam em `static/vendor`.
+
 ### Problemas comuns
 
 - **Porta 8000 ou 5432 em uso:** feche o programa que usa a porta (outro servidor Django ou um
@@ -140,10 +147,17 @@ por categoria. Itens preparados na hora, como café coado, podem ser cadastrados
 
 Em **PDV**: abra o caixa e toque nos produtos da grade de atalhos (filtrada por categoria) ou leia o
 código de barras (ou digite o código ou parte do nome) e pressione Enter. A comanda fica à direita,
-com o total. `F2` volta ao campo de produto e `F4` finaliza a venda. Na
-finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o troco. O fechamento do
-caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
-esperado.
+com o total. Logo abaixo do total, escolha **Dinheiro** ou **PIX** (a lojinha não aceita cartões) e, em
+dinheiro, informe a quantia recebida: o troco aparece na hora. `F4` (ou **Confirmar pagamento**)
+conclui a venda sem sair do PDV, que fica pronto para a próxima, com o link da última venda. `F2` volta
+ao campo de produto. O fechamento do caixa confere as vendas por forma de pagamento e exige
+justificativa quando o valor contado difere do esperado.
+
+### Turno de atendimento
+
+O login vale por um turno: depois de `DURACAO_TURNO_MINUTOS` (padrão: 100 minutos, ajustável no
+`.env`) a sessão termina e quem assume o caixa entra com a própria conta. A sessão também termina ao
+fechar o navegador. O horário de fim aparece no menu do usuário ("Turno até…").
 
 ### Estoque
 
