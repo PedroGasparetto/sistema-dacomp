@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="989px" preserveAspectRatio="none" style="width:1386px;height:989px;" version="1.1" viewBox="0 0 1386 989" width="1386px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="502" x="445" y="11.1387">Lojinha do DACOMP — Diagrama de classes de projeto (2/3): serviços de vendas</text><!--MD5=[dedf270e8f1cdd38fbe80acbc2800442]
+cluster vendas--><rect fill="#FFFFFF" height="925" style="stroke: #555555; stroke-width: 1.5;" width="854" x="22" y="53.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="51" x="423.5" y="67.1074">vendas</text><!--MD5=[eab1979dcb984afa63d4db94eb3206d9]
+cluster estoque--><rect fill="#FFFFFF" height="86" style="stroke: #555555; stroke-width: 1.5;" width="146" x="900" y="683.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="59" x="943.5" y="697.1074">estoque</text><!--MD5=[85bb1748ff35eef89f9a7ca76c8454bc]
+cluster catalogo--><rect fill="#FFFFFF" height="86" style="stroke: #555555; stroke-width: 1.5;" width="148" x="1070" y="683.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="62" x="1113" y="697.1074">catalogo</text><!--MD5=[8f5a9c5b5383bdbe5cf069cfb9da78a4]
+class SV--><rect fill="#FFFFFF" height="467.0313" id="SV" style="stroke: #333333; stroke-width: 1.5;" width="554" x="38" y="85.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58" x="286" y="102.1074">«serviço»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="100" x="265" y="116.0762">vendas.servicos</text><line style="stroke: #333333; stroke-width: 1.5;" x1="39" x2="591" y1="123.9063" y2="123.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="219" x="44" y="157.0137">+obter_caixa_aberto(): Caixa [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="367" x="44" y="170.9824">+abrir_caixa(usuario: Usuario, valor_inicial: Decimal): Caixa</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="269" x="44" y="184.9512">+resumir_caixa(caixa: Caixa): ResumoCaixa</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="434" x="44" y="198.9199">+fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="186" x="68" y="212.8887">justificativa: Texto = ""): Caixa</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="39" x2="298.5" y1="138.8906" y2="138.8906"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="33" x="298.5" y="142.5449">Caixa</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="331.5" x2="591" y1="138.8906" y2="138.8906"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="509" x="44" y="244.8262">+obter_venda_em_andamento(usuario: Usuario, caixa: Caixa [0..1]): Venda [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="330" x="44" y="258.7949">+iniciar_ou_retomar_venda(usuario: Usuario): Venda</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="395" x="44" y="272.7637">+localizar_produtos_para_venda(termo: Texto): Produto [0..10]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="542" x="44" y="286.7324">+adicionar_item(venda: Venda, produto: Produto, quantidade: Inteiro = 1): ItemVenda</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="445" x="44" y="300.7012">+alterar_quantidade(item: ItemVenda, quantidade: Inteiro): ItemVenda</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="206" x="44" y="314.6699">+remover_item(item: ItemVenda)</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="252" x="44" y="328.6387">+cancelar_venda(venda: Venda): Venda</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="226" x="44" y="342.6074">+verificar_finalizacao(venda: Venda)</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="434" x="44" y="356.5762">+calcular_troco(total: Decimal, forma_pagamento: FormaPagamento,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="455" x="68" y="370.5449">valor_recebido: Decimal [0..1]): (valor_recebido: Decimal, troco: Decimal)</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="439" x="44" y="384.5137">+concluir_venda(venda: Venda, forma_pagamento: FormaPagamento,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="239" x="68" y="398.4824">valor_recebido: Decimal [0..1]): Venda</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="236" x="44" y="412.4512">-exigir_em_andamento(venda: Venda)</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="369" x="44" y="426.4199">-validar_quantidade(produto: Produto, quantidade: Inteiro)</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="39" x2="295" y1="226.7031" y2="226.7031"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="40" x="295" y="230.3574">Venda</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="335" x2="591" y1="226.7031" y2="226.7031"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="278" x="44" y="458.3574">+prazo_devolucao(venda: Venda): DataHora</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="521" x="44" y="472.3262">+motivo_devolucao_bloqueada(venda: Venda, agora: DataHora [0..1]): Texto [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="528" x="44" y="486.2949">+registrar_devolucao(venda: Venda, quantidades: Mapa&lt;id do ItemVenda, Inteiro&gt;,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="272" x="68" y="500.2637">motivo: Texto, usuario: Usuario): Devolucao</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="39" x2="282.5" y1="440.2344" y2="440.2344"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="282.5" y="443.8887">Devolução</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="347.5" x2="591" y1="440.2344" y2="440.2344"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="293" x="44" y="532.2012">+filtrar_vendas(filtros: FiltroVendas): Venda [*]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="396" x="44" y="546.1699">+gerar_relatorio_vendas(filtros: FiltroVendas): RelatorioVendas</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="39" x2="253" y1="514.0781" y2="514.0781"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="124" x="253" y="517.7324">Consulta e relatório</text><line style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 1.0,2.0;" x1="377" x2="591" y1="514.0781" y2="514.0781"/><!--MD5=[dab0b53f160b4774c5f552c80e3d7ddb]
+class ResumoCaixa--><rect fill="#FFFFFF" height="157.6875" id="ResumoCaixa" style="stroke: #333333; stroke-width: 1.5;" width="259" x="64.5" y="655.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="167.5" y="672.1074">«dados»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="83" x="152.5" y="686.0762">ResumoCaixa</text><line style="stroke: #333333; stroke-width: 1.5;" x1="65.5" x2="322.5" y1="693.9063" y2="693.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="247" x="70.5" y="709.0449">+por_forma: LinhaFormaPagamento [4]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="181" x="70.5" y="723.0137">+quantidade_vendas: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="151" x="70.5" y="736.9824">+total_vendido: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="207" x="70.5" y="750.9512">+quantidade_devolucoes: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="167" x="70.5" y="764.9199">+total_estornado: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="143" x="70.5" y="778.8887">+total_liquido: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="163" x="70.5" y="792.8574">+valor_esperado: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="206" x="70.5" y="806.8262">+vendas_em_andamento: Inteiro</text><!--MD5=[c2742d4fe42666170a696b9d2a1a0acd]
+class RelatorioVendas--><rect fill="#FFFFFF" height="129.75" id="RelatorioVendas" style="stroke: #333333; stroke-width: 1.5;" width="259" x="373.5" y="669.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="476.5" y="686.1074">«dados»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="103" x="451.5" y="700.0762">RelatorioVendas</text><line style="stroke: #333333; stroke-width: 1.5;" x1="374.5" x2="631.5" y1="707.9063" y2="707.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="123" x="379.5" y="723.0449">+vendas: Venda [*]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="247" x="379.5" y="737.0137">+por_forma: LinhaFormaPagamento [4]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="181" x="379.5" y="750.9824">+quantidade_vendas: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="151" x="379.5" y="764.9512">+total_vendido: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="167" x="379.5" y="778.9199">+total_estornado: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="143" x="379.5" y="792.8887">+total_liquido: Decimal</text><!--MD5=[aa9e0662cdd7b9681cd2fe06a643ce80]
+class FiltroVendas--><rect fill="#FFFFFF" height="129.75" id="FiltroVendas" style="stroke: #333333; stroke-width: 1.5;" width="217" x="642.5" y="254.4688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="724.5" y="270.6074">«dados»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="78" x="712" y="284.5762">FiltroVendas</text><line style="stroke: #333333; stroke-width: 1.5;" x1="643.5" x2="858.5" y1="292.4063" y2="292.4063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="174" x="648.5" y="307.5449">+identificador: Inteiro [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="205" x="648.5" y="321.5137">+situacao: SituacaoVenda [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="162" x="648.5" y="335.4824">+operador: Usuario [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="128" x="648.5" y="349.4512">+caixa: Inteiro [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="118" x="648.5" y="363.4199">+inicio: Data [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="202" x="648.5" y="377.3887">+fim: Data [0..1] {inicio &lt;= fim}</text><!--MD5=[1d1205b4fae8ddd379efd85257ff3cf8]
+class LinhaFormaPagamento--><rect fill="#FFFFFF" height="87.8438" id="LinhaFormaPagamento" style="stroke: #333333; stroke-width: 1.5;" width="150" x="273" y="874.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="53" x="321.5" y="891.1074">«dados»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="144" x="276" y="905.0762">LinhaFormaPagamento</text><line style="stroke: #333333; stroke-width: 1.5;" x1="274" x2="422" y1="912.9063" y2="912.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="88" x="279" y="928.0449">+forma: Texto</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="130" x="279" y="942.0137">+quantidade: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="97" x="279" y="955.9824">+valor: Decimal</text><!--MD5=[4cbe87623530d90844ebc604c35014ce]
+class SE--><rect fill="#FFFFFF" height="37.9375" id="SE" style="stroke: #333333; stroke-width: 1.5;" width="113" x="916.5" y="715.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58" x="944" y="732.1074">«serviço»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="107" x="919.5" y="746.0762">estoque.servicos</text><!--MD5=[ab379e9e493fa8e8da7f6ab346fb535e]
+class SC--><rect fill="#FFFFFF" height="37.9375" id="SC" style="stroke: #333333; stroke-width: 1.5;" width="116" x="1086" y="715.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58" x="1115" y="732.1074">«serviço»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="110" x="1089" y="746.0762">catalogo.servicos</text><path d="M939.5,906.9688 L939.5,930.9375 L1198.5,930.9375 L1198.5,916.9688 L1188.5,906.9688 L939.5,906.9688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M1188.5,906.9688 L1188.5,916.9688 L1198.5,916.9688 L1188.5,906.9688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="238" x="945.5" y="923.1074">Operações detalhadas na página 3/3.</text><path d="M910,286.4688 L910,352.3438 L1374,352.3438 L1374,296.4688 L1364,286.4688 L910,286.4688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M1364,286.4688 L1364,296.4688 L1374,296.4688 L1364,286.4688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="427" x="916" y="302.6074">Toda operação que grava (abrir_caixa, fechar_caixa, adicionar_item,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="443" x="916" y="316.5762">concluir_venda, registrar_devolucao) roda em uma transação atômica:</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="408" x="916" y="330.5449">se uma regra falhar, nada é gravado (RNF01). As regras violadas</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="307" x="916" y="344.5137">lançam ValidationError, exibido na tela pela view.</text><!--MD5=[a5ca4a58e45fd749f8d2849eea8b28ce]
+link SV to ResumoCaixa--><path d="M246.9,553.1988 C236.69,588.0988 226.77,621.9888 218.33,650.8087 " fill="none" id="SV-&gt;ResumoCaixa" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#333333" points="216.88,655.7688,223.24,648.2488,218.28,650.9688,215.56,646.0088,216.88,655.7688" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="37" x="238" y="609.1074">«cria»</text><!--MD5=[22abd4e6cb20dfd161e7265fb17e5595]
+link SV to RelatorioVendas--><path d="M420.81,553.1988 C439.36,593.9888 457.28,633.3988 471.62,664.9588 " fill="none" id="SV-&gt;RelatorioVendas" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#333333" points="473.71,669.5587,473.6272,659.7102,471.641,665.0069,466.3443,663.0207,473.71,669.5587" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="37" x="454" y="609.1074">«cria»</text><!--MD5=[e2ad939189e53dc7b6ce11465762d7fb]
+link ResumoCaixa to LinhaFormaPagamento--><path d="M260.2,814.2088 C276.57,833.5588 293.61,853.6888 308.27,871.0088 " fill="none" id="ResumoCaixa-&gt;LinhaFormaPagamento" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="311.55,874.8988,308.7885,865.445,308.3196,871.0824,302.6823,870.6135,311.55,874.8988" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="296.3448" y="864.1298">4</text><!--MD5=[65cc4b7eb1634f8920c6d27cca9c8794]
+link RelatorioVendas to LinhaFormaPagamento--><path d="M448.35,800.1388 C428.5,823.4488 406.44,849.3488 388.08,870.9088 " fill="none" id="RelatorioVendas-&gt;LinhaFormaPagamento" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="384.69,874.8888,393.5671,870.6229,387.9287,871.0794,387.4721,865.441,384.69,874.8888" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="382.5129" y="864.1181">4</text><!--MD5=[2a0a0d316640e96d04261345a4c744a0]
+link SE to N--><path d="M982.56,754.0888 C1002.29,791.4888 1047.02,876.2988 1063.1,906.7887 " fill="none" id="SE-N" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><!--MD5=[1193174b7c53373d5338ce6134668938]
+link SC to N--><path d="M1136.53,754.0888 C1121.12,791.4888 1086.17,876.2988 1073.61,906.7887 " fill="none" id="SC-N" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><!--MD5=[d1222ddeba0b06c36e80195727e701a5]
+link SV to FiltroVendas--><!--MD5=[d1222ddeba0b06c36e80195727e701a5]
+link SV to FiltroVendas--><path d="M592.18,157.2487 C628.92,173.2787 665.65,204.2188 702.39,250.0688 " fill="none" id="SV-&gt;FiltroVendas" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#333333" points="705.71,254.2687,703.2536,244.7311,702.6039,250.3505,696.9845,249.7008,705.71,254.2687" style="stroke: #333333; stroke-width: 1.0;"/><!--MD5=[06c24185b396a35330269fdf2f3b4f0a]
+link SV to SE--><path d="M592.31,537.0988 C600.89,542.5587 609.46,547.8688 618,552.9688 C685.78,593.4988 706.02,598.3388 780,625.9688 C823.47,642.1988 839.16,633.9388 880,655.9688 C907.42,670.7588 934.18,694.4788 951.9,711.8788 " fill="none" id="SV-&gt;SE" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#333333" points="955.76,715.7088,952.2059,706.5235,952.2173,712.1804,946.5605,712.1918,955.76,715.7088" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="37" x="885" y="595.1074">«usa»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="168" x="819.5" y="609.0762">registrar_baixa_por_venda,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="245" x="781" y="623.0449">registrar_recomposicao_por_devolucao</text><!--MD5=[f6a6aa38b35ecfcb510284896c42b8af]
+link SV to SC--><path d="M592.12,542.1188 C600.69,546.0387 609.32,549.6688 618,552.9688 C704.85,585.9688 953.86,537.7188 1035,582.9688 C1086.54,611.7088 1120,676.2288 1134.95,710.8988 " fill="none" id="SV-&gt;SC" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#333333" points="1137.03,715.7887,1137.1982,705.9413,1135.0776,711.1857,1129.8333,709.0651,1137.03,715.7887" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="37" x="1129" y="595.1074">«usa»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="122" x="1086.5" y="609.0762">buscar_por_codigo,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="125" x="1085" y="623.0449">pesquisar_produtos</text><!--MD5=[5f0ac02dfd473739ea084bd2ae230040]
+link SV to GMN23--><path d="M529.74,85.7888 C564.74,61.7687 602.8,42.0987 643,30.9688 C688.4,18.3887 809.6,18.3887 855,30.9688 C988.96,68.0688 1086.53,218.5588 1124.52,286.2188 " fill="none" id="SV-GMN23" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><!--MD5=[23c437f98246558ed5182ff679ba90a7]
+@startuml classes-servicos-vendas
+
+title Lojinha do DACOMP — Diagrama de classes de projeto (2/3): serviços de vendas
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageBorderColor #555555
+skinparam arrowColor #333333
+skinparam nodesep 50
+skinparam ranksep 60
+hide empty members
+hide circle
+
+package "vendas" {
+  class "vendas.servicos" as SV <<serviço>> {
+    .. Caixa ..
+    + obter_caixa_aberto(): Caixa [0..1]
+    + abrir_caixa(usuario: Usuario, valor_inicial: Decimal): Caixa
+    + resumir_caixa(caixa: Caixa): ResumoCaixa
+    + fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal,\n      justificativa: Texto = ""): Caixa
+    .. Venda ..
+    + obter_venda_em_andamento(usuario: Usuario, caixa: Caixa [0..1]): Venda [0..1]
+    + iniciar_ou_retomar_venda(usuario: Usuario): Venda
+    + localizar_produtos_para_venda(termo: Texto): Produto [0..10]
+    + adicionar_item(venda: Venda, produto: Produto, quantidade: Inteiro = 1): ItemVenda
+    + alterar_quantidade(item: ItemVenda, quantidade: Inteiro): ItemVenda
+    + remover_item(item: ItemVenda)
+    + cancelar_venda(venda: Venda): Venda
+    + verificar_finalizacao(venda: Venda)
+    + calcular_troco(total: Decimal, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): (valor_recebido: Decimal, troco: Decimal)
+    + concluir_venda(venda: Venda, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): Venda
+    - exigir_em_andamento(venda: Venda)
+    - validar_quantidade(produto: Produto, quantidade: Inteiro)
+    .. Devolução ..
+    + prazo_devolucao(venda: Venda): DataHora
+    + motivo_devolucao_bloqueada(venda: Venda, agora: DataHora [0..1]): Texto [0..1]
+    + registrar_devolucao(venda: Venda, quantidades: Mapa<id do ItemVenda, Inteiro>,\n      motivo: Texto, usuario: Usuario): Devolucao
+    .. Consulta e relatório ..
+    + filtrar_vendas(filtros: FiltroVendas): Venda [*]
+    + gerar_relatorio_vendas(filtros: FiltroVendas): RelatorioVendas
+  }
+  class ResumoCaixa <<dados>> {
+    + por_forma: LinhaFormaPagamento [4]
+    + quantidade_vendas: Inteiro
+    + total_vendido: Decimal
+    + quantidade_devolucoes: Inteiro
+    + total_estornado: Decimal
+    + total_liquido: Decimal
+    + valor_esperado: Decimal
+    + vendas_em_andamento: Inteiro
+  }
+  class RelatorioVendas <<dados>> {
+    + vendas: Venda [*]
+    + por_forma: LinhaFormaPagamento [4]
+    + quantidade_vendas: Inteiro
+    + total_vendido: Decimal
+    + total_estornado: Decimal
+    + total_liquido: Decimal
+  }
+  class FiltroVendas <<dados>> {
+    + identificador: Inteiro [0..1]
+    + situacao: SituacaoVenda [0..1]
+    + operador: Usuario [0..1]
+    + caixa: Inteiro [0..1]
+    + inicio: Data [0..1]
+    + fim: Data [0..1] {inicio <= fim}
+  }
+  class LinhaFormaPagamento <<dados>> {
+    + forma: Texto
+    + quantidade: Inteiro
+    + valor: Decimal
+  }
+  SV ..> ResumoCaixa : <<cria>>
+  SV ..> RelatorioVendas : <<cria>>
+  ResumoCaixa - -> "4" LinhaFormaPagamento
+  RelatorioVendas - -> "4" LinhaFormaPagamento
+}
+
+
+package "estoque" {
+  class "estoque.servicos" as SE <<serviço>>
+}
+package "catalogo" {
+  class "catalogo.servicos" as SC <<serviço>>
+}
+note "Operações detalhadas na página 3/3." as N
+SE .. N
+SC .. N
+
+SV -[hidden]right- FiltroVendas
+SV ..> FiltroVendas
+SV ..> SE : <<usa>>\nregistrar_baixa_por_venda,\nregistrar_recomposicao_por_devolucao
+SV ..> SC : <<usa>>\nbuscar_por_codigo,\npesquisar_produtos
+
+note right of SV
+  Toda operação que grava (abrir_caixa, fechar_caixa, adicionar_item,
+  concluir_venda, registrar_devolucao) roda em uma transação atômica:
+  se uma regra falhar, nada é gravado (RNF01). As regras violadas
+  lançam ValidationError, exibido na tela pela view.
+end note
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.12.1+1-1-24.04.4-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

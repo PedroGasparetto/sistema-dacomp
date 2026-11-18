@@ -1,0 +1,98 @@
+@startuml classes-servicos-estoque
+' Diagrama de classes de projeto — serviços (regras de negócio).
+' Cada servicos.py é um módulo Python; aqui aparece como classe <<serviço>> com
+' operações de classe. As views (controle) chamam essas operações.
+' Gerado a partir de contas/perfis.py e catalogo/, estoque/ e vendas/servicos.py.
+
+title Lojinha do DACOMP — Diagrama de classes de projeto (3/3): serviços de estoque, catálogo e contas
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageBorderColor #555555
+skinparam arrowColor #333333
+skinparam nodesep 50
+skinparam ranksep 60
+hide empty members
+hide circle
+
+package "estoque" {
+  class "estoque.servicos" as SE <<serviço>> {
+    + calcular_novo_saldo(tipo: TipoMovimentacao, saldo_atual: Inteiro, quantidade: Inteiro): Inteiro
+    + validar_movimentacao(tipo: TipoMovimentacao, produto: Produto, quantidade: Inteiro,\n      motivo: MotivoAjuste [0..1])
+    + registrar_movimentacao(tipo: TipoMovimentacao, produto: Produto, quantidade: Inteiro,\n      usuario: Usuario, motivo: MotivoAjuste [0..1], observacao: Texto = ""): Movimentacao
+    + registrar_baixa_por_venda(produto: Produto, quantidade: Inteiro, usuario: Usuario,\n      referencia: Texto): Movimentacao [0..1]
+    + registrar_recomposicao_por_devolucao(produto: Produto, quantidade: Inteiro,\n      usuario: Usuario, referencia: Texto): Movimentacao [0..1]
+    - gravar_movimentacao(produto: Produto, tipo: TipoMovimentacao, novo_saldo: Inteiro,\n      usuario: Usuario, motivo: MotivoAjuste [0..1], observacao: Texto): Movimentacao
+    + filtrar_movimentacoes(filtros: FiltroMovimentacoes): Movimentacao [*]
+    + gerar_relatorio_movimentacoes(filtros: FiltroMovimentacoes): RelatorioMovimentacoes
+  }
+  class RelatorioMovimentacoes <<dados>> {
+    + movimentacoes: Movimentacao [*]
+    + por_produto: LinhaProduto [*]
+    + totais: Mapa<TipoMovimentacao, Inteiro>
+  }
+  class FiltroMovimentacoes <<dados>> {
+    + termo_produto: Texto = ""
+    + tipo: TipoMovimentacao [0..1]
+    + inicio: Data [0..1]
+    + fim: Data [0..1] {inicio <= fim}
+  }
+  class LinhaProduto <<dados>> {
+    + codigo: Texto
+    + nome: Texto
+    + saldo_atual: Inteiro
+    + entrada: Inteiro
+    + ajuste: Inteiro
+    + venda: Inteiro
+    + devolucao: Inteiro
+    + variacao_total: Inteiro
+  }
+  SE ..> RelatorioMovimentacoes : <<cria>>
+  RelatorioMovimentacoes -right-> "*" LinhaProduto
+}
+
+package "catalogo" {
+  class "catalogo.servicos" as SC <<serviço>> {
+    + pesquisar_produtos(termo: Texto = "", por: PesquisarPor = NOME,\n      incluir_inativos: Booleano = falso, categoria: Categoria [0..1]): Produto [*]
+    + buscar_por_codigo(valor: Texto): Produto [0..1]
+  }
+  enum PesquisarPor <<enumeration>> {
+    NOME
+    CODIGO
+    CODIGO_BARRAS
+  }
+}
+
+package "contas" {
+  class "contas.perfis" as SP <<serviço>> {
+    + {static} DIRETORIA: Texto = "Diretoria" {readOnly}
+    + {static} BOLSISTA: Texto = "Bolsista" {readOnly}
+    + {static} VOLUNTARIO: Texto = "Voluntário" {readOnly}
+    + possui_algum_perfil(usuario: Usuario, perfis_permitidos: Texto [1..3]): Booleano
+  }
+  class PerfilRequeridoMixin <<controle>> {
+    + perfis_permitidos: Texto [1..3] = todos os perfis
+    + test_func(): Booleano
+  }
+  PerfilRequeridoMixin ..> SP : <<usa>>
+}
+
+
+SE -[hidden]right- FiltroMovimentacoes
+SE ..> FiltroMovimentacoes
+SE ..> SC : <<usa>>\nlê e bloqueia Produto\n(o formulário usa buscar_por_codigo)
+RelatorioMovimentacoes -[hidden]right- LinhaProduto
+LinhaProduto -[hidden]down- SC
+SC -[hidden]down- PerfilRequeridoMixin
+
+note bottom of SE
+  Único ponto que altera Produto.saldo_estoque.
+  Cada alteração cria uma Movimentacao.
+end note
+
+@enduml

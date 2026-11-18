@@ -1,0 +1,204 @@
+@startuml classes-entidades
+' Diagrama de classes de projeto — entidades (camada de modelo).
+' Gerado a partir de contas/, catalogo/, estoque/ e vendas/models.py.
+' Abra no Lucidchart (Inserir > PlantUML) ou no draw.io (Organizar > Inserir > Avançado > PlantUML).
+
+title Lojinha do DACOMP — Diagrama de classes de projeto (1/3): entidades
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageBorderColor #555555
+skinparam arrowColor #333333
+skinparam nodesep 45
+skinparam ranksep 60
+hide empty members
+hide circle
+
+package "contas" {
+  class "AbstractUser" as AbstractUser <<Django>> {
+    + username: Texto {único, máx. 150}
+    + first_name: Texto {máx. 150}
+    + last_name: Texto {máx. 150}
+    + email: Texto
+    + is_active: Booleano = verdadeiro
+    + is_superuser: Booleano = falso
+    + check_password(senha: Texto): Booleano
+  }
+  class Usuario {
+    + /nomes_perfis: Texto[0..3]
+    + get_full_name(): Texto
+  }
+  class "Perfil (Group)" as Perfil <<Django>> {
+    + name: Texto {Diretoria | Bolsista | Voluntário}
+  }
+  AbstractUser <|-- Usuario
+  Usuario "0..*" --> "0..3" Perfil : groups
+}
+
+package "catalogo" {
+  class Produto {
+    + codigo: Texto {único, máx. 20, maiúsculas}
+    + nome: Texto {máx. 120}
+    + categoria: Categoria = OUTRO
+    + descricao: Texto [0..1]
+    + marca: Texto [0..1] {máx. 60}
+    + fornecedor: Texto [0..1] {máx. 120}
+    + codigo_barras: Texto [0..1] {único, máx. 50}
+    + unidade: Unidade = UNIDADE
+    {field} + preco_unitario: Decimal(8,2) {>= 0}
+    {field} + preco_custo: Decimal(8,2) [0..1] {>= 0}
+    + ativo: Booleano = verdadeiro
+    + controla_estoque: Booleano = verdadeiro
+    + saldo_estoque: Inteiro = 0 {>= 0, somente leitura}
+    + criado_em: DataHora {automático}
+    + alterado_em: DataHora {automático}
+    + /lucro_unitario: Decimal [0..1]
+    + /margem_percentual: Decimal [0..1]
+    + get_absolute_url(): Texto
+  }
+  enum Categoria <<enumeration>> {
+    CAFE
+    BEBIDA
+    LANCHE
+    DOCE
+    OUTRO
+  }
+  enum Unidade <<enumeration>> {
+    UN
+    COPO
+    FATIA
+    PCT
+    CX
+    DZ
+    KG
+    L
+  }
+}
+
+package "estoque" {
+  class Movimentacao <<imutável>> {
+    + tipo: TipoMovimentacao
+    + quantidade_anterior: Inteiro {>= 0}
+    + variacao: Inteiro
+    + quantidade_resultante: Inteiro {>= 0}
+    + motivo: MotivoAjuste [0..1] {obrigatório no ajuste}
+    + observacao: Texto [0..1] {máx. 255}
+    + realizada_em: DataHora {automático}
+    + get_absolute_url(): Texto
+  }
+  enum TipoMovimentacao <<enumeration>> {
+    ENTRADA
+    AJUSTE
+    VENDA
+    DEVOLUCAO
+  }
+  enum MotivoAjuste <<enumeration>> {
+    PERDA
+    VENCIMENTO
+    AVARIA
+    CONTAGEM
+    OUTRO
+  }
+}
+
+package "vendas" {
+  class Caixa {
+    + situacao: SituacaoCaixa = ABERTO {no máximo 1 aberto}
+    {field} + valor_inicial: Decimal(10,2) {>= 0}
+    + aberto_em: DataHora {automático}
+    + fechado_em: DataHora [0..1]
+    {field} + valor_esperado: Decimal(10,2) [0..1]
+    {field} + valor_contado: Decimal(10,2) [0..1] {>= 0}
+    + justificativa: Texto [0..1] {máx. 255, obrigatória se houver diferença}
+    + /diferenca: Decimal [0..1]
+  }
+  class Venda {
+    + situacao: SituacaoVenda = EM_ANDAMENTO
+    + iniciada_em: DataHora {automático}
+    + concluida_em: DataHora [0..1]
+    {field} + total: Decimal(10,2) = 0
+    + forma_pagamento: FormaPagamento [0..1]
+    {field} + valor_recebido: Decimal(10,2) [0..1]
+    {field} + troco: Decimal(10,2) [0..1]
+    + /total_itens: Decimal
+    + /total_devolvido: Decimal
+    + /total_liquido: Decimal
+    + get_absolute_url(): Texto
+  }
+  class ItemVenda {
+    + quantidade: Inteiro {> 0}
+    {field} + preco_unitario: Decimal(8,2) {preço praticado na venda}
+    + /subtotal: Decimal
+    + /quantidade_devolvida: Inteiro
+    + /quantidade_devolvivel: Inteiro
+  }
+  class Devolucao {
+    + motivo: Texto {máx. 255, obrigatório}
+    + forma_estorno: FormaPagamento {= forma da venda}
+    {field} + valor_estornado: Decimal(10,2) {> 0}
+    + realizada_em: DataHora {automático}
+    + get_absolute_url(): Texto
+  }
+  class ItemDevolucao {
+    + quantidade: Inteiro {> 0, <= quantidade devolvível}
+    + /subtotal: Decimal
+  }
+  enum SituacaoCaixa <<enumeration>> {
+    ABERTO
+    FECHADO
+  }
+  enum SituacaoVenda <<enumeration>> {
+    EM_ANDAMENTO
+    CONCLUIDA
+    CANCELADA
+  }
+  enum FormaPagamento <<enumeration>> {
+    DINHEIRO
+    PIX
+    CREDITO
+    DEBITO
+  }
+}
+
+note bottom of ItemVenda
+  {único: venda + produto}
+  Um produto aparece uma vez por venda;
+  repetir o produto soma a quantidade.
+end note
+note bottom of ItemDevolucao
+  {único: devolucao + item_venda}
+end note
+
+' Posicionamento (links invisíveis, só para o layout).
+Categoria -[hidden]right- Unidade
+SituacaoCaixa -[hidden]right- SituacaoVenda
+SituacaoVenda -[hidden]right- FormaPagamento
+TipoMovimentacao -[hidden]right- MotivoAjuste
+Produto -[hidden]down- Categoria
+Movimentacao -[hidden]down- TipoMovimentacao
+ItemDevolucao -[hidden]down- SituacaoCaixa
+
+' Associações. Seta só de um lado: o código só navega naquele sentido
+' (related_name="+" ou acesso reverso não usado). Sem seta: navegável nos dois sentidos.
+Caixa "1" -- "0..*" Venda : vendas
+Venda "1" *-- "0..*" ItemVenda : itens
+ItemVenda "0..*" --> "1" Produto : produto
+Venda "1" -- "0..*" Devolucao : devolucoes
+Caixa "1" -- "0..*" Devolucao : devolucoes\n(caixa do estorno)
+Devolucao "1" *-- "1..*" ItemDevolucao : itens
+ItemDevolucao "0..*" -- "1" ItemVenda : item_venda / devolucoes
+Movimentacao "0..*" --> "1" Produto : produto
+
+Produto "0..*" --> "1" Usuario : criado_por,\nalterado_por
+Movimentacao "0..*" --> "1" Usuario : responsavel
+Caixa "0..*" --> "1" Usuario : aberto_por
+Caixa "0..*" --> "0..1" Usuario : fechado_por
+Venda "0..*" --> "1" Usuario : operador
+Devolucao "0..*" --> "1" Usuario : operador
+
+@enduml

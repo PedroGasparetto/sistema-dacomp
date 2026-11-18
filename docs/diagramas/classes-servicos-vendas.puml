@@ -1,0 +1,111 @@
+@startuml classes-servicos-vendas
+' Diagrama de classes de projeto — serviços (regras de negócio).
+' Cada servicos.py é um módulo Python; aqui aparece como classe <<serviço>> com
+' operações de classe. As views (controle) chamam essas operações.
+' Gerado a partir de contas/perfis.py e catalogo/, estoque/ e vendas/servicos.py.
+
+title Lojinha do DACOMP — Diagrama de classes de projeto (2/3): serviços de vendas
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageBorderColor #555555
+skinparam arrowColor #333333
+skinparam nodesep 50
+skinparam ranksep 60
+hide empty members
+hide circle
+
+package "vendas" {
+  class "vendas.servicos" as SV <<serviço>> {
+    .. Caixa ..
+    + obter_caixa_aberto(): Caixa [0..1]
+    + abrir_caixa(usuario: Usuario, valor_inicial: Decimal): Caixa
+    + resumir_caixa(caixa: Caixa): ResumoCaixa
+    + fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal,\n      justificativa: Texto = ""): Caixa
+    .. Venda ..
+    + obter_venda_em_andamento(usuario: Usuario, caixa: Caixa [0..1]): Venda [0..1]
+    + iniciar_ou_retomar_venda(usuario: Usuario): Venda
+    + localizar_produtos_para_venda(termo: Texto): Produto [0..10]
+    + adicionar_item(venda: Venda, produto: Produto, quantidade: Inteiro = 1): ItemVenda
+    + alterar_quantidade(item: ItemVenda, quantidade: Inteiro): ItemVenda
+    + remover_item(item: ItemVenda)
+    + cancelar_venda(venda: Venda): Venda
+    + verificar_finalizacao(venda: Venda)
+    + calcular_troco(total: Decimal, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): (valor_recebido: Decimal, troco: Decimal)
+    + concluir_venda(venda: Venda, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): Venda
+    - exigir_em_andamento(venda: Venda)
+    - validar_quantidade(produto: Produto, quantidade: Inteiro)
+    .. Devolução ..
+    + prazo_devolucao(venda: Venda): DataHora
+    + motivo_devolucao_bloqueada(venda: Venda, agora: DataHora [0..1]): Texto [0..1]
+    + registrar_devolucao(venda: Venda, quantidades: Mapa<id do ItemVenda, Inteiro>,\n      motivo: Texto, usuario: Usuario): Devolucao
+    .. Consulta e relatório ..
+    + filtrar_vendas(filtros: FiltroVendas): Venda [*]
+    + gerar_relatorio_vendas(filtros: FiltroVendas): RelatorioVendas
+  }
+  class ResumoCaixa <<dados>> {
+    + por_forma: LinhaFormaPagamento [4]
+    + quantidade_vendas: Inteiro
+    + total_vendido: Decimal
+    + quantidade_devolucoes: Inteiro
+    + total_estornado: Decimal
+    + total_liquido: Decimal
+    + valor_esperado: Decimal
+    + vendas_em_andamento: Inteiro
+  }
+  class RelatorioVendas <<dados>> {
+    + vendas: Venda [*]
+    + por_forma: LinhaFormaPagamento [4]
+    + quantidade_vendas: Inteiro
+    + total_vendido: Decimal
+    + total_estornado: Decimal
+    + total_liquido: Decimal
+  }
+  class FiltroVendas <<dados>> {
+    + identificador: Inteiro [0..1]
+    + situacao: SituacaoVenda [0..1]
+    + operador: Usuario [0..1]
+    + caixa: Inteiro [0..1]
+    + inicio: Data [0..1]
+    + fim: Data [0..1] {inicio <= fim}
+  }
+  class LinhaFormaPagamento <<dados>> {
+    + forma: Texto
+    + quantidade: Inteiro
+    + valor: Decimal
+  }
+  SV ..> ResumoCaixa : <<cria>>
+  SV ..> RelatorioVendas : <<cria>>
+  ResumoCaixa --> "4" LinhaFormaPagamento
+  RelatorioVendas --> "4" LinhaFormaPagamento
+}
+
+
+package "estoque" {
+  class "estoque.servicos" as SE <<serviço>>
+}
+package "catalogo" {
+  class "catalogo.servicos" as SC <<serviço>>
+}
+note "Operações detalhadas na página 3/3." as N
+SE .. N
+SC .. N
+
+SV -[hidden]right- FiltroVendas
+SV ..> FiltroVendas
+SV ..> SE : <<usa>>\nregistrar_baixa_por_venda,\nregistrar_recomposicao_por_devolucao
+SV ..> SC : <<usa>>\nbuscar_por_codigo,\npesquisar_produtos
+
+note right of SV
+  Toda operação que grava (abrir_caixa, fechar_caixa, adicionar_item,
+  concluir_venda, registrar_devolucao) roda em uma transação atômica:
+  se uma regra falhar, nada é gravado (RNF01). As regras violadas
+  lançam ValidationError, exibido na tela pela view.
+end note
+
+@enduml

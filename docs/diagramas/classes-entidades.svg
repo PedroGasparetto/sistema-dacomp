@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="1856px" preserveAspectRatio="none" style="width:2466px;height:1856px;" version="1.1" viewBox="0 0 2466 1856" width="2466px" zoomAndPan="magnify"><defs/><g><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="445" x="1022" y="11.1387">Lojinha do DACOMP — Diagrama de classes de projeto (1/3): entidades</text><!--MD5=[d8def050079d52e9a3de024f5d19a0c3]
+cluster contas--><rect fill="#FFFFFF" height="653.5" style="stroke: #555555; stroke-width: 1.5;" width="342" x="418" y="1192.4688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="48" x="565" y="1205.6074">contas</text><!--MD5=[85bb1748ff35eef89f9a7ca76c8454bc]
+cluster catalogo--><rect fill="#FFFFFF" height="586" style="stroke: #555555; stroke-width: 1.5;" width="378" x="2077" y="1122.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="62" x="2235" y="1136.1074">catalogo</text><!--MD5=[eab1979dcb984afa63d4db94eb3206d9]
+cluster estoque--><rect fill="#FFFFFF" height="510.5" style="stroke: #555555; stroke-width: 1.5;" width="372" x="22" y="863.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="59" x="178.5" y="877.1074">estoque</text><!--MD5=[dedf270e8f1cdd38fbe80acbc2800442]
+cluster vendas--><rect fill="#FFFFFF" height="1008" style="stroke: #555555; stroke-width: 1.5;" width="874" x="834" y="37.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="51" x="1245.5" y="51.1074">vendas</text><!--MD5=[8bc087b45dd58ab9ded14528c53be1f4]
+class AbstractUser--><rect fill="#FFFFFF" height="151.7188" id="AbstractUser" style="stroke: #333333; stroke-width: 1.5;" width="283" x="434.5" y="1224.4688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58" x="547" y="1240.6074">«Django»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="82" x="535" y="1254.5762">AbstractUser</text><line style="stroke: #333333; stroke-width: 1.5;" x1="435.5" x2="716.5" y1="1262.4063" y2="1262.4063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="234" x="440.5" y="1277.5449">+username: Texto {único, máx. 150}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="194" x="440.5" y="1291.5137">+first_name: Texto {máx. 150}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="193" x="440.5" y="1305.4824">+last_name: Texto {máx. 150}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="85" x="440.5" y="1319.4512">+email: Texto</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="215" x="440.5" y="1333.4199">+is_active: Booleano = verdadeiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="205" x="440.5" y="1347.3887">+is_superuser: Booleano = falso</text><line style="stroke: #333333; stroke-width: 1.5;" x1="435.5" x2="716.5" y1="1354.2188" y2="1354.2188"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="271" x="440.5" y="1369.3574">+check_password(senha: Texto): Booleano</text><!--MD5=[35a64b983c79880384a2fd9b61f0c24b]
+class Usuario--><rect fill="#FFFFFF" height="67.9063" id="Usuario" style="stroke: #333333; stroke-width: 1.5;" width="185" x="559.5" y="1579.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="48" x="628" y="1596.1074">Usuario</text><line style="stroke: #333333; stroke-width: 1.5;" x1="560.5" x2="743.5" y1="1603.9375" y2="1603.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="173" x="565.5" y="1619.0762">+/nomes_perfis: Texto[0..3]</text><line style="stroke: #333333; stroke-width: 1.5;" x1="560.5" x2="743.5" y1="1625.9063" y2="1625.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="148" x="565.5" y="1641.0449">+get_full_name(): Texto</text><!--MD5=[b0d447918147c1f7edd71021b59528c0]
+class Perfil--><rect fill="#FFFFFF" height="59.9063" id="Perfil" style="stroke: #333333; stroke-width: 1.5;" width="310" x="434" y="1769.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="58" x="560" y="1786.1074">«Django»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="83" x="547.5" y="1800.0762">Perfil (Group)</text><line style="stroke: #333333; stroke-width: 1.5;" x1="435" x2="743" y1="1807.9063" y2="1807.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="298" x="440" y="1823.0449">+name: Texto {Diretoria | Bolsista | Voluntário}</text><!--MD5=[d4dacc50d49878ba7c621dfc80a2e1ce]
+class Produto--><rect fill="#FFFFFF" height="291.4063" id="Produto" style="stroke: #333333; stroke-width: 1.5;" width="347" x="2092.5" y="1154.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="2241" y="1171.1074">Produto</text><line style="stroke: #333333; stroke-width: 1.5;" x1="2093.5" x2="2438.5" y1="1178.9375" y2="1178.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="283" x="2098.5" y="1194.0762">+codigo: Texto {único, máx. 20, maiúsculas}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="164" x="2098.5" y="1208.0449">+nome: Texto {máx. 120}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="199" x="2098.5" y="1222.0137">+categoria: Categoria = OUTRO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="151" x="2098.5" y="1235.9824">+descricao: Texto [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="198" x="2098.5" y="1249.9512">+marca: Texto [0..1] {máx. 60}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="236" x="2098.5" y="1263.9199">+fornecedor: Texto [0..1] {máx. 120}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="290" x="2098.5" y="1277.8887">+codigo_barras: Texto [0..1] {único, máx. 50}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="194" x="2098.5" y="1291.8574">+unidade: Unidade = UNIDADE</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="239" x="2098.5" y="1305.8262">+preco_unitario: Decimal(8,2) {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="264" x="2098.5" y="1319.7949">+preco_custo: Decimal(8,2) [0..1] {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="192" x="2098.5" y="1333.7637">+ativo: Booleano = verdadeiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="272" x="2098.5" y="1347.7324">+controla_estoque: Booleano = verdadeiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="335" x="2098.5" y="1361.7012">+saldo_estoque: Inteiro = 0 {&gt;= 0, somente leitura}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="233" x="2098.5" y="1375.6699">+criado_em: DataHora {automático}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="247" x="2098.5" y="1389.6387">+alterado_em: DataHora {automático}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="194" x="2098.5" y="1403.6074">+/lucro_unitario: Decimal [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="234" x="2098.5" y="1417.5762">+/margem_percentual: Decimal [0..1]</text><line style="stroke: #333333; stroke-width: 1.5;" x1="2093.5" x2="2438.5" y1="1424.4063" y2="1424.4063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="166" x="2098.5" y="1439.5449">+get_absolute_url(): Texto</text><!--MD5=[7e1ce8ab2bf669717f28e918f4971b9a]
+class Categoria--><rect fill="#FFFFFF" height="115.7813" id="Categoria" style="stroke: #333333; stroke-width: 1.5;" width="96" x="2202" y="1555.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="2203" y="1572.1074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="61" x="2219.5" y="1586.0762">Categoria</text><line style="stroke: #333333; stroke-width: 1.5;" x1="2203" x2="2297" y1="1593.9063" y2="1593.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="31" x="2208" y="1609.0449">CAFE</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="44" x="2208" y="1623.0137">BEBIDA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="48" x="2208" y="1636.9824">LANCHE</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="34" x="2208" y="1650.9512">DOCE</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="42" x="2208" y="1664.9199">OUTRO</text><!--MD5=[815f0720af79e8b9b02a33bedbb94dd9]
+class Unidade--><rect fill="#FFFFFF" height="157.6875" id="Unidade" style="stroke: #333333; stroke-width: 1.5;" width="96" x="2343" y="1534.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="2344" y="1551.1074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="52" x="2365" y="1565.0762">Unidade</text><line style="stroke: #333333; stroke-width: 1.5;" x1="2344" x2="2438" y1="1572.9063" y2="1572.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="18" x="2349" y="1588.0449">UN</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="34" x="2349" y="1602.0137">COPO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="33" x="2349" y="1615.9824">FATIA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="23" x="2349" y="1629.9512">PCT</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="15" x="2349" y="1643.9199">CX</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="18" x="2349" y="1657.8887">DZ</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="16" x="2349" y="1671.8574">KG</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="6" x="2349" y="1685.8262">L</text><!--MD5=[03d4fdf97f98ff8242709a955e680d05]
+class Movimentacao--><rect fill="#FFFFFF" height="165.6875" id="Movimentacao" style="stroke: #333333; stroke-width: 1.5;" width="340" x="38" y="895.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="66" x="175" y="912.1074">«imutável»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="90" x="163" y="926.0762">Movimentacao</text><line style="stroke: #333333; stroke-width: 1.5;" x1="39" x2="377" y1="933.9063" y2="933.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="158" x="44" y="949.0449">+tipo: TipoMovimentacao</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="238" x="44" y="963.0137">+quantidade_anterior: Inteiro {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="111" x="44" y="976.9824">+variacao: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="253" x="44" y="990.9512">+quantidade_resultante: Inteiro {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="328" x="44" y="1004.9199">+motivo: MotivoAjuste [0..1] {obrigatório no ajuste}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="240" x="44" y="1018.8887">+observacao: Texto [0..1] {máx. 255}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="250" x="44" y="1032.8574">+realizada_em: DataHora {automático}</text><line style="stroke: #333333; stroke-width: 1.5;" x1="39" x2="377" y1="1039.6875" y2="1039.6875"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="166" x="44" y="1054.8262">+get_absolute_url(): Texto</text><!--MD5=[836bcc89a1f2c20f93e73c9a03f8092e]
+class TipoMovimentacao--><rect fill="#FFFFFF" height="101.8125" id="TipoMovimentacao" style="stroke: #333333; stroke-width: 1.5;" width="122" x="115" y="1249.4688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="129" y="1265.6074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="116" x="118" y="1279.5762">TipoMovimentacao</text><line style="stroke: #333333; stroke-width: 1.5;" x1="116" x2="236" y1="1287.4063" y2="1287.4063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="57" x="121" y="1302.5449">ENTRADA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="43" x="121" y="1316.5137">AJUSTE</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="42" x="121" y="1330.4824">VENDA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="74" x="121" y="1344.4512">DEVOLUCAO</text><!--MD5=[8239ec196ea046838712a215a426925b]
+class MotivoAjuste--><rect fill="#FFFFFF" height="115.7813" id="MotivoAjuste" style="stroke: #333333; stroke-width: 1.5;" width="96" x="282" y="1242.4688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="283" y="1258.6074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="79" x="290.5" y="1272.5762">MotivoAjuste</text><line style="stroke: #333333; stroke-width: 1.5;" x1="283" x2="377" y1="1280.4063" y2="1280.4063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="41" x="288" y="1295.5449">PERDA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="79" x="288" y="1309.5137">VENCIMENTO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="43" x="288" y="1323.4824">AVARIA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="68" x="288" y="1337.4512">CONTAGEM</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="42" x="288" y="1351.4199">OUTRO</text><!--MD5=[447a8284ea40244450a8207cb9ea5eb5]
+class Caixa--><rect fill="#FFFFFF" height="143.7188" id="Caixa" style="stroke: #333333; stroke-width: 1.5;" width="455" x="1237.5" y="69.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="33" x="1448.5" y="86.1074">Caixa</text><line style="stroke: #333333; stroke-width: 1.5;" x1="1238.5" x2="1691.5" y1="93.9375" y2="93.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="371" x="1243.5" y="109.0762">+situacao: SituacaoCaixa = ABERTO {no máximo 1 aberto}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="228" x="1243.5" y="123.0449">+valor_inicial: Decimal(10,2) {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="236" x="1243.5" y="137.0137">+aberto_em: DataHora {automático}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="192" x="1243.5" y="150.9824">+fechado_em: DataHora [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="239" x="1243.5" y="164.9512">+valor_esperado: Decimal(10,2) [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="283" x="1243.5" y="178.9199">+valor_contado: Decimal(10,2) [0..1] {&gt;= 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="443" x="1243.5" y="192.8887">+justificativa: Texto [0..1] {máx. 255, obrigatória se houver diferença}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="168" x="1243.5" y="206.8574">+/diferenca: Decimal [0..1]</text><!--MD5=[06a1f3f399e1919b66bb5cca56e2f0b6]
+class Venda--><rect fill="#FFFFFF" height="193.625" id="Venda" style="stroke: #333333; stroke-width: 1.5;" width="298" x="1326" y="288.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="40" x="1455" y="305.1074">Venda</text><line style="stroke: #333333; stroke-width: 1.5;" x1="1327" x2="1623" y1="312.9375" y2="312.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="286" x="1332" y="328.0762">+situacao: SituacaoVenda = EM_ANDAMENTO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="242" x="1332" y="342.0449">+iniciada_em: DataHora {automático}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="201" x="1332" y="356.0137">+concluida_em: DataHora [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="160" x="1332" y="369.9824">+total: Decimal(10,2) = 0</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="281" x="1332" y="383.9512">+forma_pagamento: FormaPagamento [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="234" x="1332" y="397.9199">+valor_recebido: Decimal(10,2) [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="176" x="1332" y="411.8887">+troco: Decimal(10,2) [0..1]</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="137" x="1332" y="425.8574">+/total_itens: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="164" x="1332" y="439.8262">+/total_devolvido: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="147" x="1332" y="453.7949">+/total_liquido: Decimal</text><line style="stroke: #333333; stroke-width: 1.5;" x1="1327" x2="1623" y1="460.625" y2="460.625"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="166" x="1332" y="475.7637">+get_absolute_url(): Texto</text><!--MD5=[647f1aa02a9013a1bbca3ef7c035fd70]
+class ItemVenda--><rect fill="#FFFFFF" height="101.8125" id="ItemVenda" style="stroke: #333333; stroke-width: 1.5;" width="381" x="1311.5" y="927.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="67" x="1468.5" y="944.1074">ItemVenda</text><line style="stroke: #333333; stroke-width: 1.5;" x1="1312.5" x2="1691.5" y1="951.9375" y2="951.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="172" x="1317.5" y="967.0762">+quantidade: Inteiro {&gt; 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="369" x="1317.5" y="981.0449">+preco_unitario: Decimal(8,2) {preço praticado na venda}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="123" x="1317.5" y="995.0137">+/subtotal: Decimal</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="198" x="1317.5" y="1008.9824">+/quantidade_devolvida: Inteiro</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="199" x="1317.5" y="1022.9512">+/quantidade_devolvivel: Inteiro</text><!--MD5=[d45d803bc12e8e69e59673e224deb637]
+class Devolucao--><rect fill="#FFFFFF" height="109.8125" id="Devolucao" style="stroke: #333333; stroke-width: 1.5;" width="364" x="897" y="557.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="65" x="1046.5" y="574.1074">Devolucao</text><line style="stroke: #333333; stroke-width: 1.5;" x1="898" x2="1260" y1="581.9375" y2="581.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="247" x="903" y="597.0762">+motivo: Texto {máx. 255, obrigatório}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="352" x="903" y="611.0449">+forma_estorno: FormaPagamento {= forma da venda}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="248" x="903" y="625.0137">+valor_estornado: Decimal(10,2) {&gt; 0}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="250" x="903" y="638.9824">+realizada_em: DataHora {automático}</text><line style="stroke: #333333; stroke-width: 1.5;" x1="898" x2="1260" y1="645.8125" y2="645.8125"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="166" x="903" y="660.9512">+get_absolute_url(): Texto</text><!--MD5=[c2d11835c5640b0ca752c698251e2638]
+class ItemDevolucao--><rect fill="#FFFFFF" height="59.9063" id="ItemDevolucao" style="stroke: #333333; stroke-width: 1.5;" width="351" x="857.5" y="742.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="92" x="987" y="759.1074">ItemDevolucao</text><line style="stroke: #333333; stroke-width: 1.5;" x1="858.5" x2="1207.5" y1="766.9375" y2="766.9375"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="339" x="863.5" y="782.0762">+quantidade: Inteiro {&gt; 0, &lt;= quantidade devolvível}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="123" x="863.5" y="796.0449">+/subtotal: Decimal</text><!--MD5=[bcdc1f57928b3c73783faf0eedc62f4e]
+class SituacaoCaixa--><rect fill="#FFFFFF" height="73.875" id="SituacaoCaixa" style="stroke: #333333; stroke-width: 1.5;" width="96" x="850" y="941.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="851" y="958.1074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="88" x="854" y="972.0762">SituacaoCaixa</text><line style="stroke: #333333; stroke-width: 1.5;" x1="851" x2="945" y1="979.9063" y2="979.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="48" x="856" y="995.0449">ABERTO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="58" x="856" y="1009.0137">FECHADO</text><!--MD5=[09ad52805bd309fc0b1fc3b678f309d9]
+class SituacaoVenda--><rect fill="#FFFFFF" height="87.8438" id="SituacaoVenda" style="stroke: #333333; stroke-width: 1.5;" width="113" x="991.5" y="934.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="1001" y="951.1074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="95" x="1000.5" y="965.0762">SituacaoVenda</text><line style="stroke: #333333; stroke-width: 1.5;" x1="992.5" x2="1103.5" y1="972.9063" y2="972.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="101" x="997.5" y="988.0449">EM_ANDAMENTO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="69" x="997.5" y="1002.0137">CONCLUIDA</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="72" x="997.5" y="1015.9824">CANCELADA</text><!--MD5=[9c1565ced55bd860ef89a5aea26a54ce]
+class FormaPagamento--><rect fill="#FFFFFF" height="101.8125" id="FormaPagamento" style="stroke: #333333; stroke-width: 1.5;" width="117" x="1149.5" y="927.9688"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" font-style="italic" lengthAdjust="spacingAndGlyphs" textLength="94" x="1161" y="944.1074">«enumeration»</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="111" x="1152.5" y="958.0762">FormaPagamento</text><line style="stroke: #333333; stroke-width: 1.5;" x1="1150.5" x2="1265.5" y1="965.9063" y2="965.9063"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="58" x="1155.5" y="981.0449">DINHEIRO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="18" x="1155.5" y="995.0137">PIX</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="52" x="1155.5" y="1008.9824">CREDITO</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="44" x="1155.5" y="1022.9512">DEBITO</text><path d="M1364,1274.4688 L1364,1326.375 A0,0 0 0 0 1364,1326.375 L1640,1326.375 A0,0 0 0 0 1640,1326.375 L1640,1284.4688 L1630,1274.4688 L1506,1274.4688 L1502,1030.2388 L1498,1274.4688 L1364,1274.4688 A0,0 0 0 0 1364,1274.4688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M1630,1274.4688 L1630,1284.4688 L1640,1284.4688 L1630,1274.4688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="164" x="1370" y="1290.6074">{único: venda + produto}</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="255" x="1370" y="1304.5762">Um produto aparece uma vez por venda;</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="238" x="1370" y="1318.5449">repetir o produto soma a quantidade.</text><path d="M573,966.9688 L573,990.9375 L805,990.9375 L805,976.9688 L795,966.9688 L573,966.9688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><path d="M795,966.9688 L795,976.9688 L805,976.9688 L795,966.9688 " fill="#FBFB77" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="211" x="579" y="983.1074">{único: devolucao + item_venda}</text><!--MD5=[82c531efa0d33001e34e63927fa95b55]
+reverse link AbstractUser to Usuario--><path d="M599.1,1396.1388 C614.33,1458.5688 633.36,1536.5688 643.94,1579.9488 " fill="none" id="AbstractUser&lt;-Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="none" points="592.24,1397.5688,594.3,1376.4788,605.84,1394.2488,592.24,1397.5688" style="stroke: #333333; stroke-width: 1.0;"/><!--MD5=[0e2bf77ac386a753523e351e9e60af28]
+link Usuario to Perfil--><path d="M640.59,1648.2888 C629.27,1681.3587 612,1731.7788 600.61,1765.0588 " fill="none" id="Usuario-&gt;Perfil" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="598.98,1769.8388,605.6732,1762.6137,600.5954,1765.1069,598.1022,1760.0291,598.98,1769.8388" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="44" x="615" y="1737.1074">groups</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="614.4582" y="1667.0516">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="24" x="574.4876" y="1759.1784">0..3</text><!--MD5=[ec36245841a12edfebc607bdca992ac3]
+link ItemDevolucao to GMN28--><path d="M943.76,803.0587 C907.49,816.6788 865.98,834.6388 831,855.9688 C776.34,889.3088 721.71,943.5788 699.44,966.8288 " fill="none" id="ItemDevolucao-GMN28" style="stroke: #333333; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><!--MD5=[9fb5e883520558f0fe381fdbcf6cf261]
+link Categoria to Unidade--><!--MD5=[84515e94344bacc86075ca69032f55eb]
+link SituacaoCaixa to SituacaoVenda--><!--MD5=[fbe31c281f4f627ce620e7d0ffd77f0b]
+link SituacaoVenda to FormaPagamento--><!--MD5=[b5871664f17e569090ceb2040c9042d4]
+link TipoMovimentacao to MotivoAjuste--><!--MD5=[4d42aba6e16004239783febd3181205e]
+link Produto to Categoria--><!--MD5=[f8823a97d486d505a5eec3ff012e3cfe]
+link Movimentacao to TipoMovimentacao--><!--MD5=[500b1b4e8fd2fd52cd4d92f8bca10fbb]
+link ItemDevolucao to SituacaoCaixa--><!--MD5=[ed68d77eb0bfa81432cf3b1337b7edcc]
+link Caixa to Venda--><path d="M1467.95,214.2687 C1468.91,237.5487 1469.99,263.8087 1471.02,288.6188 " fill="none" id="Caixa-Venda" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="45" x="1470" y="256.1074">vendas</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1459.8532" y="232.7294">1</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1447.7795" y="278.213">0..*</text><!--MD5=[3db68a1764e8725cb9fb1efc8cb48907]
+reverse link Venda to ItemVenda--><path d="M1480.01,496.5787 C1485.88,625.1488 1495.37,832.7488 1499.7,927.6788 " fill="none" id="Venda&lt;-ItemVenda" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="1479.4,483.2388,1475.6744,489.4129,1479.9407,495.2266,1483.6663,489.0524,1479.4,483.2388" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="31" x="1490" y="710.1074">itens</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1471.4281" y="501.721">1</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1475.6634" y="917.0569">0..*</text><!--MD5=[78b02ff3bfef5e90cc84982d1930f5c0]
+link ItemVenda to Produto--><path d="M1692.68,1007.1188 C1782.03,1024.2388 1888.3,1051.0788 1978,1091.9688 C2015.45,1109.0388 2052.96,1131.3288 2087.95,1154.9488 " fill="none" id="ItemVenda-&gt;Produto" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="2092.21,1157.8288,2087.0066,1149.4667,2088.0719,1155.0223,2082.5163,1156.0876,2092.21,1157.8288" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="2004" y="1104.1074">produto</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1700.5581" y="1006.1257">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="2076.7095" y="1149.6874">1</text><!--MD5=[c5e4e5e65403daf7ae15e58f2b44ba88]
+link Venda to Devolucao--><path d="M1325.85,471.7088 C1274.99,500.6088 1219.54,532.1188 1174.1,557.9388 " fill="none" id="Venda-Devolucao" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="71" x="1242" y="525.1074">devolucoes</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1309.9532" y="473.9679">1</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1164.4522" y="547.1251">0..*</text><!--MD5=[f1c28a0cc2020835c61ae05bf2c207db]
+link Caixa to Devolucao--><path d="M1280.74,214.0687 C1246.01,234.0988 1212.61,258.8688 1187,288.9688 C1120.33,367.3287 1094.4,488.3888 1084.62,557.8988 " fill="none" id="Caixa-Devolucao" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="71" x="1210" y="383.6074">devolucoes</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="115" x="1188" y="397.5762">(caixa do estorno)</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1254.7965" y="232.7586">1</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1061.8298" y="547.0792">0..*</text><!--MD5=[995d5458607dc8b74b5c235cb3872e48]
+reverse link Devolucao to ItemDevolucao--><path d="M1059.52,680.8888 C1053.22,702.5288 1046.56,725.3988 1041.49,742.8187 " fill="none" id="Devolucao&lt;-ItemDevolucao" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="1063.17,668.3387,1057.6482,672.9766,1059.8054,679.8574,1065.3273,675.2196,1063.17,668.3387" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="31" x="1054" y="710.1074">itens</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1052.7532" y="687.0883">1</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1018.8782" y="732.1535">1..*</text><!--MD5=[728f683ed01841b01f5252c8624c21b4]
+link ItemDevolucao to ItemVenda--><path d="M1140.73,802.9788 C1187.17,816.8888 1241.6,835.0787 1289,855.9688 C1335.21,876.3288 1384.28,903.9888 1423.66,927.8188 " fill="none" id="ItemDevolucao-ItemVenda" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="154" x="1269" y="845.1074">item_venda / devolucoes</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1139.8897" y="822.2202">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="1403.0517" y="917.2183">1</text><!--MD5=[9183b108dfbe67741ace98781c1c6908]
+link Movimentacao to Produto--><path d="M378.08,1053.2088 C389.43,1056.5788 400.81,1059.5588 412,1061.9688 C548,1091.2788 1525.87,1091.4788 1663,1114.9688 C1808.94,1139.9688 1968.99,1190.0488 2087.5,1231.7288 " fill="none" id="Movimentacao-&gt;Produto" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="2092.4,1233.4588,2085.2358,1226.7005,2087.6829,1231.8006,2082.5828,1234.2478,2092.4,1233.4588" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="50" x="1561" y="1104.1074">produto</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="385.7193" y="1067.7807">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="2076.3525" y="1228.2792">1</text><!--MD5=[cdf0fe1856e2643b7e45ca9c6c8aa502]
+link Produto to Usuario--><path d="M2146.1,1446.0588 C2119.85,1469.4688 2090.43,1490.6788 2059,1504.9688 C1940.52,1558.8388 1049.29,1597.6888 749.82,1609.3388 " fill="none" id="Produto-&gt;Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="744.58,1609.5388,753.7327,1613.1758,749.576,1609.3389,753.4129,1605.1822,744.58,1609.5388" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="70" x="2112" y="1488.1074">criado_por,</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="80" x="2107" y="1502.0762">alterado_por</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="2116.9414" y="1465.5302">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="752.578" y="1606.8163">1</text><!--MD5=[bdca234c3c8f067b1283e8c5b9f3c264]
+link Movimentacao to Usuario--><path d="M378.18,1051.5888 C389.53,1055.3688 400.88,1058.8787 412,1061.9688 C483.14,1081.7488 692.14,1058.7488 740,1114.9688 C855.58,1250.7288 732.42,1484.4688 676.55,1575.3188 " fill="none" id="Movimentacao-&gt;Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="673.78,1579.7988,681.9253,1574.2621,676.4172,1575.5508,675.1285,1570.0426,673.78,1579.7988" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="76" x="789" y="1305.1074">responsavel</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="385.8235" y="1052.5439">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="669.6694" y="1569.1571">1</text><!--MD5=[63f343373b01b7cf9ab5822666267b4a]
+link Caixa to Usuario--><path d="M1692.64,201.4388 C1776.76,237.9088 1852,295.5287 1852,384.9688 C1852,384.9688 1852,384.9688 1852,1301.4688 C1852,1436.6288 1756.12,1468.3688 1626,1504.9688 C1314.21,1592.6688 927.51,1609.6588 749.74,1612.6087 " fill="none" id="Caixa-&gt;Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="744.54,1612.6888,753.6072,1616.5339,749.5393,1612.603,753.4701,1608.5351,744.54,1612.6888" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="69" x="1853" y="777.6074">aberto_por</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1700.4704" y="201.336">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="752.5347" y="1624.3037">1</text><!--MD5=[63f343373b01b7cf9ab5822666267b4a]
+link Caixa to Usuario--><path d="M1692.7,184.6188 C1877.31,225.0887 2107,293.7687 2107,384.9688 C2107,384.9688 2107,384.9688 2107,979.9688 C2107,1039.2788 2089.11,1052.3388 2066,1106.9688 C1999.54,1264.0788 2016.77,1336.4288 1886,1445.9688 C1714.2,1589.8788 1011.33,1610.2288 750.25,1612.7588 " fill="none" id="Caixa-&gt;Usuario-1" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="744.92,1612.8088,753.954,1616.7315,749.9198,1612.7659,753.8854,1608.7318,744.92,1612.8088" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="78" x="2108" y="777.6074">fechado_por</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1700.5323" y="183.9641">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="24" x="752.6251" y="1610.4239">0..1</text><!--MD5=[d4899aec6ec091282475e12254e3481e]
+link Venda to Usuario--><path d="M1538.28,483.0087 C1665.98,689.8287 1921.25,1180.0888 1663,1445.9688 C1537.5,1575.1788 977.92,1604.4688 749.55,1611.0688 " fill="none" id="Venda-&gt;Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="744.55,1611.2088,753.6606,1614.9501,749.548,1611.066,753.4321,1606.9533,744.55,1611.2088" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="58" x="1716" y="845.1074">operador</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="1520.1193" y="501.8005">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="752.323" y="1607.7926">1</text><!--MD5=[ce334bfa9cecd447314c34f5ee23c12e]
+link Devolucao to Usuario--><path d="M896.69,635.2088 C759.42,661.8287 580.02,721.6688 490,855.9688 C439.03,932.0188 429.05,993.6488 490,1061.9688 C547.78,1126.7488 821.45,1048.2688 877,1114.9688 C971.14,1228.0088 943.12,1314.5488 877,1445.9688 C846.86,1505.8688 783.95,1549.6788 732.29,1577.3587 " fill="none" id="Devolucao-&gt;Usuario" style="stroke: #333333; stroke-width: 1.0;"/><polygon fill="#333333" points="727.65,1579.8288,737.4749,1579.1427,732.0665,1577.4847,733.7245,1572.0763,727.65,1579.8288" style="stroke: #333333; stroke-width: 1.0;"/><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="58" x="491" y="983.6074">operador</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="22" x="867.1388" y="633.9848">0..*</text><text fill="#000000" font-family="DejaVu Sans" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="8" x="735.3234" y="1569.1936">1</text><!--MD5=[55e0628c9dbb34010bc2ff43b751e0b1]
+@startuml classes-entidades
+
+title Lojinha do DACOMP — Diagrama de classes de projeto (1/3): entidades
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam packageBorderColor #555555
+skinparam arrowColor #333333
+skinparam nodesep 45
+skinparam ranksep 60
+hide empty members
+hide circle
+
+package "contas" {
+  class "AbstractUser" as AbstractUser <<Django>> {
+    + username: Texto {único, máx. 150}
+    + first_name: Texto {máx. 150}
+    + last_name: Texto {máx. 150}
+    + email: Texto
+    + is_active: Booleano = verdadeiro
+    + is_superuser: Booleano = falso
+    + check_password(senha: Texto): Booleano
+  }
+  class Usuario {
+    + /nomes_perfis: Texto[0..3]
+    + get_full_name(): Texto
+  }
+  class "Perfil (Group)" as Perfil <<Django>> {
+    + name: Texto {Diretoria | Bolsista | Voluntário}
+  }
+  AbstractUser <|- - Usuario
+  Usuario "0..*" - -> "0..3" Perfil : groups
+}
+
+package "catalogo" {
+  class Produto {
+    + codigo: Texto {único, máx. 20, maiúsculas}
+    + nome: Texto {máx. 120}
+    + categoria: Categoria = OUTRO
+    + descricao: Texto [0..1]
+    + marca: Texto [0..1] {máx. 60}
+    + fornecedor: Texto [0..1] {máx. 120}
+    + codigo_barras: Texto [0..1] {único, máx. 50}
+    + unidade: Unidade = UNIDADE
+    {field} + preco_unitario: Decimal(8,2) {>= 0}
+    {field} + preco_custo: Decimal(8,2) [0..1] {>= 0}
+    + ativo: Booleano = verdadeiro
+    + controla_estoque: Booleano = verdadeiro
+    + saldo_estoque: Inteiro = 0 {>= 0, somente leitura}
+    + criado_em: DataHora {automático}
+    + alterado_em: DataHora {automático}
+    + /lucro_unitario: Decimal [0..1]
+    + /margem_percentual: Decimal [0..1]
+    + get_absolute_url(): Texto
+  }
+  enum Categoria <<enumeration>> {
+    CAFE
+    BEBIDA
+    LANCHE
+    DOCE
+    OUTRO
+  }
+  enum Unidade <<enumeration>> {
+    UN
+    COPO
+    FATIA
+    PCT
+    CX
+    DZ
+    KG
+    L
+  }
+}
+
+package "estoque" {
+  class Movimentacao <<imutável>> {
+    + tipo: TipoMovimentacao
+    + quantidade_anterior: Inteiro {>= 0}
+    + variacao: Inteiro
+    + quantidade_resultante: Inteiro {>= 0}
+    + motivo: MotivoAjuste [0..1] {obrigatório no ajuste}
+    + observacao: Texto [0..1] {máx. 255}
+    + realizada_em: DataHora {automático}
+    + get_absolute_url(): Texto
+  }
+  enum TipoMovimentacao <<enumeration>> {
+    ENTRADA
+    AJUSTE
+    VENDA
+    DEVOLUCAO
+  }
+  enum MotivoAjuste <<enumeration>> {
+    PERDA
+    VENCIMENTO
+    AVARIA
+    CONTAGEM
+    OUTRO
+  }
+}
+
+package "vendas" {
+  class Caixa {
+    + situacao: SituacaoCaixa = ABERTO {no máximo 1 aberto}
+    {field} + valor_inicial: Decimal(10,2) {>= 0}
+    + aberto_em: DataHora {automático}
+    + fechado_em: DataHora [0..1]
+    {field} + valor_esperado: Decimal(10,2) [0..1]
+    {field} + valor_contado: Decimal(10,2) [0..1] {>= 0}
+    + justificativa: Texto [0..1] {máx. 255, obrigatória se houver diferença}
+    + /diferenca: Decimal [0..1]
+  }
+  class Venda {
+    + situacao: SituacaoVenda = EM_ANDAMENTO
+    + iniciada_em: DataHora {automático}
+    + concluida_em: DataHora [0..1]
+    {field} + total: Decimal(10,2) = 0
+    + forma_pagamento: FormaPagamento [0..1]
+    {field} + valor_recebido: Decimal(10,2) [0..1]
+    {field} + troco: Decimal(10,2) [0..1]
+    + /total_itens: Decimal
+    + /total_devolvido: Decimal
+    + /total_liquido: Decimal
+    + get_absolute_url(): Texto
+  }
+  class ItemVenda {
+    + quantidade: Inteiro {> 0}
+    {field} + preco_unitario: Decimal(8,2) {preço praticado na venda}
+    + /subtotal: Decimal
+    + /quantidade_devolvida: Inteiro
+    + /quantidade_devolvivel: Inteiro
+  }
+  class Devolucao {
+    + motivo: Texto {máx. 255, obrigatório}
+    + forma_estorno: FormaPagamento {= forma da venda}
+    {field} + valor_estornado: Decimal(10,2) {> 0}
+    + realizada_em: DataHora {automático}
+    + get_absolute_url(): Texto
+  }
+  class ItemDevolucao {
+    + quantidade: Inteiro {> 0, <= quantidade devolvível}
+    + /subtotal: Decimal
+  }
+  enum SituacaoCaixa <<enumeration>> {
+    ABERTO
+    FECHADO
+  }
+  enum SituacaoVenda <<enumeration>> {
+    EM_ANDAMENTO
+    CONCLUIDA
+    CANCELADA
+  }
+  enum FormaPagamento <<enumeration>> {
+    DINHEIRO
+    PIX
+    CREDITO
+    DEBITO
+  }
+}
+
+note bottom of ItemVenda
+  {único: venda + produto}
+  Um produto aparece uma vez por venda;
+  repetir o produto soma a quantidade.
+end note
+note bottom of ItemDevolucao
+  {único: devolucao + item_venda}
+end note
+
+Categoria -[hidden]right- Unidade
+SituacaoCaixa -[hidden]right- SituacaoVenda
+SituacaoVenda -[hidden]right- FormaPagamento
+TipoMovimentacao -[hidden]right- MotivoAjuste
+Produto -[hidden]down- Categoria
+Movimentacao -[hidden]down- TipoMovimentacao
+ItemDevolucao -[hidden]down- SituacaoCaixa
+
+Caixa "1" - - "0..*" Venda : vendas
+Venda "1" *- - "0..*" ItemVenda : itens
+ItemVenda "0..*" - -> "1" Produto : produto
+Venda "1" - - "0..*" Devolucao : devolucoes
+Caixa "1" - - "0..*" Devolucao : devolucoes\n(caixa do estorno)
+Devolucao "1" *- - "1..*" ItemDevolucao : itens
+ItemDevolucao "0..*" - - "1" ItemVenda : item_venda / devolucoes
+Movimentacao "0..*" - -> "1" Produto : produto
+
+Produto "0..*" - -> "1" Usuario : criado_por,\nalterado_por
+Movimentacao "0..*" - -> "1" Usuario : responsavel
+Caixa "0..*" - -> "1" Usuario : aberto_por
+Caixa "0..*" - -> "0..1" Usuario : fechado_por
+Venda "0..*" - -> "1" Usuario : operador
+Devolucao "0..*" - -> "1" Usuario : operador
+
+@enduml
+
+PlantUML version 1.2020.02(Sun Mar 01 10:22:07 UTC 2020)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 21.0.12.1+1-1-24.04.4-Ubuntu
+Operating System: Linux
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
