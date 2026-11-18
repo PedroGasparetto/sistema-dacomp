@@ -1,13 +1,13 @@
-<mxfile host="app.diagrams.net" modified="2026-11-17T19:53:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+<mxfile host="app.diagrams.net" modified="2026-11-18T20:16:00.000Z" agent="Antigravity" version="31.7.0" type="device">
   <diagram id="diagrama-er-lojinha" name="Diagrama Entidade-Relacionamento">
-    <mxGraphModel dx="1450" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="860" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1560" dy="980" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1480" pageHeight="960" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
         <!-- USUARIO -->
         <mxCell id="er_usuario" value="contas_usuario" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="40" y="60" width="250" height="175" as="geometry" />
+          <mxGeometry x="70" y="90" width="250" height="175" as="geometry" />
         </mxCell>
         <mxCell id="er_usuario_cols" value="PK  id : bigint&#xa;UK  username : varchar(150)&#xa;      first_name : varchar(150)&#xa;      last_name : varchar(150)&#xa;      email : varchar(254)&#xa;      is_active : boolean&#xa;      is_superuser : boolean" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_usuario">
           <mxGeometry y="28" width="250" height="147" as="geometry" />
@@ -15,38 +15,73 @@
 
         <!-- PRODUTO -->
         <mxCell id="er_produto" value="catalogo_produto" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="500" y="40" width="290" height="290" as="geometry" />
+          <mxGeometry x="510" y="65" width="310" height="325" as="geometry" />
         </mxCell>
-        <mxCell id="er_produto_cols" value="PK  id : bigint&#xa;UK  codigo : varchar(20)&#xa;      nome : varchar(120)&#xa;      categoria : varchar(10)&#xa;      descricao : text&#xa;      marca : varchar(60)&#xa;      fornecedor : varchar(120)&#xa;UK  codigo_barras : varchar(50) NULL&#xa;      unidade : varchar(5)&#xa;      preco_unitario : numeric(8,2)&#xa;      preco_custo : numeric(8,2) NULL&#xa;      ativo : boolean&#xa;      controla_estoque : boolean&#xa;      saldo_estoque : integer&#xa;FK  criado_por_id : bigint&#xa;FK  alterado_por_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_produto">
-          <mxGeometry y="28" width="290" height="262" as="geometry" />
+        <mxCell id="er_produto_cols" value="PK  id : bigint&#xa;UK  codigo : varchar(20)&#xa;      nome : varchar(120)&#xa;      categoria : varchar(10)&#xa;      descricao : text&#xa;      marca : varchar(60)&#xa;      fornecedor : varchar(120)&#xa;UK  codigo_barras : varchar(50) NULL&#xa;      unidade : varchar(5)&#xa;      preco_unitario : numeric(8,2)&#xa;      preco_custo : numeric(8,2) NULL&#xa;      ativo : boolean&#xa;      controla_estoque : boolean&#xa;      saldo_estoque : integer [somente leitura]&#xa;      criado_em : timestamptz&#xa;FK  criado_por_id : bigint&#xa;      alterado_em : timestamptz&#xa;FK  alterado_por_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_produto">
+          <mxGeometry y="28" width="310" height="297" as="geometry" />
+        </mxCell>
+
+        <!-- MOVIMENTACAO ESTOQUE -->
+        <mxCell id="er_mov" value="estoque_movimentacao" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="90" width="310" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="er_mov_cols" value="PK  id : bigint&#xa;FK  produto_id : bigint&#xa;      tipo : varchar(10)&#xa;      quantidade_anterior : integer&#xa;      variacao : integer&#xa;      quantidade_resultante : integer&#xa;      motivo : varchar(12)&#xa;      observacao : varchar(255)&#xa;FK  responsavel_id : bigint&#xa;      realizada_em : timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_mov">
+          <mxGeometry y="28" width="310" height="197" as="geometry" />
         </mxCell>
 
         <!-- CAIXA -->
         <mxCell id="er_caixa" value="vendas_caixa" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="40" y="430" width="270" height="215" as="geometry" />
+          <mxGeometry x="70" y="450" width="275" height="215" as="geometry" />
         </mxCell>
         <mxCell id="er_caixa_cols" value="PK  id : bigint&#xa;      situacao : varchar(10) [1 aberto]&#xa;      valor_inicial : numeric(10,2)&#xa;FK  aberto_por_id : bigint&#xa;      aberto_em : timestamptz&#xa;FK  fechado_por_id : bigint NULL&#xa;      fechado_em : timestamptz NULL&#xa;      valor_esperado : numeric(10,2) NULL&#xa;      valor_contado : numeric(10,2) NULL&#xa;      justificativa : varchar(255)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_caixa">
-          <mxGeometry y="28" width="270" height="187" as="geometry" />
+          <mxGeometry y="28" width="275" height="187" as="geometry" />
         </mxCell>
 
         <!-- VENDA -->
         <mxCell id="er_venda" value="vendas_venda" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="500" y="430" width="290" height="215" as="geometry" />
+          <mxGeometry x="510" y="450" width="310" height="215" as="geometry" />
         </mxCell>
         <mxCell id="er_venda_cols" value="PK  id : bigint&#xa;FK  caixa_id : bigint&#xa;FK  operador_id : bigint&#xa;      situacao : varchar(10)&#xa;      iniciada_em : timestamptz&#xa;      concluida_em : timestamptz NULL&#xa;      total : numeric(10,2)&#xa;      forma_pagamento : varchar(10)&#xa;      valor_recebido : numeric(10,2) NULL&#xa;      troco : numeric(10,2) NULL" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_venda">
-          <mxGeometry y="28" width="290" height="187" as="geometry" />
+          <mxGeometry y="28" width="310" height="187" as="geometry" />
         </mxCell>
 
         <!-- ITEM_VENDA -->
         <mxCell id="er_item" value="vendas_itemvenda" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="960" y="450" width="280" height="145" as="geometry" />
+          <mxGeometry x="1030" y="450" width="310" height="140" as="geometry" />
         </mxCell>
         <mxCell id="er_item_cols" value="PK  id : bigint&#xa;FK  venda_id : bigint (UK com produto)&#xa;FK  produto_id : bigint (UK com venda)&#xa;      quantidade : integer&#xa;      preco_unitario : numeric(8,2)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_item">
-          <mxGeometry y="28" width="280" height="117" as="geometry" />
+          <mxGeometry y="28" width="310" height="112" as="geometry" />
+        </mxCell>
+
+        <!-- DEVOLUCAO -->
+        <mxCell id="er_devolucao" value="vendas_devolucao" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="510" y="740" width="310" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="er_devolucao_cols" value="PK  id : bigint&#xa;FK  venda_id : bigint&#xa;FK  caixa_id : bigint&#xa;FK  operador_id : bigint&#xa;      motivo : varchar(255)&#xa;      forma_estorno : varchar(10)&#xa;      valor_estornado : numeric(10,2)&#xa;      realizada_em : timestamptz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_devolucao">
+          <mxGeometry y="28" width="310" height="157" as="geometry" />
+        </mxCell>
+
+        <!-- ITEM_DEVOLUCAO -->
+        <mxCell id="er_item_dev" value="vendas_itemdevolucao" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="740" width="310" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="er_item_dev_cols" value="PK  id : bigint&#xa;FK  devolucao_id : bigint (UK com item_venda)&#xa;FK  item_venda_id : bigint (UK com devolucao)&#xa;      quantidade : integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="er_item_dev">
+          <mxGeometry y="28" width="310" height="102" as="geometry" />
         </mxCell>
 
         <!-- Relações Crow's Foot -->
         <mxCell id="er_rel_usr_prod" value="cria / altera (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_usuario" target="er_produto">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="er_rel_usr_mov" value="responsável (1 : N)" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=0;entryX=0.5;entryY=0;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_usuario" target="er_mov">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="195" y="30" />
+              <mxPoint x="1185" y="30" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="er_rel_prod_mov" value="altera saldo de (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_produto" target="er_mov">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="er_rel_usr_caixa" value="abre / fecha (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_usuario" target="er_caixa">
@@ -55,8 +90,8 @@
         <mxCell id="er_rel_usr_venda" value="opera (1 : N)" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.75;entryX=0;entryY=0.25;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_usuario" target="er_venda">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="395" y="191" />
-              <mxPoint x="395" y="484" />
+              <mxPoint x="415" y="221" />
+              <mxPoint x="415" y="504" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -66,7 +101,36 @@
         <mxCell id="er_rel_venda_item" value="contém (1 : 1..N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERoneToMany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_venda" target="er_item">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="er_rel_prod_item" value="compõe (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_produto" target="er_item">
+        <mxCell id="er_rel_prod_item" value="compõe (1 : N)" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.85;entryX=0;entryY=0.25;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_produto" target="er_item">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="915" y="341" />
+              <mxPoint x="915" y="485" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="er_rel_venda_dev" value="origina (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_venda" target="er_devolucao">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="er_rel_caixa_dev" value="estorna (1 : N)" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.35;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_caixa" target="er_devolucao">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="208" y="805" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="er_rel_usr_dev" value="registra (1 : N)" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=0;entryY=0.75;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_usuario" target="er_devolucao">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="25" y="178" />
+              <mxPoint x="25" y="879" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="er_rel_dev_item" value="contém (1 : 1..N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERoneToMany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_devolucao" target="er_item_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="er_rel_ivenda_idev" value="devolve (1 : N)" style="edgeStyle=orthogonalEdgeStyle;startArrow=ERmandOne;endArrow=ERmany;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="er_item" target="er_item_dev">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>

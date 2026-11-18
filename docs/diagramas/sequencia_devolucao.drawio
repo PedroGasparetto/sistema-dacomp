@@ -1,0 +1,96 @@
+<mxfile host="app.diagrams.net" modified="2026-11-18T20:23:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+  <diagram id="sequencia-devolucao" name="Sequência - Registro de Devolução">
+    <mxGraphModel dx="1520" dy="960" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1480" pageHeight="920" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Participantes -->
+        <mxCell id="d_op" value="Operador" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="65" y="15" width="30" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d_view" value="RegistrarDevolucaoView" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="305" y="25" width="180" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d_vs" value="vendas.servicos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="25" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d_es" value="estoque.servicos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="965" y="25" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="d_db" value="PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="25" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Linhas de vida -->
+        <mxCell id="dl_op" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="90" as="sourcePoint" /><mxPoint x="80" y="885" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dl_view" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="395" y="69" as="sourcePoint" /><mxPoint x="395" y="885" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dl_vs" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="69" as="sourcePoint" /><mxPoint x="695" y="885" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dl_es" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1040" y="69" as="sourcePoint" /><mxPoint x="1040" y="885" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dl_db" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1350" y="69" as="sourcePoint" /><mxPoint x="1350" y="885" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- Frames -->
+        <mxCell id="df_tx" value="tx (@transaction.atomic)" style="shape=umlFrame;whiteSpace=wrap;html=1;width=180;height=22;fillColor=none;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="420" width="815" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="df_loop" value="loop [para cada item devolvido]" style="shape=umlFrame;whiteSpace=wrap;html=1;width=210;height=22;fillColor=none;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="625" y="590" width="770" height="170" as="geometry" />
+        </mxCell>
+
+        <!-- Mensagens -->
+        <mxCell id="dm1" value="1: Acessa /vendas/&amp;lt;pk&amp;gt;/devolucao/" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="110" as="sourcePoint" /><mxPoint x="395" y="110" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm2" value="2: motivo_devolucao_bloqueada(venda)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="395" y="150" as="sourcePoint" /><mxPoint x="695" y="150" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm3" value="3: Verifica concluída, prazo &lt;= 7d, itens devolvíveis e caixa aberto" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="190" as="sourcePoint" /><mxPoint x="1350" y="190" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm4" value="4: Informa quantidades e motivo&#xa;-&gt; solicita prévia do estorno" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="245" as="sourcePoint" /><mxPoint x="395" y="245" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm5" value="5: Tela confirmar_devolucao&#xa;(valor e forma original)" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="395" y="295" as="sourcePoint" /><mxPoint x="80" y="295" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm6" value="6: Confirma devolução (confirmar)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="350" as="sourcePoint" /><mxPoint x="395" y="350" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm7" value="7: registrar_devolucao(venda,&#xa;quantidades, motivo, usuario)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="395" y="395" as="sourcePoint" /><mxPoint x="695" y="395" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm8" value="8: select_for_update() em Venda e Caixa aberto;&#xa;valida saldo em gaveta (se DINHEIRO)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="485" as="sourcePoint" /><mxPoint x="1350" y="485" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm9" value="9: Cria Devolucao (forma_estorno, valor_estornado)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="545" as="sourcePoint" /><mxPoint x="1350" y="545" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm10" value="10: Cria ItemDevolucao" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="640" as="sourcePoint" /><mxPoint x="1350" y="640" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm11" value="11: registrar_recomposicao_por_devolucao(&#xa;produto, qtd, usuario, ref)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="688" as="sourcePoint" /><mxPoint x="1040" y="688" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm12" value="12: select_for_update() Produto;&#xa;grava Movimentacao (DEVOLUCAO) e soma saldo" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1040" y="736" as="sourcePoint" /><mxPoint x="1350" y="736" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm13" value="13: Devolucao registrada" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="695" y="815" as="sourcePoint" /><mxPoint x="395" y="815" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="dm14" value="14: Redireciona para DetalheVendaView&#xa;com estorno registrado" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="395" y="855" as="sourcePoint" /><mxPoint x="80" y="855" as="targetPoint" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

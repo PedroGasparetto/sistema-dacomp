@@ -1,6 +1,6 @@
 # Guia de Contribuição
 
-Obrigado por contribuir com o **Sistema de Controle de Vendas e Estoque da Lojinha do DACOMP** (`trab_eng_soft`, disciplina **INF01127 - Engenharia de Software**)!
+Obrigado por contribuir com o **Sistema de Controle de Vendas e Estoque da Lojinha do DACOMP** (`sistema-dacomp`, disciplina **INF01127 - Engenharia de Software**)!
 
 Este guia explica como configurar o ambiente, seguir as convenções do projeto e enviar suas alterações para revisão.
 
@@ -12,8 +12,8 @@ Todo o projeto roda em containers Docker (**Python 3.13 + Django** e **PostgreSQ
 
 1. Clone o repositório e entre na pasta:
    ```bash
-   git clone https://github.com/gbtaffarel/trab_eng_soft.git
-   cd trab_eng_soft
+   git clone https://github.com/PedroGasparetto/sistema-dacomp.git
+   cd sistema-dacomp
    ```
 2. Suba os containers:
    ```bash
@@ -30,6 +30,7 @@ Todo o projeto roda em containers Docker (**Python 3.13 + Django** e **PostgreSQ
 
 > [!TIP]
 > A pasta do projeto é montada como volume em `/app` dentro do container `web`. Ao salvar qualquer arquivo `.py`, `.html` ou `.css`, o servidor de desenvolvimento do Django recarrega automaticamente.
+> Para implantação em produção na rede interna do DAcomp, consulte [docs/instalacao-rede-local.md](docs/instalacao-rede-local.md).
 
 ---
 
@@ -60,32 +61,36 @@ Nunca trabalhe diretamente na branch `main`. Use o fluxo abaixo para cada nova t
 
 O projeto é um **monólito Django em camadas**, organizado por subsistema (Django apps). Conhecer essa divisão evita acoplamento desnecessário e mantém o código consistente:
 
-| Pacote     | Responsabilidade                                              |
-|------------|---------------------------------------------------------------|
-| `config`   | Configurações (`settings.py`) e roteamento raiz (`urls.py`)   |
-| `nucleo`   | Página inicial, templatetags de formatação/paginação e `popular_demo` |
-| `contas`   | Autenticação, modelo `Usuario`, perfis (`Diretoria`, `Bolsista`, `Voluntário`) e CLI `criar_conta` |
-| `catalogo` | Cadastro, pesquisa e controle de saldo de `Produto`           |
-| `vendas`   | `Caixa`, `Venda`, `ItemVenda`, PDV, pagamento e consulta      |
+| Pacote     | Responsabilidade                                                                                            |
+|------------|-------------------------------------------------------------------------------------------------------------|
+| `config`   | Configurações (`settings.py`), WSGI/ASGI e roteamento raiz (`urls.py`)                                      |
+| `nucleo`   | Página inicial, templatetags de estáticos/formatação/paginação e `popular_demo`                             |
+| `contas`   | Autenticação, `Usuario`, perfis (`Diretoria`, `Bolsista`, `Voluntário`), turno, gestão web e CLI `criar_conta` |
+| `catalogo` | Cadastro e pesquisa de `Produto` (`saldo_estoque` é somente leitura no cadastro)                            |
+| `estoque`  | `Movimentacao`, entradas, ajustes, baixas/recomposições de saldo e relatório de movimentações               |
+| `vendas`   | `Caixa`, `Venda`, `ItemVenda`, `Devolucao`, `ItemDevolucao`, PDV, pagamento, estorno, consulta e relatório  |
 
-Para mais detalhes e diagramas, consulte [docs/arquitetura.md](docs/arquitetura.md) e [docs/fluxos.md](docs/fluxos.md).
+Para mais detalhes e diagramas, consulte [docs/arquitetura.md](docs/arquitetura.md), [docs/fluxos.md](docs/fluxos.md) e [docs/diagramas/classes-operacoes.md](docs/diagramas/classes-operacoes.md).
 
 ### Regras de Ouro do Código
 
 1. **Separação em camadas dentro de cada app:**
-   - `models.py`: entidades, campos, `TextChoices`, constraints e propriedades simples.
+   - `models.py`: entidades, campos, `TextChoices`, constraints e propriedades derivadas simples.
    - `servicos.py`: **toda a regra de negócio** e transações (`@transaction.atomic`). Views e forms não devem conter lógica de negócio complexa ou manipulação direta de saldo/estado.
    - `forms.py` / `views.py`: validação de entrada, controle de acesso e orquestração HTTP.
-   - `templates/<app>/`: apresentação HTML (usando `templates/base.html` e `static/css/app.css`).
+   - `templates/<app>/`: apresentação HTML (usando `templates/base.html`, `static/css/app.css` e assets locais em `static/vendor/`).
 2. **Respeite a direção das dependências:**
-   - `vendas` → `catalogo` → `contas`
-   - `nucleo` pode importar os demais apps para montar a tela inicial.
-   - Evite dependências circulares (ex.: `catalogo` não deve importar `vendas`).
+   - `vendas` → `estoque` → `catalogo` → `contas` (além de `vendas` → `catalogo` para busca/itens e `vendas`/`estoque`/`catalogo` → `contas`).
+   - `nucleo` pode importar os demais apps para montar a tela inicial e o comando `popular_demo`.
+   - Evite dependências circulares (ex.: `catalogo` não deve importar `estoque` nem `vendas`, e `estoque` não deve importar `vendas`).
+   - **`estoque.servicos` é o único ponto** que altera `Produto.saldo_estoque`.
 3. **Transações e concorrência:**
-   - Operações críticas (como `concluir_venda`, `baixar_saldo`, `abrir_caixa` e `fechar_caixa`) devem usar `@transaction.atomic` e `select_for_update()` quando alteram saldos ou estados concorrentes.
+   - Operações críticas (como `concluir_venda`, `registrar_devolucao`, `registrar_movimentacao`, `registrar_baixa_por_venda`, `registrar_recomposicao_por_devolucao`, `abrir_caixa` e `fechar_caixa`) devem usar `@transaction.atomic` e `select_for_update()` quando alteram saldos ou estados concorrentes.
 4. **Controle de acesso:**
    - Toda view protegida deve herdar de `contas.mixins.PerfilRequeridoMixin`.
-   - Por padrão, `perfis_permitidos = PERFIS_OPERADOR` (os três perfis). Para ações administrativas de catálogo, defina `perfis_permitidos = PERFIS_GESTAO_PRODUTOS` (`Diretoria` e `Bolsista`).
+   - Por padrão, `perfis_permitidos = PERFIS_OPERADOR` (os três perfis).
+   - Para ações administrativas de catálogo, defina `perfis_permitidos = PERFIS_GESTAO_PRODUTOS` (`Diretoria` e `Bolsista`).
+   - Para gestão de contas (`UC15`), defina `perfis_permitidos = PERFIS_GESTAO_CONTAS` (`Diretoria`).
 5. **Idioma e nomenclatura:**
    - Código de domínio, modelos, views, URLs, mensagens ao usuário e testes são escritos em **português** (`pt-br`), seguindo o padrão já existente no repositório.
 6. **Paginação:**
@@ -113,7 +118,7 @@ Para mais detalhes e diagramas, consulte [docs/arquitetura.md](docs/arquitetura.
 O projeto utiliza **pytest** + **pytest-django** (configurado em `pytest.ini` e com fixtures compartilhadas em `conftest.py`, como `diretoria`, `bolsista`, `voluntario`, `produto` e `servico`).
 
 - Escreva testes para novas regras de negócio em `<app>/tests.py` (ou `test_*.py`).
-- Teste tanto o caminho feliz quanto os fluxos de erro/permissão (ex.: usuário sem perfil tentando acessar view restrita, venda sem saldo, fechamento de caixa com diferença sem justificativa).
+- Teste tanto o caminho feliz quanto os fluxos de erro/permissão (ex.: usuário sem perfil tentando acessar view restrita, venda sem saldo, fechamento de caixa com diferença sem justificativa, devolução fora do prazo ou sem saldo em caixa).
 - Execute a suíte completa antes de abrir o PR:
   ```bash
   docker compose exec web pytest
@@ -125,6 +130,7 @@ O projeto utiliza **pytest** + **pytest-django** (configurado em `pytest.ini` e 
 
 - [ ] O código segue a separação em camadas (`models.py` → `servicos.py` → `forms.py`/`views.py` → `templates/`).
 - [ ] Novas views usam `PerfilRequeridoMixin` com os perfis adequados.
+- [ ] Alterações em `Produto.saldo_estoque` passam exclusivamente por `estoque.servicos`.
 - [ ] Alterações em modelos possuem suas respectivas migrações em `migrations/`.
 - [ ] Novos testes foram adicionados e toda a suíte (`docker compose exec web pytest`) passa sem erros.
 - [ ] Documentação (`README.md` ou `docs/`) foi atualizada caso novas rotas, comandos ou pacotes tenham sido introduzidos.

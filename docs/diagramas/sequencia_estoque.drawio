@@ -1,0 +1,95 @@
+<mxfile host="app.diagrams.net" modified="2026-11-18T20:23:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+  <diagram id="sequencia-estoque" name="Sequência - Transação de Estoque">
+    <mxGraphModel dx="1380" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1340" pageHeight="820" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Participantes -->
+        <mxCell id="e_op" value="Operador" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="65" y="15" width="30" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="e_view" value="RegistrarMovimentacaoView" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="305" y="25" width="185" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cs" value="catalogo.servicos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="605" y="25" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="e_es" value="estoque.servicos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="875" y="25" width="150" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="e_db" value="PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="25" width="140" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Linhas de vida -->
+        <mxCell id="el_op" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="90" as="sourcePoint" /><mxPoint x="80" y="785" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="el_view" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="69" as="sourcePoint" /><mxPoint x="397" y="785" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="el_cs" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="69" as="sourcePoint" /><mxPoint x="680" y="785" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="el_es" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="950" y="69" as="sourcePoint" /><mxPoint x="950" y="785" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="el_db" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1210" y="69" as="sourcePoint" /><mxPoint x="1210" y="785" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- Frames -->
+        <mxCell id="ef_prev" value="1ª Etapa: Validação e Prévia" style="shape=umlFrame;whiteSpace=wrap;html=1;width=210;height=22;fillColor=none;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="35" y="100" width="1245" height="275" as="geometry" />
+        </mxCell>
+        <mxCell id="ef_tx" value="2ª Etapa: Confirmação (@transaction.atomic)" style="shape=umlFrame;whiteSpace=wrap;html=1;width=290;height=22;fillColor=none;strokeColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="35" y="405" width="1245" height="350" as="geometry" />
+        </mxCell>
+
+        <!-- Mensagens -->
+        <mxCell id="em1" value="1: Informa tipo (ENTRADA/AJUSTE),&#xa;código, quantidade e motivo" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="148" as="sourcePoint" /><mxPoint x="397" y="148" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em2" value="2: buscar_por_codigo(valor)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="190" as="sourcePoint" /><mxPoint x="680" y="190" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em3" value="3: Consulta Produto" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="230" as="sourcePoint" /><mxPoint x="1210" y="230" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em4" value="4: validar_movimentacao() + calcular_novo_saldo()" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="285" as="sourcePoint" /><mxPoint x="950" y="285" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em5" value="5: Exibe resumo&#xa;(anterior, variação, resultante)" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="340" as="sourcePoint" /><mxPoint x="80" y="340" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="em6" value="6: Confirma transação (confirmar)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="80" y="455" as="sourcePoint" /><mxPoint x="397" y="455" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em7" value="7: registrar_movimentacao(tipo, produto, qtd, usuario, motivo, obs)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="505" as="sourcePoint" /><mxPoint x="950" y="505" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em8" value="8: Produto.objects.select_for_update()" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="950" y="555" as="sourcePoint" /><mxPoint x="1210" y="555" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em9" value="9: validar_movimentacao() + calcular_novo_saldo()" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="950" y="585" as="sourcePoint" />
+            <mxPoint x="950" y="615" as="targetPoint" />
+            <Array as="points"><mxPoint x="1020" y="585" /><mxPoint x="1020" y="615" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="em10" value="10: Cria Movimentacao imutável e&#xa;atualiza Produto.saldo_estoque" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="950" y="660" as="sourcePoint" /><mxPoint x="1210" y="660" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em11" value="11: Movimentacao registrada" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="950" y="705" as="sourcePoint" /><mxPoint x="397" y="705" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="em12" value="12: Redireciona para&#xa;DetalheMovimentacaoView" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="397" y="740" as="sourcePoint" /><mxPoint x="80" y="740" as="targetPoint" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

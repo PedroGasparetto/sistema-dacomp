@@ -1,127 +1,246 @@
-<mxfile host="app.diagrams.net" modified="2026-11-17T19:52:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+<mxfile host="app.diagrams.net" modified="2026-11-18T20:19:00.000Z" agent="Antigravity" version="31.7.0" type="device">
   <diagram id="diagrama-classes-lojinha" name="Diagrama de Classes de Projeto">
-    <mxGraphModel dx="1600" dy="1050" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1620" pageHeight="1040" background="#ffffff" math="0" shadow="0">
+    <mxGraphModel dx="1960" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1940" pageHeight="1180" background="#ffffff" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
         <!-- Usuario -->
         <mxCell id="cls_usuario" value="Usuario (contas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="40" y="70" width="270" height="200" as="geometry" />
+          <mxGeometry x="60" y="75" width="280" height="225" as="geometry" />
         </mxCell>
-        <mxCell id="cls_usuario_attrs" value="+ id : BigInt {PK}&#xa;+ username : str {unique}&#xa;+ first_name : str&#xa;+ last_name : str&#xa;+ email : str&#xa;+ is_active : bool = True&#xa;+ is_superuser : bool = False" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_usuario">
-          <mxGeometry y="28" width="270" height="114" as="geometry" />
+        <mxCell id="cls_usuario_attrs" value="+ id : BigInt {PK}&#xa;+ username : Texto {único}&#xa;+ first_name : Texto&#xa;+ last_name : Texto&#xa;+ email : Texto&#xa;+ is_active : Booleano = True&#xa;+ is_superuser : Booleano = False&#xa;+ /nomes_perfis : Texto [0..3]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_usuario">
+          <mxGeometry y="28" width="280" height="128" as="geometry" />
         </mxCell>
         <mxCell id="cls_usuario_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_usuario">
-          <mxGeometry y="142" width="270" height="8" as="geometry" />
+          <mxGeometry y="156" width="280" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="cls_usuario_methods" value="+ nomes_perfis() : list&lt;str&gt;&#xa;+ __str__() : str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_usuario">
-          <mxGeometry y="150" width="270" height="50" as="geometry" />
+        <mxCell id="cls_usuario_methods" value="+ check_password(senha: Texto) : Booleano&#xa;+ get_full_name() : Texto&#xa;+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_usuario">
+          <mxGeometry y="164" width="280" height="61" as="geometry" />
         </mxCell>
 
         <!-- Produto -->
         <mxCell id="cls_produto" value="Produto (catalogo)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="510" y="40" width="330" height="330" as="geometry" />
+          <mxGeometry x="530" y="45" width="350" height="355" as="geometry" />
         </mxCell>
-        <mxCell id="cls_produto_attrs" value="+ id : BigInt {PK}&#xa;+ codigo : str {unique, max=20}&#xa;+ nome : str {max=120}&#xa;+ categoria : Categoria&#xa;+ descricao : str&#xa;+ marca : str {max=60}&#xa;+ fornecedor : str {max=120}&#xa;+ codigo_barras : str {unique, null}&#xa;+ unidade : Unidade&#xa;+ preco_unitario : Decimal {&gt;= 0}&#xa;+ preco_custo : Decimal {null, &gt;= 0}&#xa;+ ativo : bool = True&#xa;+ controla_estoque : bool = True&#xa;+ saldo_estoque : int = 0 {&gt;= 0}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_produto">
-          <mxGeometry y="28" width="330" height="214" as="geometry" />
+        <mxCell id="cls_produto_attrs" value="+ id : BigInt {PK}&#xa;+ codigo : Texto {único, max=20}&#xa;+ nome : Texto {max=120}&#xa;+ categoria : Categoria = OUTRO&#xa;+ descricao [0..1] : Texto&#xa;+ marca [0..1] : Texto&#xa;+ fornecedor [0..1] : Texto&#xa;+ codigo_barras [0..1] : Texto {único}&#xa;+ unidade : Unidade = UN&#xa;+ preco_unitario : Decimal(8,2) {&gt;= 0}&#xa;+ preco_custo [0..1] : Decimal(8,2) {&gt;= 0}&#xa;+ ativo : Booleano = True&#xa;+ controla_estoque : Booleano = True&#xa;+ saldo_estoque : Inteiro = 0 {&gt;= 0, via estoque}&#xa;+ criado_em : DataHora {frozen}&#xa;+ alterado_em : DataHora&#xa;+ /lucro_unitario [0..1] : Decimal&#xa;+ /margem_percentual [0..1] : Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_produto">
+          <mxGeometry y="28" width="350" height="270" as="geometry" />
         </mxCell>
         <mxCell id="cls_produto_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_produto">
-          <mxGeometry y="242" width="330" height="8" as="geometry" />
+          <mxGeometry y="298" width="350" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="cls_produto_methods" value="+ lucro_unitario() : Decimal | None&#xa;+ margem_percentual() : Decimal | None&#xa;+ get_absolute_url() : str&#xa;+ __str__() : str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_produto">
-          <mxGeometry y="250" width="330" height="80" as="geometry" />
+        <mxCell id="cls_produto_methods" value="+ get_absolute_url() : Texto&#xa;+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_produto">
+          <mxGeometry y="306" width="350" height="49" as="geometry" />
         </mxCell>
 
-        <!-- ServicoCatalogo -->
-        <mxCell id="cls_serv_cat" value="&lt;&lt;service&gt;&gt;&#xa;ServicoCatalogo (catalogo.servicos)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="940" y="60" width="640" height="120" as="geometry" />
+        <!-- Movimentacao -->
+        <mxCell id="cls_mov" value="Movimentacao (estoque)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="75" width="340" height="220" as="geometry" />
         </mxCell>
-        <mxCell id="cls_serv_cat_methods" value="+ pesquisar_produtos(termo: str, por: PesquisarPor, incluir_inativos: bool, categoria: str) : QuerySet&lt;Produto&gt;&#xa;+ buscar_por_codigo(valor: str) : Produto | None&#xa;+ baixar_saldo(produto: Produto, quantidade: int) : Produto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_serv_cat">
-          <mxGeometry y="38" width="640" height="82" as="geometry" />
+        <mxCell id="cls_mov_attrs" value="+ id : BigInt {PK}&#xa;+ tipo : TipoMovimentacao {frozen}&#xa;+ quantidade_anterior : Inteiro {&gt;= 0, frozen}&#xa;+ variacao : Inteiro {frozen}&#xa;+ quantidade_resultante : Inteiro {&gt;= 0, frozen}&#xa;+ motivo [0..1] : MotivoAjuste {frozen}&#xa;+ observacao [0..1] : Texto {frozen}&#xa;+ realizada_em : DataHora {frozen}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_mov">
+          <mxGeometry y="28" width="340" height="132" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_mov_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_mov">
+          <mxGeometry y="160" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_mov_methods" value="+ get_absolute_url() : Texto&#xa;+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_mov">
+          <mxGeometry y="168" width="340" height="52" as="geometry" />
+        </mxCell>
+
+        <!-- Enumeracoes -->
+        <mxCell id="cls_enums" value="&lt;&lt;enumeration&gt;&gt;&#xa;Enumerações de Domínio" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="45" width="405" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_enums_vals" value="Categoria: CAFE | BEBIDA | LANCHE | DOCE | OUTRO&#xa;Unidade: UN | COPO | FATIA | PCT | CX | DZ | KG | L&#xa;PesquisarPor: NOME | CODIGO | CODIGO_BARRAS&#xa;TipoMovimentacao: ENTRADA | AJUSTE | VENDA | DEVOLUCAO&#xa;MotivoAjuste: PERDA | VENCIMENTO | AVARIA | CONTAGEM | OUTRO&#xa;SituacaoCaixa: ABERTO | FECHADO&#xa;SituacaoVenda: EM_ANDAMENTO | CONCLUIDA | CANCELADA&#xa;FormaPagamento: DINHEIRO | PIX | CREDITO | DEBITO" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="cls_enums">
+          <mxGeometry y="38" width="405" height="142" as="geometry" />
         </mxCell>
 
         <!-- Caixa -->
         <mxCell id="cls_caixa" value="Caixa (vendas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="40" y="470" width="290" height="230" as="geometry" />
+          <mxGeometry x="60" y="470" width="310" height="215" as="geometry" />
         </mxCell>
-        <mxCell id="cls_caixa_attrs" value="+ id : BigInt {PK}&#xa;+ situacao : SituacaoCaixa {apenas_um_aberto}&#xa;+ valor_inicial : Decimal&#xa;+ aberto_em : datetime {frozen}&#xa;+ fechado_em : datetime {null}&#xa;+ valor_esperado : Decimal {null}&#xa;+ valor_contado : Decimal {null}&#xa;+ justificativa : str {max=255}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_caixa">
-          <mxGeometry y="28" width="290" height="134" as="geometry" />
+        <mxCell id="cls_caixa_attrs" value="+ id : BigInt {PK}&#xa;+ situacao : SituacaoCaixa = ABERTO {1 aberto}&#xa;+ valor_inicial : Decimal(10,2) {&gt;= 0, frozen}&#xa;+ aberto_em : DataHora {frozen}&#xa;+ fechado_em [0..1] : DataHora&#xa;+ valor_esperado [0..1] : Decimal(10,2)&#xa;+ valor_contado [0..1] : Decimal(10,2) {&gt;= 0}&#xa;+ justificativa [0..1] : Texto&#xa;+ /diferenca [0..1] : Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_caixa">
+          <mxGeometry y="28" width="310" height="144" as="geometry" />
         </mxCell>
         <mxCell id="cls_caixa_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_caixa">
-          <mxGeometry y="162" width="290" height="8" as="geometry" />
+          <mxGeometry y="172" width="310" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="cls_caixa_methods" value="+ diferenca() : Decimal | None&#xa;+ __str__() : str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_caixa">
-          <mxGeometry y="170" width="290" height="60" as="geometry" />
+        <mxCell id="cls_caixa_methods" value="+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_caixa">
+          <mxGeometry y="180" width="310" height="35" as="geometry" />
         </mxCell>
 
         <!-- Venda -->
         <mxCell id="cls_venda" value="Venda (vendas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="510" y="470" width="330" height="250" as="geometry" />
+          <mxGeometry x="530" y="470" width="350" height="255" as="geometry" />
         </mxCell>
-        <mxCell id="cls_venda_attrs" value="+ id : BigInt {PK}&#xa;+ situacao : SituacaoVenda = EM_ANDAMENTO&#xa;+ iniciada_em : datetime {frozen}&#xa;+ concluida_em : datetime {null}&#xa;+ total : Decimal = 0.00&#xa;+ forma_pagamento : FormaPagamento {blank}&#xa;+ valor_recebido : Decimal {null}&#xa;+ troco : Decimal {null}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_venda">
-          <mxGeometry y="28" width="330" height="134" as="geometry" />
+        <mxCell id="cls_venda_attrs" value="+ id : BigInt {PK}&#xa;+ situacao : SituacaoVenda = EM_ANDAMENTO&#xa;+ iniciada_em : DataHora {frozen}&#xa;+ concluida_em [0..1] : DataHora&#xa;+ total : Decimal(10,2) = 0.00&#xa;+ forma_pagamento [0..1] : FormaPagamento&#xa;+ valor_recebido [0..1] : Decimal(10,2)&#xa;+ troco [0..1] : Decimal(10,2)&#xa;+ /total_itens : Decimal&#xa;+ /total_devolvido : Decimal&#xa;+ /total_liquido : Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_venda">
+          <mxGeometry y="28" width="350" height="172" as="geometry" />
         </mxCell>
         <mxCell id="cls_venda_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_venda">
-          <mxGeometry y="162" width="330" height="8" as="geometry" />
+          <mxGeometry y="200" width="350" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="cls_venda_methods" value="+ total_itens() : Decimal&#xa;+ get_absolute_url() : str&#xa;+ __str__() : str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_venda">
-          <mxGeometry y="170" width="330" height="80" as="geometry" />
+        <mxCell id="cls_venda_methods" value="+ get_absolute_url() : Texto&#xa;+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_venda">
+          <mxGeometry y="208" width="350" height="47" as="geometry" />
         </mxCell>
 
         <!-- ItemVenda -->
         <mxCell id="cls_item" value="ItemVenda (vendas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="960" y="450" width="280" height="160" as="geometry" />
+          <mxGeometry x="1040" y="450" width="340" height="175" as="geometry" />
         </mxCell>
-        <mxCell id="cls_item_attrs" value="+ id : BigInt {PK}&#xa;+ quantidade : int {&gt; 0}&#xa;+ preco_unitario : Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item">
-          <mxGeometry y="28" width="280" height="64" as="geometry" />
+        <mxCell id="cls_item_attrs" value="+ id : BigInt {PK}&#xa;+ quantidade : Inteiro {&gt; 0}&#xa;+ preco_unitario : Decimal(8,2) {frozen}&#xa;+ /subtotal : Decimal&#xa;+ /quantidade_devolvida : Inteiro&#xa;+ /quantidade_devolvivel : Inteiro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item">
+          <mxGeometry y="28" width="340" height="102" as="geometry" />
         </mxCell>
         <mxCell id="cls_item_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_item">
-          <mxGeometry y="92" width="280" height="8" as="geometry" />
+          <mxGeometry y="130" width="340" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="cls_item_methods" value="+ subtotal() : Decimal&#xa;+ __str__() : str" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item">
-          <mxGeometry y="100" width="280" height="60" as="geometry" />
+        <mxCell id="cls_item_methods" value="+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item">
+          <mxGeometry y="138" width="340" height="37" as="geometry" />
         </mxCell>
 
-        <!-- ServicoVendas -->
-        <mxCell id="cls_serv_vnd" value="&lt;&lt;service&gt;&gt;&#xa;ServicoVendas (vendas.servicos)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="940" y="670" width="640" height="250" as="geometry" />
+        <!-- Devolucao -->
+        <mxCell id="cls_devolucao" value="Devolucao (vendas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="530" y="815" width="350" height="170" as="geometry" />
         </mxCell>
-        <mxCell id="cls_serv_vnd_methods" value="+ obter_caixa_aberto() : Caixa | None&#xa;+ abrir_caixa(usuario: Usuario, valor_inicial: Decimal) : Caixa&#xa;+ resumir_caixa(caixa: Caixa) : dict&#xa;+ fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal, justificativa: str) : Caixa&#xa;+ iniciar_ou_retomar_venda(usuario: Usuario) : Venda&#xa;+ adicionar_item(venda: Venda, produto: Produto, quantidade: int) : ItemVenda&#xa;+ alterar_quantidade(item: ItemVenda, quantidade: int) : ItemVenda&#xa;+ remover_item(item: ItemVenda) : void&#xa;+ cancelar_venda(venda: Venda) : Venda&#xa;+ calcular_troco(total: Decimal, forma_pagamento: str, valor_recebido: Decimal) : tuple&lt;Decimal, Decimal&gt;&#xa;+ concluir_venda(venda: Venda, forma_pagamento: str, valor_recebido: Decimal) : Venda&#xa;+ filtrar_vendas(identificador: int, situacao: str, operador: Usuario, caixa: int, ...) : QuerySet&lt;Venda&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_serv_vnd">
-          <mxGeometry y="38" width="640" height="212" as="geometry" />
+        <mxCell id="cls_dev_attrs" value="+ id : BigInt {PK}&#xa;+ motivo : Texto {frozen}&#xa;+ forma_estorno : FormaPagamento {frozen}&#xa;+ valor_estornado : Decimal(10,2) {&gt; 0, frozen}&#xa;+ realizada_em : DataHora {frozen}" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_devolucao">
+          <mxGeometry y="28" width="350" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_dev_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_devolucao">
+          <mxGeometry y="114" width="350" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_dev_methods" value="+ get_absolute_url() : Texto&#xa;+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_devolucao">
+          <mxGeometry y="122" width="350" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- ItemDevolucao -->
+        <mxCell id="cls_item_dev" value="ItemDevolucao (vendas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=28;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="700" width="340" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_item_dev_attrs" value="+ id : BigInt {PK}&#xa;+ quantidade : Inteiro {&gt; 0, frozen}&#xa;+ /subtotal : Decimal" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item_dev">
+          <mxGeometry y="28" width="340" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_item_dev_sep" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="cls_item_dev">
+          <mxGeometry y="88" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_item_dev_methods" value="+ __str__() : Texto" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="cls_item_dev">
+          <mxGeometry y="96" width="340" height="39" as="geometry" />
+        </mxCell>
+
+        <!-- Perfis e Controle (contas) -->
+        <mxCell id="cls_perfis" value="&lt;&lt;serviço / controle&gt;&gt;&#xa;Perfis e Mixin (contas)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="255" width="405" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_perfis_body" value="+ DIRETORIA / BOLSISTA / VOLUNTARIO : Texto {frozen}&#xa;+ PERFIS_OPERADOR / GESTAO_PRODUTOS / GESTAO_CONTAS&#xa;+ possui_algum_perfil(usuario, perfis_permitidos) : Booleano&#xa;+ PerfilRequeridoMixin.test_func() : Booleano&#xa;+ TurnoMiddleware(DURACAO_TURNO_MINUTOS)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="cls_perfis">
+          <mxGeometry y="38" width="405" height="87" as="geometry" />
+        </mxCell>
+
+        <!-- ServicosCatalogo -->
+        <mxCell id="cls_serv_cat" value="&lt;&lt;serviço&gt;&gt;&#xa;ServicosCatalogo (catalogo.servicos)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="410" width="405" height="98" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_serv_cat_methods" value="+ pesquisar_produtos(termo, por, incluir_inativos,&#xa;    categoria) : Produto [*]&#xa;+ buscar_por_codigo(valor: Texto) : Produto [0..1]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="cls_serv_cat">
+          <mxGeometry y="38" width="405" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ServicosEstoque -->
+        <mxCell id="cls_serv_est" value="&lt;&lt;serviço&gt;&gt;&#xa;ServicosEstoque (estoque.servicos)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="540" width="405" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_serv_est_methods" value="+ calcular_novo_saldo(tipo, saldo_atual, qtd) : Inteiro&#xa;+ validar_movimentacao(tipo, produto, qtd, motivo)&#xa;+ registrar_movimentacao(tipo, produto, qtd, usuario, ...)&#xa;+ registrar_baixa_por_venda(produto, qtd, usuario, ref)&#xa;+ registrar_recomposicao_por_devolucao(produto, qtd, ...)&#xa;- gravar_movimentacao(...) : Movimentacao&#xa;+ filtrar_movimentacoes(filtros) : Movimentacao [*]&#xa;+ gerar_relatorio_movimentacoes(filtros) : Relatorio" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="cls_serv_est">
+          <mxGeometry y="38" width="405" height="137" as="geometry" />
+        </mxCell>
+
+        <!-- ServicosVendas -->
+        <mxCell id="cls_serv_vnd" value="&lt;&lt;serviço&gt;&gt;&#xa;ServicosVendas (vendas.servicos)" style="swimlane;swimlaneFillColor=#ffffff;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=38;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="885" width="850" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_serv_vnd_methods" value="+ obter_caixa_aberto() : Caixa [0..1]  |  + abrir_caixa(usuario: Usuario, valor_inicial: Decimal) : Caixa&#xa;+ resumir_caixa(caixa: Caixa) : ResumoCaixa  |  + fechar_caixa(caixa, usuario, valor_contado, justificativa) : Caixa&#xa;+ obter_venda_em_andamento(usuario, caixa) : Venda [0..1]  |  + iniciar_ou_retomar_venda(usuario: Usuario) : Venda&#xa;+ localizar_produtos_para_venda(termo: Texto) : Produto [0..10]&#xa;+ adicionar_item(venda: Venda, produto: Produto, quantidade: Inteiro = 1) : ItemVenda&#xa;+ alterar_quantidade(item: ItemVenda, quantidade: Inteiro) : ItemVenda  |  + remover_item(item: ItemVenda)&#xa;+ cancelar_venda(venda: Venda) : Venda  |  + verificar_finalizacao(venda: Venda)&#xa;+ calcular_troco(total, forma_pagamento, valor_recebido) : (valor_recebido, troco)&#xa;+ concluir_venda(venda: Venda, forma_pagamento: FormaPagamento, valor_recebido: Decimal [0..1]) : Venda&#xa;+ prazo_devolucao(venda: Venda) : DataHora  |  + motivo_devolucao_bloqueada(venda: Venda, agora) : Texto [0..1]&#xa;+ registrar_devolucao(venda: Venda, quantidades: Mapa, motivo: Texto, usuario: Usuario) : Devolucao&#xa;+ filtrar_vendas(filtros: FiltroVendas) : Venda [*]  |  + gerar_relatorio_vendas(filtros: FiltroVendas) : RelatorioVendas" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingRight=8;spacingTop=6;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=11;" vertex="1" parent="cls_serv_vnd">
+          <mxGeometry y="38" width="850" height="192" as="geometry" />
         </mxCell>
 
         <!-- Relacionamentos e navegabilidade -->
         <mxCell id="rel_prod_usr" value="+criado_por / +alterado_por (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_produto" target="cls_usuario">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rel_caixa_usr" value="+aberto_por / +fechado_por (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_caixa" target="cls_usuario">
+        <mxCell id="rel_mov_prod" value="+produto (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_mov" target="cls_produto">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_mov_usr" value="+responsavel (* .. 1)" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=0;entryX=0.5;entryY=0;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_mov" target="cls_usuario">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="20" />
+              <mxPoint x="200" y="20" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_caixa_usr" value="+aberto_por / +fechado_por [0..1] (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_caixa" target="cls_usuario">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="rel_venda_caixa" value="+caixa (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_venda" target="cls_caixa">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rel_venda_usr" value="+operador (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_venda" target="cls_usuario">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="rel_venda_usr" value="+operador (* .. 1)" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.25;entryX=1;entryY=0.75;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_venda" target="cls_usuario">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="534" />
+              <mxPoint x="440" y="244" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="rel_venda_item" value="+itens (1 .. 0..*)" style="startArrow=diamondThin;startFill=1;endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_venda" target="cls_item">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rel_item_prod" value="+produto (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_item" target="cls_produto">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="dep_cat_prod" value="usa" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_serv_cat" target="cls_produto">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="dep_vnd_cat" value="chama baixar_saldo" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_serv_vnd" target="cls_serv_cat">
+        <mxCell id="rel_item_prod" value="+produto (* .. 1)" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.25;entryX=1;entryY=0.85;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_item" target="cls_produto">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="1580" y="795" />
-              <mxPoint x="1580" y="120" />
+              <mxPoint x="955" y="494" />
+              <mxPoint x="955" y="347" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="dep_vnd_venda" value="gerencia" style="dashed=1;endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_serv_vnd" target="cls_venda">
+        <mxCell id="rel_venda_dev" value="+devolucoes (1 .. 0..*)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_venda" target="cls_devolucao">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_caixa_dev" value="+devolucoes (1 .. 0..*)" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.35;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_caixa" target="cls_devolucao">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="215" y="875" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_dev_usr" value="+operador (* .. 1)" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.75;entryX=0;entryY=0.5;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_devolucao" target="cls_usuario">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="942" />
+              <mxPoint x="20" y="188" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_dev_item" value="+itens (1 .. 1..*)" style="startArrow=diamondThin;startFill=1;endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_devolucao" target="cls_item_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_idev_ivenda" value="+item_venda (* .. 1)" style="endArrow=open;endFill=0;html=1;rounded=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_item_dev" target="cls_item">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep_est_mov" value="«gerencia» saldo" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;exitX=0;exitY=0.2;entryX=1;entryY=0.65;" edge="1" parent="1" source="cls_serv_est" target="cls_mov">
+          <mxGeometry x="0.35" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1430" y="575" />
+              <mxPoint x="1430" y="218" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep_vnd_est" value="«usa» baixa e recomposição" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;exitX=0.76;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="cls_serv_vnd" target="cls_serv_est">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dep_vnd_cat" value="«usa»" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;exitX=1;exitY=0.25;entryX=1;entryY=0.5;" edge="1" parent="1" source="cls_serv_vnd" target="cls_serv_cat">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1915" y="942" />
+              <mxPoint x="1915" y="459" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dep_vnd_dev" value="«gerencia»" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="cls_serv_vnd" target="cls_devolucao">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
