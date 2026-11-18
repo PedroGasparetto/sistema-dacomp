@@ -1,0 +1,25 @@
+' Estilo comum dos diagramas de classes (incluído em cada página com !include).
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 13
+skinparam titleFontSize 16
+skinparam packageStyle rectangle
+skinparam packageFontSize 14
+skinparam packageBorderColor #8A8A99
+skinparam packageBackgroundColor #FAFAFC
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #2F2F3A
+skinparam classHeaderBackgroundColor #EEEAF5
+skinparam classFontStyle bold
+skinparam stereotypeFontSize 11
+skinparam arrowColor #2F2F3A
+skinparam arrowFontSize 12
+skinparam noteBackgroundColor #FFF8DC
+skinparam noteBorderColor #B8A86A
+skinparam linetype polyline
+skinparam nodesep 70
+skinparam ranksep 80
+skinparam padding 2
+hide empty members
+hide circle

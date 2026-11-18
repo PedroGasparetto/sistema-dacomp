@@ -1,0 +1,96 @@
+@startuml classes-3-catalogo-estoque-contas
+' Diagrama de classes de projeto (3/5) — atributos dos pacotes catalogo, estoque e contas.
+' Notação dos slides: nome [multiplicidade] : tipo = valor inicial {propriedades};
+' /nome = derivado; {frozen} = não muda depois de criado.
+!include estilo.iuml
+
+title Lojinha do DACOMP — Diagrama de classes (3/5): pacotes catalogo, estoque e contas
+
+package "catalogo" {
+  class Produto {
+    + codigo : Texto {único}
+    + nome : Texto
+    + categoria : Categoria = OUTRO
+    + descricao [0..1] : Texto
+    + marca [0..1] : Texto
+    + fornecedor [0..1] : Texto
+    + codigo_barras [0..1] : Texto {único}
+    + unidade : Unidade = UN
+    {field} + preco_unitario : Decimal(8,2) {>= 0}
+    {field} + preco_custo [0..1] : Decimal(8,2) {>= 0}
+    + ativo : Booleano = verdadeiro
+    + controla_estoque : Booleano = verdadeiro
+    + saldo_estoque : Inteiro = 0 {>= 0}
+    + criado_em : DataHora {frozen}
+    + alterado_em : DataHora
+    + /lucro_unitario [0..1] : Decimal
+    + /margem_percentual [0..1] : Decimal
+  }
+  enum Categoria <<enumeration>> {
+    CAFE
+    BEBIDA
+    LANCHE
+    DOCE
+    OUTRO
+  }
+  enum Unidade <<enumeration>> {
+    UN
+    COPO
+    FATIA
+    PCT
+    CX
+    DZ
+    KG
+    L
+  }
+}
+
+package "estoque" {
+  class Movimentacao {
+    + tipo : TipoMovimentacao {frozen}
+    + quantidade_anterior : Inteiro {>= 0, frozen}
+    + variacao : Inteiro {frozen}
+    + quantidade_resultante : Inteiro {>= 0, frozen}
+    + motivo [0..1] : MotivoAjuste {frozen}
+    + observacao [0..1] : Texto {frozen}
+    + realizada_em : DataHora {frozen}
+  }
+  enum TipoMovimentacao <<enumeration>> {
+    ENTRADA
+    AJUSTE
+    VENDA
+    DEVOLUCAO
+  }
+  enum MotivoAjuste <<enumeration>> {
+    PERDA
+    VENCIMENTO
+    AVARIA
+    CONTAGEM
+    OUTRO
+  }
+}
+
+package "contas" {
+  class Usuario {
+    + username : Texto {único}
+    + first_name : Texto
+    + last_name : Texto
+    + email : Texto
+    + is_active : Booleano = verdadeiro
+    + perfis [0..3] : Texto {Diretoria | Bolsista | Voluntário}
+    + check_password (senha : Texto) : Booleano
+    + get_full_name () : Texto
+  }
+}
+
+Movimentacao "0..*" -left-> "1" Produto : altera saldo de >
+Movimentacao "0..*" -down-> "1" Usuario : responsavel
+Produto "0..*" -down-> "1" Usuario : criado_por,\nalterado_por
+
+' Enumerações abaixo da classe que as usa (posicionamento).
+Categoria -[hidden]right- Unidade
+TipoMovimentacao -[hidden]right- MotivoAjuste
+Produto -[hidden]down- Categoria
+Movimentacao -[hidden]down- TipoMovimentacao
+
+@enduml
