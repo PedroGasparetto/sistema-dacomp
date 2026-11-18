@@ -1,11 +1,15 @@
+from datetime import timedelta
+
 import pytest
 from django.contrib.auth.models import Group
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.urls import reverse
+from django.utils import timezone
 
 from contas.models import Usuario
 from contas.perfis import DIRETORIA, TODOS_PERFIS
+from contas.turno import CHAVE_INICIO_TURNO
 
 SENHA_FORTE = "uma-senha-forte-456"
 
@@ -126,3 +130,35 @@ def test_atualiza_perfis_e_desativa_sem_mexer_na_senha(bolsista):
 def test_troca_de_senha_fica_com_changepassword(bolsista):
     with pytest.raises(CommandError):
         call_command("criar_conta", "bolsista", senha=SENHA_FORTE)
+
+
+# Sessão por turno ----------------------------------------------------------------
+
+
+def test_login_inicia_o_turno(client, voluntario):
+    client.force_login(voluntario)
+    assert CHAVE_INICIO_TURNO in client.session
+    resposta = client.get(reverse("nucleo:inicio"))
+    assert resposta.status_code == 200
+    assert resposta.context["fim_do_turno"] is not None
+
+
+def test_fim_do_turno_encerra_a_sessao(client, voluntario, settings):
+    client.force_login(voluntario)
+    sessao = client.session
+    sessao[CHAVE_INICIO_TURNO] = (
+        timezone.now() - timedelta(minutes=settings.DURACAO_TURNO_MINUTOS, seconds=1)
+    ).timestamp()
+    sessao.save()
+
+    resposta = client.get(reverse("vendas:pdv"))
+    assert resposta.status_code == 302
+    assert resposta.url.startswith(reverse("contas:entrar"))
+    assert "next=" in resposta.url
+    # Sem login, a próxima tela também pede autenticação.
+    assert client.get(reverse("nucleo:inicio")).status_code == 302
+
+
+def test_sessao_termina_ao_fechar_o_navegador(settings):
+    assert settings.SESSION_EXPIRE_AT_BROWSER_CLOSE
+    assert settings.SESSION_COOKIE_AGE == settings.DURACAO_TURNO_MINUTOS * 60

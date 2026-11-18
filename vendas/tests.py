@@ -199,9 +199,51 @@ def test_fluxo_completo_no_pdv(client, caixa, voluntario, produto_com_saldo):
         {"forma_pagamento": FormaPagamento.DINHEIRO, "valor_recebido": "70.00"},
     )
     venda.refresh_from_db()
-    assert resposta.status_code == 302
     assert venda.situacao == Venda.Situacao.CONCLUIDA
     assert venda.troco == Decimal("10.00")
+    # Depois do pagamento, a pessoa operadora continua no PDV, com a última venda à vista.
+    assert resposta.status_code == 302
+    assert resposta.url == reverse("vendas:pdv")
+    pdv = client.get(reverse("vendas:pdv"))
+    assert pdv.context["venda"] is None
+    assert pdv.context["ultima_venda"] == venda
+
+
+def test_pagamento_fica_na_tela_do_pdv(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    pdv = client.get(reverse("vendas:pdv")).content.decode()
+    assert 'id="pdv-pagamento"' in pdv
+    assert reverse("vendas:pagamento", args=[venda.pk]) in pdv
+    # A antiga página de pagamento não existe mais: o endereço volta ao PDV.
+    assert client.get(reverse("vendas:pagamento", args=[venda.pk])).url == reverse("vendas:pdv")
+
+
+def test_quantia_insuficiente_mostra_erro_no_pdv(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    resposta = client.post(
+        reverse("vendas:pagamento", args=[venda.pk]),
+        {"forma_pagamento": FormaPagamento.DINHEIRO, "valor_recebido": "10.00"},
+    )
+    assert resposta.status_code == 200
+    assert resposta.templates[0].name == "vendas/pdv.html"
+    assert resposta.context["formulario_pagamento"].errors
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
+
+
+def test_cartao_nao_e_aceito(client, caixa, voluntario, produto_com_saldo):
+    assert set(FormaPagamento.values) == {"dinheiro", "pix"}
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    resposta = client.post(reverse("vendas:pagamento", args=[venda.pk]), {"forma_pagamento": "credito"})
+    assert resposta.status_code == 200
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
 
 
 def test_pesquisa_por_nome_com_varios_resultados_lista_candidatos(client, caixa, voluntario, produto, bolsista):
@@ -226,7 +268,8 @@ def test_operador_nao_altera_venda_de_outro(client, caixa, voluntario, bolsista,
     item = adicionar_item(venda=venda, produto=produto_com_saldo)
     client.force_login(bolsista)
     assert client.post(reverse("vendas:remover_item", args=[item.pk])).status_code == 404
-    assert client.get(reverse("vendas:pagamento", args=[venda.pk])).status_code == 404
+    pagamento = {"forma_pagamento": FormaPagamento.PIX}
+    assert client.post(reverse("vendas:pagamento", args=[venda.pk]), pagamento).status_code == 404
 
 
 def test_consulta_de_vendas_filtra_por_caixa(client, caixa, voluntario, produto_com_saldo):

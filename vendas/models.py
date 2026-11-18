@@ -69,10 +69,9 @@ class Venda(models.Model):
         CANCELADA = "cancelada", "Cancelada"
 
     class FormaPagamento(models.TextChoices):
+        # A lojinha não aceita cartões: as taxas encareceriam os produtos (reunião de 17/11).
         DINHEIRO = "dinheiro", "Dinheiro"
         PIX = "pix", "PIX"
-        CREDITO = "credito", "Cartão de crédito"
-        DEBITO = "debito", "Cartão de débito"
 
     caixa = models.ForeignKey(Caixa, on_delete=models.PROTECT, related_name="vendas", verbose_name="caixa")
     operador = models.ForeignKey(

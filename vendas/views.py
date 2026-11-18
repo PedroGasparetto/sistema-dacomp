@@ -40,7 +40,6 @@ from .servicos import (
     registrar_devolucao,
     remover_item,
     resumir_caixa,
-    verificar_finalizacao,
 )
 
 
@@ -53,6 +52,7 @@ def _avisar_erros(request, erro):
 
 
 CHAVE_CATEGORIA_PDV = "pdv_categoria"
+CHAVE_ULTIMA_VENDA = "pdv_ultima_venda"
 
 
 def _renderizar_pdv(request, **extra):
@@ -68,6 +68,10 @@ def _renderizar_pdv(request, **extra):
         "quantidade_itens": sum(item.quantidade for item in itens),
         "formulario_item": FormularioAdicionarItem(),
         "candidatos": [],
+        "formulario_pagamento": FormularioPagamento(),
+        "ultima_venda": Venda.objects.filter(
+            pk=request.session.get(CHAVE_ULTIMA_VENDA), situacao=Venda.Situacao.CONCLUIDA
+        ).first(),
         # Grade de atalhos: itens de bar e café costumam não ter código de barras.
         "categorias": Produto.Categoria.choices,
         "categoria_atual": categoria,
@@ -167,47 +171,41 @@ class CancelarVendaView(PerfilRequeridoMixin, View):
 
 
 class PagamentoView(PerfilRequeridoMixin, View):
-    """UC12 – Receber Pagamento, incluído na finalização do UC03."""
+    """UC12 – Receber Pagamento, incluído na finalização do UC03.
 
-    template_name = "vendas/pagamento.html"
+    A forma de pagamento e o troco ficam no próprio PDV: depois de confirmar,
+    a pessoa operadora continua na mesma tela, pronta para a próxima venda.
+    """
+
+    http_method_names = ["get", "post"]
 
     def get(self, request, pk):
-        venda = _venda_em_andamento(request, pk)
-        try:
-            verificar_finalizacao(venda)
-        except ValidationError as erro:
-            _avisar_erros(request, erro)
-            return redirect("vendas:pdv")
-        return self._renderizar(request, venda, FormularioPagamento())
+        return redirect("vendas:pdv")
 
     def post(self, request, pk):
         venda = _venda_em_andamento(request, pk)
         formulario = FormularioPagamento(request.POST)
-        if formulario.is_valid():
-            try:
-                venda = concluir_venda(
-                    venda=venda,
-                    forma_pagamento=formulario.cleaned_data["forma_pagamento"],
-                    valor_recebido=formulario.cleaned_data["valor_recebido"],
-                )
-            except ValidationError as erro:
-                if hasattr(erro, "error_dict"):
-                    formulario.add_error(None, erro)
-                else:
-                    _avisar_erros(request, erro)
-                    return redirect("vendas:pdv")
-            else:
-                messages.success(request, f"{venda} concluída.")
-                return redirect(f"{venda.get_absolute_url()}?pdv=1")
-        return self._renderizar(request, venda, formulario)
+        if not formulario.is_valid():
+            return _renderizar_pdv(request, formulario_pagamento=formulario)
+        try:
+            venda = concluir_venda(
+                venda=venda,
+                forma_pagamento=formulario.cleaned_data["forma_pagamento"],
+                valor_recebido=formulario.cleaned_data["valor_recebido"],
+            )
+        except ValidationError as erro:
+            if hasattr(erro, "error_dict"):
+                formulario.add_error(None, erro)
+                return _renderizar_pdv(request, formulario_pagamento=formulario)
+            _avisar_erros(request, erro)
+            return redirect("vendas:pdv")
 
-    def _renderizar(self, request, venda, formulario):
-        itens = list(venda.itens.select_related("produto"))
-        return render(
-            request,
-            self.template_name,
-            {"venda": venda, "itens": itens, "total": venda.total_itens, "formulario": formulario},
-        )
+        mensagem = f"{venda} concluída: R$ {number_format(venda.total, 2)} em {venda.get_forma_pagamento_display()}."
+        if venda.forma_pagamento == Venda.FormaPagamento.DINHEIRO:
+            mensagem += f" Troco: R$ {number_format(venda.troco, 2)}."
+        messages.success(request, mensagem)
+        request.session[CHAVE_ULTIMA_VENDA] = venda.pk
+        return redirect("vendas:pdv")
 
 
 # Caixa (UC01 e UC02) ---------------------------------------------------------

@@ -1,0 +1,51 @@
+# Instalação na rede local do DAcomp: PostgreSQL + aplicação com gunicorn.
+# Passo a passo completo em docs/instalacao-rede-local.md.
+# Uso: docker compose -f docker-compose.rede-local.yml up -d --build   →   http://IP-DO-SERVIDOR:8000
+# Requer o arquivo .env com DJANGO_SECRET_KEY e DJANGO_ALLOWED_HOSTS (modelo em .env.example).
+
+name: lojinha-dacomp
+
+x-postgres: &postgres
+  POSTGRES_DB: ${POSTGRES_DB:-lojinha}
+  POSTGRES_USER: ${POSTGRES_USER:-lojinha}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      <<: *postgres
+    # Sem porta publicada: o banco só é acessado pela aplicação.
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: .
+    image: lojinha-dacomp-web
+    restart: unless-stopped
+    environment:
+      <<: *postgres
+      POSTGRES_HOST: db
+      DJANGO_DEBUG: "0"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Defina DJANGO_SECRET_KEY no .env}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?Defina DJANGO_ALLOWED_HOSTS no .env}
+      DURACAO_TURNO_MINUTOS: ${DURACAO_TURNO_MINUTOS:-100}
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
+    # Publicada em todas as interfaces: os outros computadores da rede acessam por http://IP:PORTA.
+    ports:
+      - "${PORTA:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  dados_postgres:
