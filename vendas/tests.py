@@ -235,15 +235,19 @@ def test_quantia_insuficiente_mostra_erro_no_pdv(client, caixa, voluntario, prod
     assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
 
 
-def test_cartao_nao_e_aceito(client, caixa, voluntario, produto_com_saldo):
-    assert set(FormaPagamento.values) == {"dinheiro", "pix"}
+def test_pagamento_com_cartao_no_pdv_dispensa_troco(client, caixa, voluntario, produto_com_saldo):
     venda = iniciar_ou_retomar_venda(voluntario)
     adicionar_item(venda=venda, produto=produto_com_saldo)
     client.force_login(voluntario)
-    resposta = client.post(reverse("vendas:pagamento", args=[venda.pk]), {"forma_pagamento": "credito"})
-    assert resposta.status_code == 200
+    pdv = client.get(reverse("vendas:pdv")).content.decode()
+    assert 'value="credito"' in pdv and 'value="debito"' in pdv
+    resposta = client.post(
+        reverse("vendas:pagamento", args=[venda.pk]), {"forma_pagamento": FormaPagamento.CREDITO}
+    )
+    assert resposta.url == reverse("vendas:pdv")
     venda.refresh_from_db()
-    assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
+    assert venda.situacao == Venda.Situacao.CONCLUIDA
+    assert (venda.forma_pagamento, venda.troco) == (FormaPagamento.CREDITO, Decimal("0.00"))
 
 
 def test_pesquisa_por_nome_com_varios_resultados_lista_candidatos(client, caixa, voluntario, produto, bolsista):
