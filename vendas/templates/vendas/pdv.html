@@ -39,11 +39,11 @@
             <tbody>
               {% for produto in candidatos %}
                 <tr>
-                  <td>{{ produto.codigo }}</td>
-                  <td>{{ produto.nome }}</td>
+                  <td class="codigo">{{ produto.codigo }}</td>
+                  <td class="candidato-nome">{{ produto.nome }}</td>
                   <td class="num">{{ produto.preco_unitario|moeda }}</td>
-                  <td class="num">{% if produto.controla_estoque %}{{ produto.saldo_estoque }} em estoque{% else %}Preparo na hora{% endif %}</td>
-                  <td>
+                  <td class="num candidato-saldo">{% if produto.controla_estoque %}{{ produto.saldo_estoque }} em estoque{% else %}Preparo na hora{% endif %}</td>
+                  <td class="candidato-acao">
                     <form method="post" action="{% url 'vendas:adicionar_item' %}" class="formulario-em-linha">
                       {% csrf_token %}
                       <input type="hidden" name="termo" value="{{ produto.codigo }}">
@@ -76,9 +76,8 @@
                       {% if produto.controla_estoque and produto.saldo_estoque == 0 %}disabled{% endif %}>
                 <span class="pdv-atalho-nome">{{ produto.nome }}</span>
                 <span class="pdv-atalho-preco">{{ produto.preco_unitario|moeda }}</span>
-                {% if produto.controla_estoque %}
-                  <small>{% if produto.saldo_estoque == 0 %}Esgotado{% else %}{{ produto.saldo_estoque }} em estoque{% endif %}</small>
-                {% endif %}
+                {# A linha existe mesmo sem controle de estoque, para os preços ficarem na mesma altura. #}
+                <small>{% if not produto.controla_estoque %}&nbsp;{% elif produto.saldo_estoque == 0 %}Esgotado{% else %}{{ produto.saldo_estoque }} em estoque{% endif %}</small>
               </button>
             </form>
           {% endfor %}
