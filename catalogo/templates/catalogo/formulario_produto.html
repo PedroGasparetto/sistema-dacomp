@@ -11,6 +11,9 @@
       {% for campo in campos %}{{ campo.as_field_group }}{% endfor %}
     </fieldset>
   {% endfor %}
+  {% if produto %}
+    <p><small>O saldo em estoque ({{ produto.saldo_estoque }}) só é alterado por transações no estoque.</small></p>
+  {% endif %}
   <div class="acoes">
     <button type="submit">Salvar</button>
     <a href="{% if produto %}{{ produto.get_absolute_url }}{% else %}{% url 'catalogo:lista_produtos' %}{% endif %}">Cancelar</a>

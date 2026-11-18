@@ -65,25 +65,24 @@ Acesse http://localhost:8000 e entre com `diretoria`, `bolsista` ou `voluntario`
 
 ### 4. Contas da equipe
 
-Não há tela de gestão de contas: elas são administradas pela linha de comando.
+A Diretoria cria, edita, inativa contas e redefine senhas em **Contas** (menu superior). Cada pessoa
+troca a própria senha em **Alterar senha**, no menu do usuário.
+
+A primeira conta da Diretoria de uma instalação nova é criada pela linha de comando:
 
 ```bash
 # Criar conta (a senha é pedida no terminal); repita --perfil para acumular papéis
 docker compose exec web python manage.py criar_conta ana --perfil diretoria --perfil bolsista --nome Ana
 
-# Alterar os perfis de uma conta existente
+# Alterar os perfis, desativar ou reativar uma conta
 docker compose exec web python manage.py criar_conta ana --perfil voluntario
-
-# Desativar ou reativar o acesso
 docker compose exec web python manage.py criar_conta ana --desativar
 docker compose exec web python manage.py criar_conta ana --reativar
-
-# Trocar a senha
-docker compose exec web python manage.py changepassword ana
 ```
 
-Perfis: `diretoria`, `bolsista` e `voluntario`. Diretoria e Bolsista mantêm o cadastro de produtos;
-os três perfis operam o PDV e o caixa.
+Perfis: `diretoria`, `bolsista` e `voluntario`. Somente a Diretoria mantém as contas; Diretoria e
+Bolsista mantêm o cadastro de produtos; os três perfis operam o PDV, o caixa, o estoque, as devoluções
+e os relatórios.
 
 ### 5. Uso no dia a dia
 
@@ -104,6 +103,13 @@ O código da pasta é montado dentro do container: ao salvar um arquivo, o servi
 sem precisar reconstruir. Os dados do banco ficam no volume `sistema-dacomp_dados_postgres` e
 continuam lá entre um `down` e outro `up`.
 
+### Instalação na rede local do DA
+
+O `docker-compose.yml` acima é para desenvolvimento (só abre no próprio computador). Para usar o
+sistema nos computadores do DAcomp, siga [docs/instalacao-rede-local.md](docs/instalacao-rede-local.md):
+um computador roda o sistema com `docker-compose.rede-local.yml` e os outros acessam pelo navegador.
+O sistema não depende de internet: CSS e fontes ficam em `static/vendor`.
+
 ### Problemas comuns
 
 - **Porta 8000 ou 5432 em uso:** feche o programa que usa a porta (outro servidor Django ou um
@@ -121,21 +127,20 @@ Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote seg
 
 ![Diagrama de Pacotes e Arquitetura](docs/diagramas/diagrama_de_pacotes.drawio.svg)
 
-| Pacote     | Responsabilidade                                            | Casos de uso (UC01–UC17) |
-|------------|-------------------------------------------------------------|--------------------------|
-| `contas`   | Autenticação e perfis fixos (Diretoria, Bolsista, Voluntário); contas criadas pela linha de comando | UC01 (UC15 via CLI) |
-| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo, lucro e quantidade em estoque) | UC02, UC13 |
-| `vendas`   | PDV, abertura e fechamento de caixa, pagamento, cancelamento e consulta de vendas | UC03, UC04, UC05, UC06, UC07, UC17 |
-| `nucleo`   | Página inicial, formatação, paginação e dados de demonstração | —                   |
-| `config`   | Configurações e rotas do projeto                              | —                   |
+| Pacote     | Responsabilidade                                                          | Casos de uso |
+|------------|---------------------------------------------------------------------------|--------------|
+| `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e gestão de contas | Autenticar Usuário, Manter Contas |
+| `catalogo` | Cadastro e pesquisa de produtos (categoria, unidade, custo e lucro)        | Consultar Produto, Manter Cadastro de Produtos |
+| `estoque`  | Entradas, ajustes, saldo, histórico de movimentações e relatório de estoque | Realizar Transação no Estoque (entrada e ajuste), Consultar Saldo e Movimentações, Gerar Relatórios Básicos |
+| `vendas`   | PDV, caixa, pagamento, cancelamento, devolução, consulta e relatório de vendas | Abrir e Fechar Caixa, Registrar Venda, Receber Pagamento, Cancelar Venda em Andamento, Registrar Devolução, Consultar Vendas, Gerar Relatórios Básicos |
+| `nucleo`   | Página inicial, formatação, paginação e dados de demonstração              | — |
+| `config`   | Configurações e rotas do projeto                                          | — |
 
-Dependências: `vendas → catalogo → contas`; `nucleo` usa todos. A quantidade em estoque é informada no
-cadastro do produto e baixada automaticamente quando uma venda é concluída (`catalogo.servicos.baixar_saldo`).
-Venda, pagamento e baixa de estoque são gravados em uma única transação (RNF01): se faltar saldo, nada é
-registrado. As listagens usam 10 registros por página.
-
-Simplificação desta etapa: as movimentações de estoque (entradas, ajustes e histórico) não foram
-implementadas; o saldo é mantido diretamente no cadastro.
+Dependências: `vendas → estoque → catalogo → contas`; `nucleo` usa todos. O saldo de um produto só é
+alterado pelo `estoque.servicos` (entradas, ajustes, baixas de venda e recomposições de devolução),
+sempre junto com o registro da movimentação. Venda, pagamento e baixa de estoque são gravados em uma
+única transação (RNF01), assim como devolução, estorno e recomposição do estoque. As listagens usam 10
+registros por página.
 
 ### PDV
 
@@ -144,17 +149,46 @@ por categoria. Itens preparados na hora, como café coado, podem ser cadastrados
 
 Em **PDV**: abra o caixa e toque nos produtos da grade de atalhos (filtrada por categoria) ou leia o
 código de barras (ou digite o código ou parte do nome) e pressione Enter. A comanda fica à direita,
-com o total. `F2` volta ao campo de produto e `F4` finaliza a venda. Na
-finalização, escolha a forma de pagamento; em dinheiro, o sistema calcula o troco. O fechamento do
-caixa confere as vendas por forma de pagamento e exige justificativa quando o valor contado difere do
-esperado.
+com o total. Logo abaixo do total, escolha a forma de pagamento (dinheiro, PIX, crédito ou débito) e, em
+dinheiro, informe a quantia recebida: o troco aparece na hora. `F4` (ou **Confirmar pagamento**)
+conclui a venda sem sair do PDV, que fica pronto para a próxima, com o link da última venda. `F2` volta
+ao campo de produto. O fechamento do caixa confere as vendas por forma de pagamento e exige
+justificativa quando o valor contado difere do esperado.
 
-Próximo pacote previsto: `relatorios` (UC50).
+### Turno de atendimento
+
+O login vale por um turno: depois de `DURACAO_TURNO_MINUTOS` (padrão: 100 minutos, ajustável no
+`.env`) a sessão termina e quem assume o caixa entra com a própria conta. A sessão também termina ao
+fechar o navegador. O horário de fim aparece no menu do usuário ("Turno até…").
+
+### Estoque
+
+Em **Estoque → Nova transação**, registre uma entrada de reposição (soma ao saldo) ou um ajuste após
+contagem (substitui o saldo e exige motivo). O sistema mostra o saldo anterior, a variação e o
+resultado antes de confirmar. Produtos novos começam com saldo zero: dê entrada no estoque depois de
+cadastrá-los.
+
+### Devolução
+
+Na tela de uma venda concluída, **Registrar devolução** permite devolver itens em até 7 dias
+(`PRAZO_DEVOLUCAO_DIAS` em `config/settings.py`), com o caixa aberto. Informe a quantidade de cada item
+e o motivo, confira o resumo e confirme: o valor é estornado pela mesma forma de pagamento da venda,
+pelo preço praticado nela, e os produtos voltam ao estoque. Uma venda aceita devoluções parciais até
+todos os itens serem devolvidos. Estornos em dinheiro saem do valor esperado no fechamento do caixa.
+
+### Relatórios
+
+Nas consultas de **Vendas** e de **Estoque**, **Gerar relatório** monta um relatório com os mesmos
+filtros da consulta, pronto para imprimir:
+
+- **Vendas:** vendas concluídas, totais por forma de pagamento, estornos de devoluções e total líquido.
+- **Movimentações de estoque:** registros do período e, por produto, entradas, ajustes, baixas por
+  venda, devoluções e saldo atual.
 
 ## Documentação e Contribuição
 
 - **[Guia de Contribuição](CONTRIBUTING.md)** — fluxo de branches/PRs, convenções de código, migrações e execução de testes.
 - **[Arquitetura do Sistema](docs/arquitetura.md)** — diagrama de pacotes, modelo entidade-relacionamento (DER), diagrama de classes de projeto, matriz de perfis e mapa de rotas.
-- **[Fluxos de Negócio](docs/fluxos.md)** — máquinas de estado (`Caixa` e `Venda`) e diagramas de sequência (PDV atômico e fechamento de caixa).
-- **[Diagramas editáveis](docs/diagramas/)** — fontes `.drawio` e `.drawio.svg` com diagrama embutido.
-- **[Casos de Uso](doc/casos_de_uso.md)** — especificação e diagrama de casos de uso.
+- **[Fluxos de Negócio](docs/fluxos.md)** — máquinas de estado (`Caixa` e `Venda`) e diagramas de sequência (PDV atômico, fechamento de caixa, estoque e devolução).
+- **[Instalação na Rede Local](docs/instalacao-rede-local.md)** — guia de implantação em rede local com `docker-compose.rede-local.yml`.
+- **[Diagramas](docs/diagramas/)** — diagramas editáveis em Draw.io (`.drawio` / `.drawio.svg`), diagramas UML de classes em PlantUML (`classes-1` a `classes-5`) e [documentação das operações](docs/diagramas/classes-operacoes.md).

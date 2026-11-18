@@ -41,7 +41,33 @@
   </table>
 </div>
 
+{% if venda.devolucoes.all %}
+  <h2>Devoluções</h2>
+  {% for devolucao in venda.devolucoes.all %}
+    <article>
+      <header>
+        <strong>{{ devolucao }}</strong> · {{ devolucao.realizada_em|date:"d/m/Y H:i" }} · {{ devolucao.operador }}
+      </header>
+      <ul>
+        {% for item in devolucao.itens.all %}
+          <li>{{ item.quantidade }} × {{ item.item_venda.produto.nome }} ({{ item.subtotal|moeda }})</li>
+        {% endfor %}
+      </ul>
+      <p>Estorno de <strong>{{ devolucao.valor_estornado|moeda }}</strong> em {{ devolucao.get_forma_estorno_display|lower }} · Motivo: {{ devolucao.motivo }}</p>
+    </article>
+  {% endfor %}
+  <p>Total devolvido: <strong>{{ venda.total_devolvido|moeda }}</strong> · Valor líquido da venda: <strong>{{ venda.total_liquido|moeda }}</strong></p>
+{% endif %}
+
 <div class="acoes">
+  {% if venda.situacao == 'concluida' %}
+    {% if not bloqueio_devolucao %}
+      <a role="button" class="secondary" href="{% url 'vendas:registrar_devolucao' venda.pk %}">Registrar devolução</a>
+      <small>Devolução aceita até {{ prazo_devolucao|date:"d/m/Y H:i" }}.</small>
+    {% else %}
+      <small>{{ bloqueio_devolucao }}</small>
+    {% endif %}
+  {% endif %}
   {% if request.GET.pdv %}
     <a role="button" href="{% url 'vendas:pdv' %}" autofocus>Nova venda</a>
   {% endif %}

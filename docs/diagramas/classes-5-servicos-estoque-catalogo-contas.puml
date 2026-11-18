@@ -1,0 +1,86 @@
+@startuml classes-5-servicos-estoque-catalogo-contas
+' Diagrama de classes de projeto — serviços (regras de negócio).
+' Cada servicos.py é um módulo Python; aqui aparece como classe <<serviço>> com
+' operações de classe. As views (controle) chamam essas operações.
+' Gerado a partir de contas/perfis.py e catalogo/, estoque/ e vendas/servicos.py.
+
+title Lojinha do DACOMP — Diagrama de classes (5/5): serviços de estoque, catálogo e contas
+
+!include estilo.iuml
+
+package "estoque" {
+  class "ServicosEstoque" as SE <<serviço>> {
+    {static} + calcular_novo_saldo (tipo : TipoMovimentacao, saldo_atual : Inteiro, quantidade : Inteiro) : Inteiro
+    {static} + validar_movimentacao (tipo : TipoMovimentacao, produto : Produto, quantidade : Inteiro,\n      motivo : MotivoAjuste [0..1])
+    {static} + registrar_movimentacao (tipo : TipoMovimentacao, produto : Produto, quantidade : Inteiro,\n      usuario : Usuario, motivo : MotivoAjuste [0..1], observacao : Texto = "") : Movimentacao
+    {static} + registrar_baixa_por_venda (produto : Produto, quantidade : Inteiro, usuario : Usuario,\n      referencia : Texto) : Movimentacao [0..1]
+    {static} + registrar_recomposicao_por_devolucao (produto : Produto, quantidade : Inteiro,\n      usuario : Usuario, referencia : Texto) : Movimentacao [0..1]
+    {static} - gravar_movimentacao (produto : Produto, tipo : TipoMovimentacao, novo_saldo : Inteiro,\n      usuario : Usuario, motivo : MotivoAjuste [0..1], observacao : Texto) : Movimentacao
+    {static} + filtrar_movimentacoes (filtros : FiltroMovimentacoes) : Movimentacao [*]
+    {static} + gerar_relatorio_movimentacoes (filtros : FiltroMovimentacoes) : RelatorioMovimentacoes
+  }
+  class RelatorioMovimentacoes <<dados>> {
+    + movimentacoes [*] : Movimentacao
+    + por_produto [*] : LinhaProduto
+    + totais : Mapa<TipoMovimentacao, Inteiro>
+  }
+  class FiltroMovimentacoes <<dados>> {
+    + termo_produto : Texto = ""
+    + tipo [0..1] : TipoMovimentacao
+    + inicio [0..1] : Data
+    + fim [0..1] : Data {inicio <= fim}
+  }
+  class LinhaProduto <<dados>> {
+    + codigo : Texto
+    + nome : Texto
+    + saldo_atual : Inteiro
+    + entrada : Inteiro
+    + ajuste : Inteiro
+    + venda : Inteiro
+    + devolucao : Inteiro
+    + variacao_total : Inteiro
+  }
+  SE ..> RelatorioMovimentacoes : <<cria>>
+  RelatorioMovimentacoes -right-> "*" LinhaProduto
+}
+
+package "catalogo" {
+  class "ServicosCatalogo" as SC <<serviço>> {
+    {static} + pesquisar_produtos (termo : Texto = "", por : PesquisarPor = NOME,\n      incluir_inativos : Booleano = falso, categoria : Categoria [0..1]) : Produto [*]
+    {static} + buscar_por_codigo (valor : Texto) : Produto [0..1]
+  }
+  enum PesquisarPor <<enumeration>> {
+    NOME
+    CODIGO
+    CODIGO_BARRAS
+  }
+}
+
+package "contas" {
+  class "Perfis" as SP <<serviço>> {
+    + {static} DIRETORIA : Texto = "Diretoria" {frozen}
+    + {static} BOLSISTA : Texto = "Bolsista" {frozen}
+    + {static} VOLUNTARIO : Texto = "Voluntário" {frozen}
+    {static} + possui_algum_perfil (usuario : Usuario, perfis_permitidos : Texto [1..3]) : Booleano
+  }
+  class PerfilRequeridoMixin <<controle>> {
+    + perfis_permitidos [1..3] : Texto = todos os perfis
+    + test_func () : Booleano
+  }
+  PerfilRequeridoMixin ..> SP : <<usa>>
+}
+
+
+SE -[hidden]right- FiltroMovimentacoes
+SE ..> FiltroMovimentacoes
+SE ..> SC : <<usa>>\nlê e bloqueia Produto\n(o formulário usa buscar_por_codigo)
+RelatorioMovimentacoes -[hidden]right- LinhaProduto
+LinhaProduto -[hidden]down- SC
+SC -[hidden]down- PerfilRequeridoMixin
+
+legend bottom right
+  Único ponto que altera Produto.saldo_estoque.
+  Cada alteração cria uma Movimentacao.
+endlegend
+
+@enduml

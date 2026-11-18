@@ -1,0 +1,83 @@
+@startuml classes-2-vendas
+' Diagrama de classes de projeto (2/5) — atributos do pacote vendas.
+' Notação dos slides: nome [multiplicidade] : tipo = valor inicial {propriedades};
+' /nome = derivado; {frozen} = não muda depois de criado.
+!include estilo.iuml
+
+title Lojinha do DACOMP — Diagrama de classes (2/5): pacote vendas
+
+package "vendas" {
+  class Caixa {
+    + situacao : SituacaoCaixa = ABERTO
+    {field} + valor_inicial : Decimal(10,2) {>= 0, frozen}
+    + aberto_em : DataHora {frozen}
+    + fechado_em [0..1] : DataHora
+    {field} + valor_esperado [0..1] : Decimal(10,2)
+    {field} + valor_contado [0..1] : Decimal(10,2) {>= 0}
+    + justificativa [0..1] : Texto
+    + /diferenca [0..1] : Decimal
+  }
+
+  class Venda {
+    + situacao : SituacaoVenda = EM_ANDAMENTO
+    + iniciada_em : DataHora {frozen}
+    + concluida_em [0..1] : DataHora
+    {field} + total : Decimal(10,2) = 0
+    + forma_pagamento [0..1] : FormaPagamento
+    {field} + valor_recebido [0..1] : Decimal(10,2)
+    {field} + troco [0..1] : Decimal(10,2)
+    + /total_itens : Decimal
+    + /total_devolvido : Decimal
+    + /total_liquido : Decimal
+  }
+
+  class ItemVenda {
+    + quantidade : Inteiro {> 0}
+    {field} + preco_unitario : Decimal(8,2) {frozen}
+    + /subtotal : Decimal
+    + /quantidade_devolvida : Inteiro
+    + /quantidade_devolvivel : Inteiro
+  }
+
+  class Devolucao {
+    + motivo : Texto {frozen}
+    + forma_estorno : FormaPagamento {frozen}
+    {field} + valor_estornado : Decimal(10,2) {> 0, frozen}
+    + realizada_em : DataHora {frozen}
+  }
+
+  class ItemDevolucao {
+    + quantidade : Inteiro {> 0, frozen}
+    + /subtotal : Decimal
+  }
+
+  enum SituacaoCaixa <<enumeration>> {
+    ABERTO
+    FECHADO
+  }
+  enum SituacaoVenda <<enumeration>> {
+    EM_ANDAMENTO
+    CONCLUIDA
+    CANCELADA
+  }
+  enum FormaPagamento <<enumeration>> {
+    DINHEIRO
+    PIX
+    CREDITO
+    DEBITO
+  }
+}
+
+Caixa "1" -right- "0..*" Venda : registra >
+Venda "1" -right- "0..*" Devolucao : devoluções
+Venda "1" *-down- "0..*" ItemVenda : itens
+Devolucao "1" *-down- "1..*" ItemDevolucao : itens
+ItemDevolucao "0..*" -left- "1" ItemVenda : devolve >
+Caixa "1" -- "0..*" Devolucao : estorna >
+
+' Enumerações agrupadas à direita (posicionamento).
+SituacaoCaixa -[hidden]down- SituacaoVenda
+SituacaoVenda -[hidden]down- FormaPagamento
+Devolucao -[hidden]right- SituacaoCaixa
+
+@enduml

@@ -15,7 +15,7 @@
   <label class="filtro-largo">{{ formulario_pesquisa.termo.label }}
     <input type="search" name="termo" value="{{ formulario_pesquisa.termo.value|default:'' }}" placeholder="Nome, código ou código de barras" autofocus>
   </label>
-  <label><input type="checkbox" name="incluir_inativos" {% if formulario_pesquisa.incluir_inativos.value %}checked{% endif %}> {{ formulario_pesquisa.incluir_inativos.label }}</label>
+  <label class="filtro-opcao"><input type="checkbox" name="incluir_inativos" {% if formulario_pesquisa.incluir_inativos.value %}checked{% endif %}> {{ formulario_pesquisa.incluir_inativos.label }}</label>
   <button type="submit">Pesquisar</button>
 </form>
 
@@ -28,7 +28,7 @@
       <tbody>
         {% for produto in produtos %}
           <tr>
-            <td>{{ produto.codigo }}</td>
+            <td class="codigo">{{ produto.codigo }}</td>
             <td><a href="{{ produto.get_absolute_url }}">{{ produto.nome }}</a></td>
             <td>{{ produto.get_categoria_display }}</td>
             <td class="num">{{ produto.preco_unitario|moeda }}</td>

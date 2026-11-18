@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.urls import reverse
 
 from catalogo.models import Produto
+from contas.models import Usuario
 from catalogo.servicos import PesquisarPor, buscar_por_codigo, pesquisar_produtos
 
 # Campo obrigatório do formulário, com o valor padrão.
@@ -84,24 +85,33 @@ def test_inativacao_preserva_o_produto(client, bolsista, produto):
     assert produto.ativo is False
 
 
-def test_quantidade_em_estoque_e_informada_no_cadastro(client, bolsista, produto):
+def test_nao_deixa_de_controlar_estoque_com_saldo(client, bolsista, produto):
+    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=3)
     client.force_login(bolsista)
-    dados = {"codigo": produto.codigo, "nome": produto.nome, "categoria": "outro", "preco_unitario": "30.00",
-             "controla_estoque": "on", "saldo_estoque": "12", **OBRIGATORIOS}
-    client.post(reverse("catalogo:editar_produto", args=[produto.pk]), dados)
-    produto.refresh_from_db()
-    assert produto.saldo_estoque == 12
+    resposta = client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {"codigo": produto.codigo, "nome": produto.nome, "preco_unitario": "30.00", **OBRIGATORIOS},
+    )
+    assert resposta.status_code == 200
+    assert "controla_estoque" in resposta.context["form"].errors
 
 
-def test_item_sem_controle_de_estoque_fica_sem_saldo(client, bolsista, produto):
+def test_edicao_do_cadastro_nao_altera_o_saldo(client, bolsista, produto):
     Produto.objects.filter(pk=produto.pk).update(saldo_estoque=8)
     client.force_login(bolsista)
-    dados = {"codigo": produto.codigo, "nome": produto.nome, "categoria": "cafe", "preco_unitario": "3.00",
-             "saldo_estoque": "8", **OBRIGATORIOS}
-    resposta = client.post(reverse("catalogo:editar_produto", args=[produto.pk]), dados)
+    client.post(
+        reverse("catalogo:editar_produto", args=[produto.pk]),
+        {
+            "codigo": produto.codigo,
+            "nome": "Caneca nova",
+            "categoria": "outro",
+            "preco_unitario": "32.00",
+            "controla_estoque": "on",
+            **OBRIGATORIOS,
+        },
+    )
     produto.refresh_from_db()
-    assert resposta.status_code == 302
-    assert (produto.controla_estoque, produto.saldo_estoque) == (False, 0)
+    assert (produto.nome, produto.saldo_estoque) == ("Caneca nova", 8)
 
 
 # Venda e lucro ------------------------------------------------------
@@ -134,3 +144,28 @@ def test_custo_e_margem_aparecem_so_para_gestores(client, voluntario, bolsista, 
     assert "Preço de custo" not in client.get(url).content.decode()
     client.force_login(bolsista)
     assert "Preço de custo" in client.get(url).content.decode()
+
+
+def test_admin_cadastra_produto_com_autoria(client, db):
+    raiz = Usuario.objects.create_superuser("raiz", password="senha-original-123")
+    client.force_login(raiz)
+    dados = {"codigo": "adm-1", "nome": "Adesivo", "categoria": Produto.Categoria.choices[0][0],
+             "preco_unitario": "3.00", "controla_estoque": "on", "ativo": "on", **OBRIGATORIOS}
+    resposta = client.post(reverse("admin:catalogo_produto_add"), dados)
+    assert resposta.status_code == 302
+    produto = Produto.objects.get(codigo="ADM-1")
+    assert produto.criado_por == raiz and produto.alterado_por == raiz
+
+
+def test_admin_aplica_as_validacoes_do_cadastro(client, produto, bolsista):
+    from estoque.models import Movimentacao
+    from estoque.servicos import registrar_movimentacao
+
+    registrar_movimentacao(tipo=Movimentacao.Tipo.ENTRADA, produto=produto, quantidade=2, usuario=bolsista)
+    client.force_login(Usuario.objects.create_superuser("raiz", password="senha-original-123"))
+    dados = {"codigo": produto.codigo, "nome": produto.nome, "categoria": produto.categoria,
+             "preco_unitario": "30.00", "ativo": "on", **OBRIGATORIOS}  # sem controla_estoque
+    resposta = client.post(reverse("admin:catalogo_produto_change", args=[produto.pk]), dados)
+    assert resposta.status_code == 200
+    produto.refresh_from_db()
+    assert produto.controla_estoque

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Confirmar devolução{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Confirmar devolução</h1>
+  <span class="selo">{{ venda }}</span>
+</div>
+
+<div class="tabela-rolavel">
+  <table class="striped">
+    <thead><tr><th>Produto</th><th class="num">Qtd.</th><th class="num">Preço</th><th class="num">Estorno</th></tr></thead>
+    <tbody>
+      {% for linha in linhas %}
+        <tr>
+          <td>{{ linha.item.produto.nome }}</td>
+          <td class="num">{{ linha.quantidade }}</td>
+          <td class="num">{{ linha.item.preco_unitario|moeda }}</td>
+          <td class="num">{{ linha.subtotal|moeda }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr><th colspan="3">Total a estornar em {{ venda.get_forma_pagamento_display|lower }}</th><th class="num">{{ valor|moeda }}</th></tr>
+    </tfoot>
+  </table>
+</div>
+<p><strong>Motivo:</strong> {{ formulario.cleaned_data.motivo }}</p>
+<p><small>Ao confirmar, o estorno é registrado e os produtos com controle de estoque voltam ao saldo.</small></p>
+
+<form method="post">
+  {% csrf_token %}
+  {% for campo in formulario %}{{ campo.as_hidden }}{% endfor %}
+  <div class="acoes">
+    <button type="submit" name="confirmar" value="1">Confirmar estorno</button>
+    <button type="submit" name="corrigir" value="1" class="secondary outline">Voltar e corrigir</button>
+    <a href="{{ venda.get_absolute_url }}">Desistir</a>
+  </div>
+</form>
+{% endblock %}

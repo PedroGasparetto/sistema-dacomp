@@ -3,11 +3,18 @@
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-insecure-key-change-me")
+CHAVE_DESENVOLVIMENTO = "dev-only-insecure-key-change-me"
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", CHAVE_DESENVOLVIMENTO)
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")]
+
+# Na rede local do DA (DEBUG desligado) a chave de desenvolvimento não pode ser usada.
+if not DEBUG and SECRET_KEY == CHAVE_DESENVOLVIMENTO:
+    raise ImproperlyConfigured("Defina DJANGO_SECRET_KEY no arquivo .env (veja docs/instalacao-rede-local.md).")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -19,6 +26,7 @@ INSTALLED_APPS = [
     "nucleo",
     "contas",
     "catalogo",
+    "estoque",
     "vendas",
 ]
 
@@ -29,8 +37,14 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "contas.turno.TurnoMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if not DEBUG:
+    # Na rede local (gunicorn, sem DEBUG), o WhiteNoise serve CSS, fontes e imagens
+    # coletados em STATIC_ROOT pelo collectstatic.
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -74,6 +88,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL = "contas:entrar"
+
+# Sessão por turno: o login vale por um turno de atendimento e termina ao fechar o
+# navegador, para ninguém registrar vendas com a conta de outra pessoa (contas/turno.py).
+DURACAO_TURNO_MINUTOS = int(os.environ.get("DURACAO_TURNO_MINUTOS", "100"))
+SESSION_COOKIE_AGE = DURACAO_TURNO_MINUTOS * 60
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LOGIN_REDIRECT_URL = "nucleo:inicio"
 LOGOUT_REDIRECT_URL = "contas:entrar"
 
@@ -90,3 +110,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Listagens de produtos, movimentações e vendas usam dez registros por página.
 TAMANHO_PAGINA = 10
+
+# UC16 – prazo para devolver itens de uma venda concluída.
+PRAZO_DEVOLUCAO_DIAS = 7

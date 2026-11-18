@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load formatacao %}
+{% block title %}Devolução da {{ venda }}{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Registrar devolução</h1>
+  <span class="selo">{{ venda }}</span>
+</div>
+<p>Informe quantas unidades de cada item voltam. O estorno é feito em
+  <strong>{{ venda.get_forma_pagamento_display|lower }}</strong>, a mesma forma de pagamento da venda,
+  pelo preço praticado nela.</p>
+
+<form method="post" class="formulario-medio">
+  {% csrf_token %}
+  {{ formulario.non_field_errors }}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr><th>Produto</th><th class="num">Preço</th><th class="num">Vendido</th><th class="num">Já devolvido</th><th class="num">Devolver</th></tr>
+      </thead>
+      <tbody>
+        {% for item, campo in formulario.linhas %}
+          <tr>
+            <td><label for="{{ campo.id_for_label }}">{{ item.produto.nome }}</label></td>
+            <td class="num">{{ item.preco_unitario|moeda }}</td>
+            <td class="num">{{ item.quantidade }}</td>
+            <td class="num">{{ item.quantidade_devolvida }}</td>
+            <td class="num campo-quantidade">{{ campo }}{{ campo.errors }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {{ formulario.motivo.as_field_group }}
+  <div class="acoes">
+    <button type="submit">Revisar devolução</button>
+    <a href="{{ venda.get_absolute_url }}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

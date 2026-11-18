@@ -1,22 +1,30 @@
+from datetime import timedelta
 from decimal import Decimal
 
 import pytest
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.utils import timezone
 
 from catalogo.models import Produto
-from vendas.models import Caixa, Venda
+from estoque.models import Movimentacao
+from estoque.servicos import registrar_movimentacao
+from vendas.models import Caixa, Devolucao, Venda
 from vendas.servicos import (
     abrir_caixa,
     adicionar_item,
     cancelar_venda,
     concluir_venda,
     fechar_caixa,
+    gerar_relatorio_vendas,
     iniciar_ou_retomar_venda,
+    motivo_devolucao_bloqueada,
+    registrar_devolucao,
     resumir_caixa,
 )
 
 FormaPagamento = Venda.FormaPagamento
+ZERO_REAIS = Decimal("0.00")
 
 
 @pytest.fixture
@@ -25,8 +33,8 @@ def caixa(voluntario):
 
 
 @pytest.fixture
-def produto_com_saldo(produto):
-    Produto.objects.filter(pk=produto.pk).update(saldo_estoque=5)
+def produto_com_saldo(produto, bolsista):
+    registrar_movimentacao(tipo=Movimentacao.Tipo.ENTRADA, produto=produto, quantidade=5, usuario=bolsista)
     produto.refresh_from_db()
     return produto
 
@@ -99,6 +107,8 @@ def test_venda_em_dinheiro_calcula_troco_e_baixa_estoque(caixa, voluntario, prod
     assert venda.troco == Decimal("39.00")
     produto_com_saldo.refresh_from_db()
     assert produto_com_saldo.saldo_estoque == 3
+    baixa = Movimentacao.objects.get(tipo=Movimentacao.Tipo.VENDA)
+    assert (baixa.variacao, baixa.observacao) == (-2, str(venda))
     assert resumir_caixa(caixa)["valor_esperado"] == Decimal("111.00")
 
 
@@ -113,18 +123,21 @@ def test_dinheiro_insuficiente_mantem_venda_em_andamento(caixa, voluntario, prod
     assert produto_com_saldo.saldo_estoque == 5
 
 
-def test_saldo_insuficiente_na_conclusao_desfaz_tudo(caixa, voluntario, produto_com_saldo, servico):
+def test_saldo_insuficiente_na_conclusao_desfaz_tudo(caixa, voluntario, produto_com_saldo, bolsista):
     venda = iniciar_ou_retomar_venda(voluntario)
-    adicionar_item(venda=venda, produto=servico, quantidade=2)
     adicionar_item(venda=venda, produto=produto_com_saldo, quantidade=4)
-    # Alguém reduz o saldo no cadastro enquanto a venda está em andamento.
-    Produto.objects.filter(pk=produto_com_saldo.pk).update(saldo_estoque=1)
+    registrar_movimentacao(
+        tipo=Movimentacao.Tipo.AJUSTE,
+        produto=produto_com_saldo,
+        quantidade=1,
+        motivo=Movimentacao.MotivoAjuste.PERDA,
+        usuario=bolsista,
+    )
     with pytest.raises(ValidationError):
         concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
     venda.refresh_from_db()
-    produto_com_saldo.refresh_from_db()
     assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
-    assert produto_com_saldo.saldo_estoque == 1
+    assert not Movimentacao.objects.filter(tipo=Movimentacao.Tipo.VENDA).exists()
 
 
 def test_preco_da_venda_e_preservado(caixa, voluntario, produto_com_saldo):
@@ -173,8 +186,7 @@ def test_item_preparado_na_hora_e_vendido_sem_estoque(caixa, voluntario, servico
     venda = iniciar_ou_retomar_venda(voluntario)
     adicionar_item(venda=venda, produto=servico, quantidade=10)
     concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
-    servico.refresh_from_db()
-    assert servico.saldo_estoque == 0
+    assert not Movimentacao.objects.exists()
 
 
 def test_fluxo_completo_no_pdv(client, caixa, voluntario, produto_com_saldo):
@@ -188,9 +200,55 @@ def test_fluxo_completo_no_pdv(client, caixa, voluntario, produto_com_saldo):
         {"forma_pagamento": FormaPagamento.DINHEIRO, "valor_recebido": "70.00"},
     )
     venda.refresh_from_db()
-    assert resposta.status_code == 302
     assert venda.situacao == Venda.Situacao.CONCLUIDA
     assert venda.troco == Decimal("10.00")
+    # Depois do pagamento, a pessoa operadora continua no PDV, com a última venda à vista.
+    assert resposta.status_code == 302
+    assert resposta.url == reverse("vendas:pdv")
+    pdv = client.get(reverse("vendas:pdv"))
+    assert pdv.context["venda"] is None
+    assert pdv.context["ultima_venda"] == venda
+
+
+def test_pagamento_fica_na_tela_do_pdv(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    pdv = client.get(reverse("vendas:pdv")).content.decode()
+    assert 'id="pdv-pagamento"' in pdv
+    assert reverse("vendas:pagamento", args=[venda.pk]) in pdv
+    # A antiga página de pagamento não existe mais: o endereço volta ao PDV.
+    assert client.get(reverse("vendas:pagamento", args=[venda.pk])).url == reverse("vendas:pdv")
+
+
+def test_quantia_insuficiente_mostra_erro_no_pdv(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    resposta = client.post(
+        reverse("vendas:pagamento", args=[venda.pk]),
+        {"forma_pagamento": FormaPagamento.DINHEIRO, "valor_recebido": "10.00"},
+    )
+    assert resposta.status_code == 200
+    assert resposta.templates[0].name == "vendas/pdv.html"
+    assert resposta.context["formulario_pagamento"].errors
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.EM_ANDAMENTO
+
+
+def test_pagamento_com_cartao_no_pdv_dispensa_troco(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(voluntario)
+    pdv = client.get(reverse("vendas:pdv")).content.decode()
+    assert 'value="credito"' in pdv and 'value="debito"' in pdv
+    resposta = client.post(
+        reverse("vendas:pagamento", args=[venda.pk]), {"forma_pagamento": FormaPagamento.CREDITO}
+    )
+    assert resposta.url == reverse("vendas:pdv")
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.CONCLUIDA
+    assert (venda.forma_pagamento, venda.troco) == (FormaPagamento.CREDITO, Decimal("0.00"))
 
 
 def test_pesquisa_por_nome_com_varios_resultados_lista_candidatos(client, caixa, voluntario, produto, bolsista):
@@ -215,7 +273,8 @@ def test_operador_nao_altera_venda_de_outro(client, caixa, voluntario, bolsista,
     item = adicionar_item(venda=venda, produto=produto_com_saldo)
     client.force_login(bolsista)
     assert client.post(reverse("vendas:remover_item", args=[item.pk])).status_code == 404
-    assert client.get(reverse("vendas:pagamento", args=[venda.pk])).status_code == 404
+    pagamento = {"forma_pagamento": FormaPagamento.PIX}
+    assert client.post(reverse("vendas:pagamento", args=[venda.pk]), pagamento).status_code == 404
 
 
 def test_consulta_de_vendas_filtra_por_caixa(client, caixa, voluntario, produto_com_saldo):
@@ -225,3 +284,275 @@ def test_consulta_de_vendas_filtra_por_caixa(client, caixa, voluntario, produto_
     client.force_login(voluntario)
     resposta = client.get(reverse("vendas:lista_vendas"), {"caixa": caixa.pk, "situacao": "concluida"})
     assert list(resposta.context["vendas"]) == [venda]
+
+
+# Devolução (UC16) --------------------------------------------------------------
+
+
+def _vender(usuario, *itens, forma=FormaPagamento.PIX, valor_recebido=None):
+    venda = iniciar_ou_retomar_venda(usuario)
+    for produto, quantidade in itens:
+        adicionar_item(venda=venda, produto=produto, quantidade=quantidade)
+    return concluir_venda(venda=venda, forma_pagamento=forma, valor_recebido=valor_recebido)
+
+
+def test_devolucao_estorna_pela_mesma_forma_e_recompoe_estoque(caixa, voluntario, produto_com_saldo, servico):
+    venda = _vender(voluntario, (produto_com_saldo, 3), (servico, 4))
+    item_caneca = venda.itens.get(produto=produto_com_saldo)
+    item_servico = venda.itens.get(produto=servico)
+
+    devolucao = registrar_devolucao(
+        venda=venda,
+        quantidades={item_caneca.pk: 2, item_servico.pk: 1},
+        motivo="Defeito",
+        usuario=voluntario,
+    )
+
+    assert devolucao.forma_estorno == FormaPagamento.PIX
+    assert devolucao.valor_estornado == Decimal("60.25")
+    produto_com_saldo.refresh_from_db()
+    assert produto_com_saldo.saldo_estoque == 4  # 5 − 3 vendidas + 2 devolvidas
+    recomposicao = Movimentacao.objects.get(tipo=Movimentacao.Tipo.DEVOLUCAO)
+    assert recomposicao.variacao == 2
+    venda.refresh_from_db()
+    assert venda.total_liquido == Decimal("30.75")
+
+
+def test_devolucoes_parciais_respeitam_o_que_foi_vendido(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 2))
+    item = venda.itens.get()
+    registrar_devolucao(venda=venda, quantidades={item.pk: 1}, motivo="Troca", usuario=voluntario)
+    with pytest.raises(ValidationError):
+        registrar_devolucao(venda=venda, quantidades={item.pk: 2}, motivo="Troca", usuario=voluntario)
+    registrar_devolucao(venda=venda, quantidades={item.pk: 1}, motivo="Troca", usuario=voluntario)
+    assert motivo_devolucao_bloqueada(venda) == "Todos os itens desta venda já foram devolvidos."
+
+
+@pytest.mark.parametrize(
+    ("quantidades", "motivo"),
+    [("nenhum item", "Defeito"), ("quantidade zero", "Defeito"), ("um item", "   ")],
+)
+def test_devolucao_invalida_nao_registra_nada(caixa, voluntario, produto_com_saldo, quantidades, motivo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    item = venda.itens.get()
+    quantidades = {"nenhum item": {}, "quantidade zero": {item.pk: 0}, "um item": {item.pk: 1}}[quantidades]
+    with pytest.raises(ValidationError):
+        registrar_devolucao(venda=venda, quantidades=quantidades, motivo=motivo, usuario=voluntario)
+    assert not Devolucao.objects.exists()
+    assert not Movimentacao.objects.filter(tipo=Movimentacao.Tipo.DEVOLUCAO).exists()
+
+
+def test_devolucao_fora_do_prazo_e_bloqueada(caixa, voluntario, produto_com_saldo, settings):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    Venda.objects.filter(pk=venda.pk).update(
+        concluida_em=timezone.now() - timedelta(days=settings.PRAZO_DEVOLUCAO_DIAS, minutes=1)
+    )
+    venda.refresh_from_db()
+    with pytest.raises(ValidationError):
+        registrar_devolucao(venda=venda, quantidades={venda.itens.get().pk: 1}, motivo="x", usuario=voluntario)
+
+
+def test_devolucao_exige_caixa_aberto(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    fechar_caixa(caixa=caixa, usuario=voluntario, valor_contado=Decimal("50.00"))
+    assert "Abra o caixa" in motivo_devolucao_bloqueada(venda)
+
+
+def test_estorno_em_dinheiro_sai_do_valor_esperado_do_caixa(caixa, voluntario, produto_com_saldo):
+    venda = _vender(
+        voluntario, (produto_com_saldo, 2), forma=FormaPagamento.DINHEIRO, valor_recebido=Decimal("60.00")
+    )
+    registrar_devolucao(venda=venda, quantidades={venda.itens.get().pk: 1}, motivo="Defeito", usuario=voluntario)
+    resumo = resumir_caixa(caixa)
+    assert resumo["valor_esperado"] == Decimal("80.00")  # 50 + 60 − 30
+    assert (resumo["total_estornado"], resumo["total_liquido"]) == (Decimal("30.00"), Decimal("30.00"))
+
+
+def test_devolucao_pela_tela_exige_confirmacao(client, caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 2))
+    item = venda.itens.get()
+    client.force_login(voluntario)
+    url = reverse("vendas:registrar_devolucao", args=[venda.pk])
+    dados = {f"item_{item.pk}": "1", "motivo": "Sabor errado"}
+
+    resumo = client.post(url, dados)
+    assert resumo.status_code == 200
+    assert resumo.context["valor"] == Decimal("30.00")
+    assert not Devolucao.objects.exists()
+
+    confirmado = client.post(url, {**dados, "confirmar": "1"})
+    assert confirmado.status_code == 302
+    assert Devolucao.objects.get().valor_estornado == Decimal("30.00")
+
+
+def test_tela_rejeita_quantidade_maior_que_a_vendida(client, caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    client.force_login(voluntario)
+    resposta = client.post(
+        reverse("vendas:registrar_devolucao", args=[venda.pk]),
+        {f"item_{venda.itens.get().pk}": "2", "motivo": "x", "confirmar": "1"},
+    )
+    assert resposta.status_code == 200
+    assert resposta.context["formulario"].errors
+    assert not Devolucao.objects.exists()
+
+
+def test_venda_cancelada_nao_aceita_devolucao(client, caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    cancelar_venda(venda=venda)
+    client.force_login(voluntario)
+    resposta = client.get(reverse("vendas:registrar_devolucao", args=[venda.pk]))
+    assert resposta.status_code == 302
+
+
+# Relatório de vendas (UC14) ------------------------------------------------------
+
+
+def test_relatorio_considera_so_vendas_concluidas_e_desconta_devolucoes(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 2))
+    registrar_devolucao(venda=venda, quantidades={venda.itens.get().pk: 1}, motivo="Defeito", usuario=voluntario)
+    em_andamento = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=em_andamento, produto=produto_com_saldo)
+
+    relatorio = gerar_relatorio_vendas(caixa=caixa.pk)
+    assert relatorio["vendas"] == [venda]
+    assert relatorio["total_vendido"] == Decimal("60.00")
+    assert relatorio["total_estornado"] == Decimal("30.00")
+    assert relatorio["total_liquido"] == Decimal("30.00")
+
+
+def test_relatorio_soma_varias_vendas_por_forma_de_pagamento(caixa, voluntario, produto_com_saldo):
+    _vender(voluntario, (produto_com_saldo, 1), forma=FormaPagamento.DINHEIRO, valor_recebido=Decimal("30.00"))
+    _vender(voluntario, (produto_com_saldo, 1), forma=FormaPagamento.DINHEIRO, valor_recebido=Decimal("30.00"))
+    _vender(voluntario, (produto_com_saldo, 2))  # PIX
+
+    relatorio = gerar_relatorio_vendas()
+    por_forma = {linha["forma"]: (linha["quantidade"], linha["valor"]) for linha in relatorio["por_forma"]}
+    assert relatorio["quantidade_vendas"] == 3
+    assert relatorio["total_vendido"] == Decimal("120.00")
+    assert por_forma["Dinheiro"] == (2, Decimal("60.00"))
+    assert por_forma["PIX"] == (1, Decimal("60.00"))
+
+
+def test_relatorio_usa_os_filtros_da_consulta(client, caixa, voluntario, produto_com_saldo):
+    _vender(voluntario, (produto_com_saldo, 1))
+    client.force_login(voluntario)
+    resposta = client.get(reverse("vendas:relatorio_vendas"), {"caixa": caixa.pk})
+    assert resposta.status_code == 200
+    assert resposta.context["relatorio"]["quantidade_vendas"] == 1
+    assert "1 × Caneca do DACOMP" in resposta.content.decode()
+    invalida = client.get(reverse("vendas:relatorio_vendas"), {"inicio": "2026-10-10", "fim": "2026-10-01"})
+    assert invalida.status_code == 302
+
+
+# Correções da revisão -------------------------------------------------------
+
+
+def test_outro_operador_cancela_venda_esquecida_e_fecha_o_caixa(client, caixa, voluntario, bolsista, produto_com_saldo):
+    """Quem assume o caixa libera a venda que ficou em andamento no turno anterior."""
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(bolsista)
+    pagina = client.get(reverse("vendas:fechar_caixa")).content.decode()
+    assert reverse("vendas:cancelar_venda", args=[venda.pk]) in pagina
+
+    resposta = client.post(reverse("vendas:cancelar_venda", args=[venda.pk]))
+    assert resposta.url == reverse("vendas:fechar_caixa")
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.CANCELADA
+    fechar_caixa(caixa=caixa, usuario=bolsista, valor_contado=Decimal("50.00"))
+
+
+def test_cancelar_venda_ja_concluida_nao_desfaz_a_conclusao(caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    copia_antiga = Venda.objects.get(pk=venda.pk)  # lida antes do F4
+    concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
+    with pytest.raises(ValidationError):
+        cancelar_venda(venda=copia_antiga)
+    with pytest.raises(ValidationError):
+        adicionar_item(venda=copia_antiga, produto=produto_com_saldo)
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.CONCLUIDA
+
+
+def test_devolucao_sem_caixa_aberto_avisa_em_vez_de_quebrar(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    fechar_caixa(caixa=caixa, usuario=voluntario, valor_contado=Decimal("50.00"))
+    item = venda.itens.get()
+    with pytest.raises(ValidationError):
+        registrar_devolucao(venda=venda, quantidades={item.pk: 1}, motivo="Defeito", usuario=voluntario)
+
+
+def test_relatorio_filtra_o_periodo_pela_conclusao(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    ontem = timezone.localdate() - timedelta(days=1)
+    Venda.objects.filter(pk=venda.pk).update(iniciada_em=timezone.now() - timedelta(days=1))
+    assert gerar_relatorio_vendas(inicio=ontem, fim=ontem)["vendas"] == []
+    hoje = timezone.localdate()
+    assert gerar_relatorio_vendas(inicio=hoje, fim=hoje)["vendas"] == [venda]
+
+
+def _em_paralelo(*funcoes):
+    """Roda as funções ao mesmo tempo, cada uma com a própria conexão ao banco."""
+    import threading
+
+    from django.db import connection
+
+    barreira = threading.Barrier(len(funcoes))
+    erros = []
+
+    def rodar(funcao):
+        try:
+            barreira.wait()
+            funcao()
+        except Exception as erro:  # noqa: BLE001 - o teste confere os erros
+            erros.append(erro)
+        finally:
+            connection.close()
+
+    threads = [threading.Thread(target=rodar, args=(funcao,)) for funcao in funcoes]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return erros
+
+
+@pytest.mark.django_db(transaction=True)
+def test_toque_duplo_no_atalho_nao_cria_duas_vendas():
+    from django.contrib.auth.models import Group
+    from django.db import transaction
+
+    from conftest import _criar_usuario
+    from contas.perfis import TODOS_PERFIS
+
+    for perfil in TODOS_PERFIS:
+        Group.objects.get_or_create(name=perfil)
+    operador = _criar_usuario("operador", *TODOS_PERFIS)
+    cafe = Produto.objects.create(
+        codigo="CAF", nome="Café", preco_unitario=Decimal("2.00"), controla_estoque=False,
+        criado_por=operador, alterado_por=operador,
+    )
+    abrir_caixa(usuario=operador, valor_inicial=ZERO_REAIS)
+
+    def tocar():
+        with transaction.atomic():
+            adicionar_item(venda=iniciar_ou_retomar_venda(operador), produto=cafe)
+
+    for _ in range(5):
+        assert _em_paralelo(tocar, tocar) == []
+        venda = Venda.objects.get(situacao=Venda.Situacao.EM_ANDAMENTO)
+        assert venda.itens.get().quantidade == 2
+        cancelar_venda(venda=venda)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_abrir_caixa_ao_mesmo_tempo_avisa_em_vez_de_quebrar():
+    from conftest import _criar_usuario
+
+    operador = _criar_usuario("operador")
+    erros = _em_paralelo(*[lambda: abrir_caixa(usuario=operador, valor_inicial=ZERO_REAIS)] * 2)
+    assert Caixa.objects.count() == 1
+    assert len(erros) == 1 and isinstance(erros[0], ValidationError)

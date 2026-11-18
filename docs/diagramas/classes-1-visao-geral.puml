@@ -1,0 +1,53 @@
+@startuml classes-1-visao-geral
+' Diagrama de classes de projeto (1/5) — visão geral das entidades e associações.
+' Os atributos estão nas páginas 2 e 3; as operações dos serviços, nas páginas 4 e 5.
+!include estilo.iuml
+
+title Lojinha do DACOMP — Diagrama de classes (1/5): visão geral das entidades
+
+hide members
+
+package "contas" {
+  class Usuario
+}
+
+package "catalogo" {
+  class Produto
+}
+
+package "estoque" {
+  class Movimentacao
+}
+
+package "vendas" {
+  class Caixa
+  class Venda
+  class ItemVenda
+  class Devolucao
+  class ItemDevolucao
+}
+
+
+Caixa "1" -right- "0..*" Venda : registra >
+Venda "1" -right- "0..*" Devolucao : devoluções
+Caixa "1" -- "0..*" Devolucao : estorna >
+Venda "1" *-down- "0..*" ItemVenda : itens
+Devolucao "1" *-down- "1..*" ItemDevolucao : itens
+ItemDevolucao "0..*" -left- "1" ItemVenda : devolve >
+ItemVenda "0..*" -down-> "1" Produto : produto
+Movimentacao "0..*" -right-> "1" Produto : altera saldo de >
+
+Caixa "0..*" -up-> "1" Usuario : aberto_por,\nfechado_por [0..1]
+Venda "0..*" -up-> "1" Usuario : operador
+Devolucao "0..*" -up-> "1" Usuario : operador
+Movimentacao "0..*" -up-> "1" Usuario : responsavel
+Produto "0..*" -up-> "1" Usuario : criado_por,\nalterado_por
+
+legend right
+  Seta: navegável só nesse sentido
+  Linha sem seta: navegável nos dois sentidos
+  ◆ composição: os itens são excluídos com o todo
+  Atributos: páginas 2 e 3 · Operações: páginas 4 e 5
+endlegend
+
+@enduml

@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Início{% endblock %} · Lojinha DAcomp</title>
   <link rel="icon" type="image/png" href="{% estatico 'img/favicon.png' %}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  {# Pico CSS e Inter ficam em static/vendor: o sistema funciona sem internet na rede do DA. #}
+  <link rel="stylesheet" href="{% estatico 'vendor/inter/inter.css' %}">
+  <link rel="stylesheet" href="{% estatico 'vendor/pico/pico.min.css' %}">
   <link rel="stylesheet" href="{% estatico 'css/app.css' %}">
 </head>
 <body class="{% block classe_corpo %}{% endblock %}">
@@ -30,6 +29,10 @@
               <li><a href="{% url 'vendas:pdv' %}" class="barra-pdv" {% if request.resolver_match.url_name == 'pdv' %}aria-current="page"{% endif %}>PDV</a></li>
               <li><a href="{% url 'vendas:lista_vendas' %}" {% if secao == 'vendas' and request.resolver_match.url_name != 'pdv' %}aria-current="page"{% endif %}>Vendas</a></li>
               <li><a href="{% url 'catalogo:lista_produtos' %}" {% if secao == 'catalogo' %}aria-current="page"{% endif %}>Produtos</a></li>
+              <li><a href="{% url 'estoque:lista_movimentacoes' %}" {% if secao == 'estoque' %}aria-current="page"{% endif %}>Estoque</a></li>
+            {% endif %}
+            {% if pode_gerir_contas %}
+              <li><a href="{% url 'contas:lista_contas' %}" {% if secao == 'contas' and request.resolver_match.url_name != 'alterar_senha' %}aria-current="page"{% endif %}>Contas</a></li>
             {% endif %}
           </ul>
         </nav>
@@ -40,6 +43,8 @@
             </summary>
             <ul dir="rtl">
               <li dir="ltr"><small>{{ perfis_usuario|join:" · "|default:"Sem perfil" }}</small></li>
+              {% if fim_do_turno %}<li dir="ltr"><small>Turno até {{ fim_do_turno|date:"H:i" }}</small></li>{% endif %}
+              <li dir="ltr"><a href="{% url 'contas:alterar_senha' %}">Alterar senha</a></li>
               <li dir="ltr">
                 <form method="post" action="{% url 'contas:sair' %}" class="formulario-em-linha">
                   {% csrf_token %}
