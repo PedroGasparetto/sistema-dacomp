@@ -13,6 +13,30 @@
     Há {{ resumo.vendas_em_andamento }} venda{{ resumo.vendas_em_andamento|pluralize }} em andamento neste caixa.
     Conclua ou cancele antes de fechar.
   </p>
+  <table class="striped" aria-label="Vendas em andamento">
+    <thead><tr><th>Venda</th><th>Operador</th><th>Iniciada</th><th>Itens</th><th class="num">Total</th><th></th></tr></thead>
+    <tbody>
+      {% for venda in vendas_em_andamento %}
+        <tr>
+          <td>{{ venda }}</td>
+          <td>{{ venda.operador }}</td>
+          <td>{{ venda.iniciada_em|date:"H:i" }}</td>
+          <td>{% for item in venda.itens.all %}{{ item }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+          <td class="num">{{ venda.total_itens|moeda }}</td>
+          <td>
+            {% if venda.operador_id == user.pk %}
+              <a href="{% url 'vendas:pdv' %}">Retomar no PDV</a>
+            {% else %}
+              <form method="post" action="{% url 'vendas:cancelar_venda' venda.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="secondary">Cancelar venda</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endif %}
 
 <div class="pdv">

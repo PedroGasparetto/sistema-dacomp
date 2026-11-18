@@ -162,3 +162,14 @@ def test_fim_do_turno_encerra_a_sessao(client, voluntario, settings):
 def test_sessao_termina_ao_fechar_o_navegador(settings):
     assert settings.SESSION_EXPIRE_AT_BROWSER_CLOSE
     assert settings.SESSION_COOKIE_AGE == settings.DURACAO_TURNO_MINUTOS * 60
+
+
+def test_diretoria_nao_altera_conta_de_superusuario(client, diretoria):
+    raiz = Usuario.objects.create_superuser("raiz", password="senha-original-123")
+    client.force_login(diretoria)
+    nova = {"new_password1": SENHA_FORTE, "new_password2": SENHA_FORTE}
+    assert client.post(reverse("contas:redefinir_senha", args=[raiz.pk]), nova).status_code == 404
+    assert client.post(reverse("contas:editar_conta", args=[raiz.pk]), {"is_active": ""}).status_code == 404
+    assert "raiz" not in client.get(reverse("contas:lista_contas")).content.decode()
+    raiz.refresh_from_db()
+    assert raiz.is_active and raiz.check_password("senha-original-123")
