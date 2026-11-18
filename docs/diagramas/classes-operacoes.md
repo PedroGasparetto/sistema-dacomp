@@ -1,7 +1,16 @@
 # Diagrama de classes de projeto: documentação das operações
 
-Complementa os diagramas `classes-entidades`, `classes-servicos-vendas` e
-`classes-servicos-estoque` desta pasta. Os tipos seguem a notação dos diagramas:
+Complementa o diagrama de classes desta pasta, dividido em cinco páginas:
+
+| Página | Arquivo | Conteúdo |
+|---|---|---|
+| 1 | `classes-1-visao-geral` | Classes e associações, sem atributos |
+| 2 | `classes-2-vendas` | Atributos do pacote `vendas` |
+| 3 | `classes-3-catalogo-estoque-contas` | Atributos de `catalogo`, `estoque` e `contas` |
+| 4 | `classes-4-servicos-vendas` | Operações de `ServicosVendas` |
+| 5 | `classes-5-servicos-estoque-catalogo-contas` | Operações dos demais serviços |
+
+O estilo comum das páginas fica em `estilo.iuml`. Os tipos seguem a notação dos diagramas:
 `Texto`, `Inteiro`, `Decimal`, `Booleano`, `Data`, `DataHora`. `[0..1]` indica valor
 opcional e `[*]`, uma coleção.
 

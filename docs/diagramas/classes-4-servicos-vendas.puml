@@ -1,24 +1,12 @@
-@startuml classes-servicos-vendas
+@startuml classes-4-servicos-vendas
 ' Diagrama de classes de projeto — serviços (regras de negócio).
 ' Cada servicos.py é um módulo Python; aqui aparece como classe <<serviço>> com
 ' operações de classe. As views (controle) chamam essas operações.
 ' Gerado a partir de contas/perfis.py e catalogo/, estoque/ e vendas/servicos.py.
 
-title Lojinha do DACOMP — Diagrama de classes de projeto (2/3): serviços de vendas
+title Lojinha do DACOMP — Diagrama de classes (4/5): serviços de vendas
 
-skinparam classAttributeIconSize 0
-skinparam shadowing false
-skinparam defaultFontName DejaVu Sans
-skinparam defaultFontSize 12
-skinparam packageStyle rectangle
-skinparam classBackgroundColor #FFFFFF
-skinparam classBorderColor #333333
-skinparam packageBorderColor #555555
-skinparam arrowColor #333333
-skinparam nodesep 50
-skinparam ranksep 60
-hide empty members
-hide circle
+!include estilo.iuml
 
 package "vendas" {
   class "ServicosVendas" as SV <<serviço>> {
@@ -92,20 +80,17 @@ package "estoque" {
 package "catalogo" {
   class "ServicosCatalogo" as SC <<serviço>>
 }
-note "Operações detalhadas na página 3/3." as N
-SE .. N
-SC .. N
 
 SV -[hidden]right- FiltroVendas
 SV ..> FiltroVendas
 SV ..> SE : <<usa>>\nregistrar_baixa_por_venda,\nregistrar_recomposicao_por_devolucao
 SV ..> SC : <<usa>>\nbuscar_por_codigo,\npesquisar_produtos
 
-note right of SV
+legend bottom right
   Toda operação que grava (abrir_caixa, fechar_caixa, adicionar_item,
   concluir_venda, registrar_devolucao) roda em uma transação atômica:
   se uma regra falhar, nada é gravado (RNF01). As regras violadas
   lançam ValidationError, exibido na tela pela view.
-end note
+endlegend
 
 @enduml

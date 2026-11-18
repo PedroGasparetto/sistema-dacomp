@@ -1,24 +1,12 @@
-@startuml classes-servicos-estoque
+@startuml classes-5-servicos-estoque-catalogo-contas
 ' Diagrama de classes de projeto — serviços (regras de negócio).
 ' Cada servicos.py é um módulo Python; aqui aparece como classe <<serviço>> com
 ' operações de classe. As views (controle) chamam essas operações.
 ' Gerado a partir de contas/perfis.py e catalogo/, estoque/ e vendas/servicos.py.
 
-title Lojinha do DACOMP — Diagrama de classes de projeto (3/3): serviços de estoque, catálogo e contas
+title Lojinha do DACOMP — Diagrama de classes (5/5): serviços de estoque, catálogo e contas
 
-skinparam classAttributeIconSize 0
-skinparam shadowing false
-skinparam defaultFontName DejaVu Sans
-skinparam defaultFontSize 12
-skinparam packageStyle rectangle
-skinparam classBackgroundColor #FFFFFF
-skinparam classBorderColor #333333
-skinparam packageBorderColor #555555
-skinparam arrowColor #333333
-skinparam nodesep 50
-skinparam ranksep 60
-hide empty members
-hide circle
+!include estilo.iuml
 
 package "estoque" {
   class "ServicosEstoque" as SE <<serviço>> {
@@ -90,9 +78,9 @@ RelatorioMovimentacoes -[hidden]right- LinhaProduto
 LinhaProduto -[hidden]down- SC
 SC -[hidden]down- PerfilRequeridoMixin
 
-note bottom of SE
+legend bottom right
   Único ponto que altera Produto.saldo_estoque.
   Cada alteração cria uma Movimentacao.
-end note
+endlegend
 
 @enduml
