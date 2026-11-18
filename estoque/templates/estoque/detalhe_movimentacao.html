@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Movimentação{% endblock %}
+{% block content %}
+<h1>{{ movimentacao.get_tipo_display }}</h1>
+<article>
+  <dl class="detalhes">
+    <dt>Produto</dt><dd><a href="{{ movimentacao.produto.get_absolute_url }}">{{ movimentacao.produto }}</a></dd>
+    <dt>Quantidade anterior</dt><dd>{{ movimentacao.quantidade_anterior }}</dd>
+    <dt>Variação</dt><dd class="{% if movimentacao.variacao > 0 %}positivo{% else %}negativo{% endif %}">{{ movimentacao.variacao|stringformat:"+d" }}</dd>
+    <dt>Quantidade resultante</dt><dd><strong>{{ movimentacao.quantidade_resultante }}</strong></dd>
+    <dt>Motivo</dt><dd>{{ movimentacao.get_motivo_display|default:"—" }}</dd>
+    <dt>Observação</dt><dd>{{ movimentacao.observacao|default:"—" }}</dd>
+    <dt>Responsável</dt><dd>{{ movimentacao.responsavel }}</dd>
+    <dt>Data e hora</dt><dd>{{ movimentacao.realizada_em|date:"d/m/Y H:i:s" }}</dd>
+  </dl>
+</article>
+<div class="acoes">
+  <a href="{% url 'estoque:lista_movimentacoes' %}">Voltar às movimentações</a>
+</div>
+{% endblock %}

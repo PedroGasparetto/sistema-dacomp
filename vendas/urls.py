@@ -15,5 +15,7 @@ urlpatterns = [
     path("caixa/fechar/", views.FecharCaixaView.as_view(), name="fechar_caixa"),
     path("caixa/<int:pk>/", views.DetalheCaixaView.as_view(), name="detalhe_caixa"),
     path("", views.ListaVendasView.as_view(), name="lista_vendas"),
+    path("relatorio/", views.RelatorioVendasView.as_view(), name="relatorio_vendas"),
     path("<int:pk>/", views.DetalheVendaView.as_view(), name="detalhe_venda"),
+    path("<int:pk>/devolucao/", views.RegistrarDevolucaoView.as_view(), name="registrar_devolucao"),
 ]

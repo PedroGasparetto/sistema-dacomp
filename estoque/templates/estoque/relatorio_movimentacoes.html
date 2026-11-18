@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Relatório de movimentações{% endblock %}
+{% block content %}
+<div class="cabecalho-pagina">
+  <h1>Relatório de movimentações de estoque</h1>
+  <span class="selo">Gerado em {% now "d/m/Y H:i" %}</span>
+</div>
+
+<p class="filtros-aplicados">
+  Movimentações{% if filtros.inicio or filtros.fim %} de {{ filtros.inicio|date:"d/m/Y"|default:"início" }} até {{ filtros.fim|date:"d/m/Y"|default:"hoje" }}{% endif %}{% if filtros.produto %} · produto “{{ filtros.produto }}”{% endif %}{% if descricao_tipo %} · {{ descricao_tipo|lower }}{% endif %}.
+</p>
+
+<h2>Totais por produto</h2>
+{% if relatorio.por_produto %}
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr>
+          <th>Produto</th><th class="num">Entradas</th><th class="num">Ajustes</th><th class="num">Baixas por venda</th>
+          <th class="num">Devoluções</th><th class="num">Variação</th><th class="num">Saldo atual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for linha in relatorio.por_produto %}
+          <tr>
+            <td>{{ linha.codigo }} · {{ linha.nome }}</td>
+            <td class="num">{{ linha.entrada|stringformat:"+d" }}</td>
+            <td class="num">{{ linha.ajuste|stringformat:"+d" }}</td>
+            <td class="num">{{ linha.venda|stringformat:"+d" }}</td>
+            <td class="num">{{ linha.devolucao|stringformat:"+d" }}</td>
+            <td class="num {% if linha.variacao_total > 0 %}positivo{% elif linha.variacao_total < 0 %}negativo{% endif %}">{{ linha.variacao_total|stringformat:"+d" }}</td>
+            <td class="num">{{ linha.saldo_atual }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Total</th>
+          <th class="num">{{ relatorio.totais.entrada|stringformat:"+d" }}</th>
+          <th class="num">{{ relatorio.totais.ajuste|stringformat:"+d" }}</th>
+          <th class="num">{{ relatorio.totais.venda|stringformat:"+d" }}</th>
+          <th class="num">{{ relatorio.totais.devolucao|stringformat:"+d" }}</th>
+          <th></th><th></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h2>Registros do período</h2>
+  <div class="tabela-rolavel">
+    <table class="striped">
+      <thead>
+        <tr><th>Data e hora</th><th>Produto</th><th>Tipo</th><th class="num">Anterior</th><th class="num">Variação</th><th class="num">Resultante</th><th>Responsável</th></tr>
+      </thead>
+      <tbody>
+        {% for movimentacao in relatorio.movimentacoes %}
+          <tr>
+            <td>{{ movimentacao.realizada_em|date:"d/m/Y H:i" }}</td>
+            <td>{{ movimentacao.produto.nome }}</td>
+            <td>{{ movimentacao.get_tipo_display }}</td>
+            <td class="num">{{ movimentacao.quantidade_anterior }}</td>
+            <td class="num">{{ movimentacao.variacao|stringformat:"+d" }}</td>
+            <td class="num">{{ movimentacao.quantidade_resultante }}</td>
+            <td>{{ movimentacao.responsavel }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p role="status">Não há movimentações para os filtros escolhidos.</p>
+{% endif %}
+
+<div class="acoes nao-imprimir">
+  <button type="button" onclick="window.print()">Imprimir</button>
+  <a href="{% url 'estoque:lista_movimentacoes' %}{% if consulta %}?{{ consulta }}{% endif %}">Voltar à consulta</a>
+</div>
+{% endblock %}

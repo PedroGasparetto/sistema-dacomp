@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "nucleo",
     "contas",
     "catalogo",
+    "estoque",
     "vendas",
 ]
 
@@ -90,3 +91,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Listagens de produtos, movimentações e vendas usam dez registros por página.
 TAMANHO_PAGINA = 10
+
+# UC16 – prazo para devolver itens de uma venda concluída.
+PRAZO_DEVOLUCAO_DIAS = 7

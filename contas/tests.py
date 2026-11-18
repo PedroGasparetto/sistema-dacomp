@@ -2,10 +2,10 @@ import pytest
 from django.contrib.auth.models import Group
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.urls import NoReverseMatch, reverse
+from django.urls import reverse
 
 from contas.models import Usuario
-from contas.perfis import TODOS_PERFIS
+from contas.perfis import DIRETORIA, TODOS_PERFIS
 
 SENHA_FORTE = "uma-senha-forte-456"
 
@@ -27,11 +27,67 @@ def test_usuario_sem_perfil_nao_opera(client, db):
     assert client.get(reverse("catalogo:lista_produtos")).status_code == 403
 
 
-def test_gestao_de_contas_nao_tem_tela(client, diretoria):
-    with pytest.raises(NoReverseMatch):
-        reverse("contas:lista_contas")
+# UC15 – Manter Contas ------------------------------------------------------------
+
+
+def test_gestao_de_contas_e_exclusiva_da_diretoria(client, bolsista, diretoria):
+    client.force_login(bolsista)
+    assert client.get(reverse("contas:lista_contas")).status_code == 403
     client.force_login(diretoria)
-    assert client.get("/conta/usuarios/").status_code == 404
+    assert client.get(reverse("contas:lista_contas")).status_code == 200
+
+
+def test_diretoria_cria_conta_com_perfis_acumulados(client, diretoria):
+    client.force_login(diretoria)
+    perfis = Group.objects.filter(name__in=["Diretoria", "Bolsista"])
+    resposta = client.post(
+        reverse("contas:criar_conta"),
+        {
+            "username": "nova",
+            "first_name": "Nova",
+            "last_name": "Pessoa",
+            "email": "nova@inf.ufrgs.br",
+            "password1": SENHA_FORTE,
+            "password2": SENHA_FORTE,
+            "perfis": [perfil.pk for perfil in perfis],
+        },
+    )
+    assert resposta.status_code == 302
+    assert Usuario.objects.get(username="nova").nomes_perfis == ["Diretoria", "Bolsista"]
+
+
+def test_diretoria_inativa_conta(client, diretoria, voluntario):
+    client.force_login(diretoria)
+    perfil = Group.objects.get(name="Voluntário")
+    resposta = client.post(
+        reverse("contas:editar_conta", args=[voluntario.pk]), {"perfis": [perfil.pk]}
+    )
+    assert resposta.status_code == 302
+    voluntario.refresh_from_db()
+    assert not voluntario.is_active
+
+
+def test_diretoria_nao_remove_o_proprio_perfil_de_diretoria(client, diretoria):
+    client.force_login(diretoria)
+    perfil_bolsista = Group.objects.get(name="Bolsista")
+    resposta = client.post(
+        reverse("contas:editar_conta", args=[diretoria.pk]),
+        {"is_active": "on", "perfis": [perfil_bolsista.pk]},
+    )
+    assert resposta.status_code == 200
+    diretoria.refresh_from_db()
+    assert DIRETORIA in diretoria.nomes_perfis
+
+
+def test_diretoria_redefine_senha(client, diretoria, voluntario):
+    client.force_login(diretoria)
+    resposta = client.post(
+        reverse("contas:redefinir_senha", args=[voluntario.pk]),
+        {"new_password1": SENHA_FORTE, "new_password2": SENHA_FORTE},
+    )
+    assert resposta.status_code == 302
+    voluntario.refresh_from_db()
+    assert voluntario.check_password(SENHA_FORTE)
 
 
 # Comando criar_conta -----------------------------------------------------------

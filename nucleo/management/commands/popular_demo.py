@@ -9,6 +9,8 @@ from django.db import transaction
 from catalogo.models import Produto
 from contas.models import Usuario
 from contas.perfis import BOLSISTA, DIRETORIA, VOLUNTARIO
+from estoque.models import Movimentacao
+from estoque.servicos import registrar_movimentacao
 
 USUARIOS_DEMO = [
     ("diretoria", "Diana", "Diretoria", [DIRETORIA]),
@@ -84,10 +86,17 @@ class Command(BaseCommand):
                     "preco_unitario": Decimal(preco),
                     "preco_custo": Decimal(custo),
                     "controla_estoque": controla_estoque,
-                    "saldo_estoque": saldo_inicial,
                     "criado_por": autor,
                     "alterado_por": autor,
                     **extras,
                 },
             )
+            if criado and saldo_inicial:
+                registrar_movimentacao(
+                    tipo=Movimentacao.Tipo.ENTRADA,
+                    produto=produto,
+                    quantidade=saldo_inicial,
+                    usuario=autor,
+                    observacao="Saldo inicial da demonstração",
+                )
         self.stdout.write(self.style.SUCCESS("Dados de demonstração prontos."))

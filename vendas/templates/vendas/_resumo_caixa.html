@@ -9,6 +9,10 @@
     </tbody>
     <tfoot>
       <tr><th>Total vendido</th><th class="num">{{ resumo.quantidade_vendas }}</th><th class="num">{{ resumo.total_vendido|moeda }}</th></tr>
+      {% if resumo.quantidade_devolucoes %}
+        <tr><td>Estornos de devoluções</td><td class="num">{{ resumo.quantidade_devolucoes }}</td><td class="num negativo">−{{ resumo.total_estornado|moeda }}</td></tr>
+        <tr><th>Total líquido</th><th></th><th class="num">{{ resumo.total_liquido|moeda }}</th></tr>
+      {% endif %}
     </tfoot>
   </table>
 </div>

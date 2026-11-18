@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.formats import number_format
 from django.views import View
 from django.views.generic import DetailView, ListView
 
@@ -13,6 +15,7 @@ from contas.mixins import PerfilRequeridoMixin
 from .forms import (
     FormularioAbrirCaixa,
     FormularioAdicionarItem,
+    FormularioDevolucao,
     FormularioFecharCaixa,
     FormularioFiltroVendas,
     FormularioPagamento,
@@ -27,10 +30,14 @@ from .servicos import (
     concluir_venda,
     fechar_caixa,
     filtrar_vendas,
+    gerar_relatorio_vendas,
     iniciar_ou_retomar_venda,
     localizar_produtos_para_venda,
+    motivo_devolucao_bloqueada,
     obter_caixa_aberto,
     obter_venda_em_andamento,
+    prazo_devolucao,
+    registrar_devolucao,
     remover_item,
     resumir_caixa,
     verificar_finalizacao,
@@ -149,6 +156,8 @@ def _venda_em_andamento(request, pk):
 
 
 class CancelarVendaView(PerfilRequeridoMixin, View):
+    """Cancelar Venda em Andamento: desistência antes da confirmação do recebimento."""
+
     http_method_names = ["post"]
 
     def post(self, request, pk):
@@ -284,6 +293,8 @@ class DetalheCaixaView(PerfilRequeridoMixin, DetailView):
 
 
 class ListaVendasView(PerfilRequeridoMixin, ListView):
+    """UC49 – Consultar Vendas (ponto de extensão Gerar relatório)."""
+
     template_name = "vendas/lista_vendas.html"
     context_object_name = "vendas"
     paginate_by = settings.TAMANHO_PAGINA
@@ -302,4 +313,115 @@ class ListaVendasView(PerfilRequeridoMixin, ListView):
 class DetalheVendaView(PerfilRequeridoMixin, DetailView):
     template_name = "vendas/detalhe_venda.html"
     context_object_name = "venda"
-    queryset = Venda.objects.select_related("operador", "caixa").prefetch_related("itens__produto")
+    queryset = Venda.objects.select_related("operador", "caixa").prefetch_related(
+        "itens__produto", "itens__devolucoes", "devolucoes__itens__item_venda__produto", "devolucoes__operador"
+    )
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        venda = self.object
+        if venda.situacao == Venda.Situacao.CONCLUIDA:
+            contexto["prazo_devolucao"] = prazo_devolucao(venda)
+            contexto["bloqueio_devolucao"] = motivo_devolucao_bloqueada(venda)
+        return contexto
+
+
+# Relatório de vendas (UC50, extensão do UC49) ----------------------------------
+
+
+class RelatorioVendasView(PerfilRequeridoMixin, View):
+    """UC50 – Gerar Relatórios Básicos: relatório das vendas filtradas na consulta."""
+
+    def get(self, request):
+        formulario = FormularioFiltroVendas(request.GET or None)
+        if formulario.is_bound and not formulario.is_valid():
+            messages.error(request, "Corrija os filtros da consulta antes de gerar o relatório.")
+            return redirect(f"{reverse('vendas:lista_vendas')}?{request.GET.urlencode()}")
+        dados = formulario.cleaned_data if formulario.is_bound else {}
+        filtros = {campo: valor for campo, valor in dados.items() if valor and campo != "situacao"}
+        return render(
+            request,
+            "vendas/relatorio_vendas.html",
+            {"relatorio": gerar_relatorio_vendas(**filtros), "filtros": dados, "consulta": request.GET.urlencode()},
+        )
+
+
+# Devolução (UC16) ----------------------------------------------------------------
+
+
+class RegistrarDevolucaoView(PerfilRequeridoMixin, View):
+    """UC16 – Registrar Devolução.
+
+    O operador escolhe as quantidades e o motivo, confere o resumo do estorno
+    e só então confirma; estorno e recomposição do estoque são gravados juntos.
+    """
+
+    template_name = "vendas/devolucao.html"
+
+    def _carregar_venda(self, pk):
+        """Sequências alternativas: venda fora do prazo, já devolvida ou caixa fechado."""
+        self.venda = get_object_or_404(
+            Venda.objects.select_related("caixa").prefetch_related("itens__produto", "itens__devolucoes"), pk=pk
+        )
+        bloqueio = motivo_devolucao_bloqueada(self.venda)
+        if bloqueio:
+            messages.error(self.request, bloqueio)
+        return bloqueio
+
+    def _formulario(self, dados=None):
+        itens = [item for item in self.venda.itens.all() if item.quantidade_devolvivel > 0]
+        return FormularioDevolucao(dados, itens=itens)
+
+    def get(self, request, pk):
+        if self._carregar_venda(pk):
+            return redirect(self.venda)
+        return self._renderizar(self._formulario())
+
+    def post(self, request, pk):
+        if self._carregar_venda(pk):
+            return redirect(self.venda)
+        formulario = self._formulario(request.POST)
+        if not formulario.is_valid() or "corrigir" in request.POST:
+            return self._renderizar(formulario)
+        if "confirmar" not in request.POST:
+            return self._resumo(formulario)
+        try:
+            devolucao = registrar_devolucao(
+                venda=self.venda,
+                quantidades=formulario.quantidades(),
+                motivo=formulario.cleaned_data["motivo"],
+                usuario=request.user,
+            )
+        except ValidationError as erro:
+            if hasattr(erro, "error_dict"):
+                formulario.add_error(None, erro)
+            else:
+                _avisar_erros(request, erro)
+            return self._renderizar(formulario)
+        messages.success(
+            request,
+            f"{devolucao} registrada: estorno de R$ {number_format(devolucao.valor_estornado, 2)} em "
+            f"{devolucao.get_forma_estorno_display().lower()} e estoque recomposto.",
+        )
+        return redirect(self.venda)
+
+    def _renderizar(self, formulario):
+        return render(self.request, self.template_name, {"venda": self.venda, "formulario": formulario})
+
+    def _resumo(self, formulario):
+        quantidades = formulario.quantidades()
+        linhas = [
+            {"item": item, "quantidade": quantidades[item.pk], "subtotal": item.preco_unitario * quantidades[item.pk]}
+            for item in formulario.itens
+            if quantidades[item.pk]
+        ]
+        return render(
+            self.request,
+            "vendas/confirmar_devolucao.html",
+            {
+                "venda": self.venda,
+                "formulario": formulario,
+                "linhas": linhas,
+                "valor": sum((linha["subtotal"] for linha in linhas), ZERO),
+            },
+        )

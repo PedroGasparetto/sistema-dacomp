@@ -17,7 +17,6 @@ class FormularioProduto(forms.ModelForm):
                 "unidade",
                 "codigo_barras",
                 "controla_estoque",
-                "saldo_estoque",
             ),
         ),
     )
@@ -36,7 +35,6 @@ class FormularioProduto(forms.ModelForm):
             "unidade",
             "codigo_barras",
             "controla_estoque",
-            "saldo_estoque",
         )
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 3}),
@@ -55,18 +53,13 @@ class FormularioProduto(forms.ModelForm):
         codigo_barras = (self.cleaned_data.get("codigo_barras") or "").strip()
         return codigo_barras or None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["saldo_estoque"].required = False
-
-    def clean(self):
-        dados = super().clean()
-        # Itens sem controle de estoque (preparados na hora) não têm saldo.
-        if not dados.get("controla_estoque"):
-            dados["saldo_estoque"] = 0
-        elif dados.get("saldo_estoque") is None:
-            dados["saldo_estoque"] = 0
-        return dados
+    def clean_controla_estoque(self):
+        controla_estoque = self.cleaned_data["controla_estoque"]
+        if self.instance.pk and not controla_estoque and self.instance.saldo_estoque > 0:
+            raise forms.ValidationError(
+                "Zere o saldo com um ajuste de estoque antes de deixar de controlar o estoque."
+            )
+        return controla_estoque
 
 
 class FormularioPesquisaProduto(forms.Form):
