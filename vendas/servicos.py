@@ -1,4 +1,4 @@
-"""Regras de negócio do caixa, das vendas e das devoluções (UC01, UC02, UC03, UC12, UC16, UC49 e UC50)."""
+"""Regras de negócio do caixa, das vendas e das devoluções (UC03, UC04, UC05, UC06, UC16, UC07 e UC14)."""
 
 from datetime import timedelta
 
@@ -26,7 +26,7 @@ def obter_caixa_aberto():
 
 @transaction.atomic
 def abrir_caixa(*, usuario, valor_inicial):
-    """UC01 – Abrir Caixa."""
+    """UC03 – Abrir Caixa."""
     if valor_inicial < ZERO:
         raise ValidationError({"valor_inicial": "O valor inicial deve ser maior ou igual a zero."})
     if obter_caixa_aberto():
@@ -72,7 +72,7 @@ def resumir_caixa(caixa):
 
 @transaction.atomic
 def fechar_caixa(*, caixa, usuario, valor_contado, justificativa=""):
-    """UC02 – Fechar Caixa."""
+    """UC04 – Fechar Caixa."""
     caixa = Caixa.objects.select_for_update().get(pk=caixa.pk)
     if caixa.situacao != Caixa.Situacao.ABERTO:
         raise ValidationError("Este caixa já está fechado.")
@@ -114,7 +114,7 @@ def obter_venda_em_andamento(usuario, caixa):
 
 
 def iniciar_ou_retomar_venda(usuario):
-    """Passos 1–2 do UC03: exige caixa aberto (sequência alternativa A1)."""
+    """Passos 1–2 do UC05: exige caixa aberto (sequência alternativa A1)."""
     caixa = obter_caixa_aberto()
     if caixa is None:
         raise ValidationError("O caixa está fechado. Abra o caixa para iniciar uma venda.")
@@ -146,7 +146,7 @@ def _validar_quantidade(produto, quantidade):
 
 @transaction.atomic
 def adicionar_item(*, venda, produto, quantidade=1):
-    """Passos 3–6 do UC03; um produto repetido soma à quantidade do item."""
+    """Passos 3–6 do UC05; um produto repetido soma à quantidade do item."""
     _exigir_em_andamento(venda)
     if not produto.ativo:
         raise ValidationError(f"{produto.nome} está inativo e não pode ser vendido.")
@@ -178,7 +178,7 @@ def remover_item(*, item):
 
 
 def cancelar_venda(*, venda):
-    """Desistência antes da confirmação do recebimento (A5): nada é registrado no estoque."""
+    """UC17 – Cancelar Venda em Andamento: nada é registrado no pagamento nem no estoque."""
     _exigir_em_andamento(venda)
     venda.situacao = Situacao.CANCELADA
     venda.save(update_fields=["situacao"])
@@ -186,7 +186,7 @@ def cancelar_venda(*, venda):
 
 
 def verificar_finalizacao(venda):
-    """Passo 8 do UC03: venda com itens ativos e saldo suficiente (A3)."""
+    """Passo 8 do UC05: venda com itens ativos e saldo suficiente (A3)."""
     _exigir_em_andamento(venda)
     itens = list(venda.itens.select_related("produto"))
     if not itens:
@@ -203,7 +203,7 @@ def verificar_finalizacao(venda):
 
 
 def calcular_troco(total, forma_pagamento, valor_recebido):
-    """UC12 – Receber Pagamento: em dinheiro, exige quantia suficiente e calcula o troco."""
+    """UC06 – Receber Pagamento: em dinheiro, exige quantia suficiente e calcula o troco."""
     if forma_pagamento != FormaPagamento.DINHEIRO:
         return total, ZERO
     if valor_recebido is None:
@@ -215,7 +215,7 @@ def calcular_troco(total, forma_pagamento, valor_recebido):
 
 @transaction.atomic
 def concluir_venda(*, venda, forma_pagamento, valor_recebido=None):
-    """Passo 10 do UC03 com a inclusão do UC12.
+    """Passo 10 do UC05 com a inclusão do UC06.
 
     Venda, pagamento e baixa de estoque são gravados juntos (RNF01): se
     qualquer etapa falhar, nada é registrado.
@@ -330,7 +330,7 @@ def registrar_devolucao(*, venda, quantidades, motivo, usuario):
 
 
 def filtrar_vendas(*, identificador=None, situacao="", operador=None, caixa=None, inicio=None, fim=None):
-    """UC49 – Consultar Vendas por identificador, período, operador ou caixa."""
+    """UC07 – Consultar Vendas por identificador, período, operador ou caixa."""
     vendas = Venda.objects.select_related("operador", "caixa")
     if identificador:
         vendas = vendas.filter(pk=identificador)
@@ -348,16 +348,17 @@ def filtrar_vendas(*, identificador=None, situacao="", operador=None, caixa=None
 
 
 def gerar_relatorio_vendas(**filtros):
-    """UC50 – relatório das vendas filtradas na consulta (UC49).
+    """UC14 – relatório das vendas filtradas na consulta (UC07).
 
     Considera apenas vendas concluídas e desconta os estornos das devoluções.
     Nenhum registro é alterado.
     """
     filtros["situacao"] = Situacao.CONCLUIDA
-    vendas = filtrar_vendas(**filtros).prefetch_related("devolucoes").order_by("concluida_em", "id")
+    vendas = filtrar_vendas(**filtros).prefetch_related("devolucoes", "itens__produto").order_by("concluida_em", "id")
     totais = {
         linha["forma_pagamento"]: linha
-        for linha in vendas.values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
+        # order_by() vazio: a ordenação da lista não pode entrar no agrupamento dos totais.
+        for linha in vendas.order_by().values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
     }
     por_forma = [
         {

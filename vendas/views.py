@@ -48,7 +48,7 @@ def _avisar_erros(request, erro):
         messages.error(request, mensagem)
 
 
-# PDV (UC03 – Registrar Venda) ---------------------------------------------
+# PDV (UC05 – Registrar Venda) ---------------------------------------------
 
 
 CHAVE_CATEGORIA_PDV = "pdv_categoria"
@@ -160,7 +160,7 @@ def _venda_em_andamento(request, pk):
 
 
 class CancelarVendaView(PerfilRequeridoMixin, View):
-    """Cancelar Venda em Andamento: desistência antes da confirmação do recebimento."""
+    """UC17 – Cancelar Venda em Andamento: desistência antes da confirmação do recebimento."""
 
     http_method_names = ["post"]
 
@@ -171,7 +171,7 @@ class CancelarVendaView(PerfilRequeridoMixin, View):
 
 
 class PagamentoView(PerfilRequeridoMixin, View):
-    """UC12 – Receber Pagamento, incluído na finalização do UC03.
+    """UC06 – Receber Pagamento, incluído na finalização do UC05.
 
     A forma de pagamento e o troco ficam no próprio PDV: depois de confirmar,
     a pessoa operadora continua na mesma tela, pronta para a próxima venda.
@@ -208,7 +208,7 @@ class PagamentoView(PerfilRequeridoMixin, View):
         return redirect("vendas:pdv")
 
 
-# Caixa (UC01 e UC02) ---------------------------------------------------------
+# Caixa (UC03 e UC04) ---------------------------------------------------------
 
 
 class AbrirCaixaView(PerfilRequeridoMixin, View):
@@ -269,7 +269,7 @@ class FecharCaixaView(PerfilRequeridoMixin, View):
         return self._renderizar(request, caixa, formulario)
 
     def _renderizar(self, request, caixa, formulario):
-        # Inclusão do UC49: vendas concluídas do caixa atual.
+        # Inclusão do UC07: vendas concluídas do caixa atual.
         vendas = filtrar_vendas(caixa=caixa.pk, situacao=Venda.Situacao.CONCLUIDA)
         return render(
             request,
@@ -287,11 +287,11 @@ class DetalheCaixaView(PerfilRequeridoMixin, DetailView):
         return {**super().get_context_data(**kwargs), "resumo": resumir_caixa(self.object)}
 
 
-# Consulta de vendas (UC49) ---------------------------------------------------
+# Consulta de vendas (UC07) ---------------------------------------------------
 
 
 class ListaVendasView(PerfilRequeridoMixin, ListView):
-    """UC49 – Consultar Vendas (ponto de extensão Gerar relatório)."""
+    """UC07 – Consultar Vendas (ponto de extensão Gerar relatório)."""
 
     template_name = "vendas/lista_vendas.html"
     context_object_name = "vendas"
@@ -324,11 +324,11 @@ class DetalheVendaView(PerfilRequeridoMixin, DetailView):
         return contexto
 
 
-# Relatório de vendas (UC50, extensão do UC49) ----------------------------------
+# Relatório de vendas (UC14, extensão do UC07) ----------------------------------
 
 
 class RelatorioVendasView(PerfilRequeridoMixin, View):
-    """UC50 – Gerar Relatórios Básicos: relatório das vendas filtradas na consulta."""
+    """UC14 – Gerar Relatórios Básicos: relatório das vendas filtradas na consulta."""
 
     def get(self, request):
         formulario = FormularioFiltroVendas(request.GET or None)

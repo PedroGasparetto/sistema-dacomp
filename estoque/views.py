@@ -19,7 +19,7 @@ from .servicos import (
 
 
 class RegistrarMovimentacaoView(PerfilRequeridoMixin, FormView):
-    """UC23 – Realizar Transação no Estoque.
+    """UC10 – Realizar Transação no Estoque.
 
     Segue o fluxo essencial: o operador informa os dados, o sistema apresenta
     o resumo (quantidade anterior, variação e resultante) e só registra após
@@ -78,7 +78,7 @@ class RegistrarMovimentacaoView(PerfilRequeridoMixin, FormView):
 
 
 class ListaMovimentacoesView(PerfilRequeridoMixin, ListView):
-    """UC29 – Consultar Movimentação no Estoque (ponto de extensão Gerar relatório)."""
+    """UC09 – Consultar Movimentação no Estoque (ponto de extensão Gerar relatório)."""
 
     template_name = "estoque/lista_movimentacoes.html"
     context_object_name = "movimentacoes"
@@ -107,7 +107,7 @@ class DetalheMovimentacaoView(PerfilRequeridoMixin, DetailView):
 
 
 class RelatorioMovimentacoesView(PerfilRequeridoMixin, View):
-    """UC50 – Gerar Relatórios Básicos: relatório das movimentações filtradas no UC29."""
+    """UC14 – Gerar Relatórios Básicos: relatório das movimentações filtradas no UC09."""
 
     def get(self, request):
         formulario = FormularioFiltroMovimentacoes(request.GET or None)

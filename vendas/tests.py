@@ -405,7 +405,7 @@ def test_venda_cancelada_nao_aceita_devolucao(client, caixa, voluntario, produto
     assert resposta.status_code == 302
 
 
-# Relatório de vendas (UC50) ------------------------------------------------------
+# Relatório de vendas (UC14) ------------------------------------------------------
 
 
 def test_relatorio_considera_so_vendas_concluidas_e_desconta_devolucoes(caixa, voluntario, produto_com_saldo):
@@ -421,11 +421,25 @@ def test_relatorio_considera_so_vendas_concluidas_e_desconta_devolucoes(caixa, v
     assert relatorio["total_liquido"] == Decimal("30.00")
 
 
+def test_relatorio_soma_varias_vendas_por_forma_de_pagamento(caixa, voluntario, produto_com_saldo):
+    _vender(voluntario, (produto_com_saldo, 1), forma=FormaPagamento.DINHEIRO, valor_recebido=Decimal("30.00"))
+    _vender(voluntario, (produto_com_saldo, 1), forma=FormaPagamento.DINHEIRO, valor_recebido=Decimal("30.00"))
+    _vender(voluntario, (produto_com_saldo, 2))  # PIX
+
+    relatorio = gerar_relatorio_vendas()
+    por_forma = {linha["forma"]: (linha["quantidade"], linha["valor"]) for linha in relatorio["por_forma"]}
+    assert relatorio["quantidade_vendas"] == 3
+    assert relatorio["total_vendido"] == Decimal("120.00")
+    assert por_forma["Dinheiro"] == (2, Decimal("60.00"))
+    assert por_forma["PIX"] == (1, Decimal("60.00"))
+
+
 def test_relatorio_usa_os_filtros_da_consulta(client, caixa, voluntario, produto_com_saldo):
     _vender(voluntario, (produto_com_saldo, 1))
     client.force_login(voluntario)
     resposta = client.get(reverse("vendas:relatorio_vendas"), {"caixa": caixa.pk})
     assert resposta.status_code == 200
     assert resposta.context["relatorio"]["quantidade_vendas"] == 1
+    assert "1 × Caneca do DACOMP" in resposta.content.decode()
     invalida = client.get(reverse("vendas:relatorio_vendas"), {"inicio": "2026-10-10", "fim": "2026-10-01"})
     assert invalida.status_code == 302

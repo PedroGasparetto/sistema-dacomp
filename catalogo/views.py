@@ -14,7 +14,7 @@ from .servicos import PesquisarPor, pesquisar_produtos
 
 
 class ListaProdutosView(PerfilRequeridoMixin, ListView):
-    """UC05 – Consultar Produto."""
+    """UC02 – Consultar Produto; atende também UC08 – Consultar Saldo do Estoque (saldo na lista e no detalhe)."""
 
     template_name = "catalogo/lista_produtos.html"
     context_object_name = "produtos"
@@ -48,7 +48,7 @@ class DetalheProdutoView(PerfilRequeridoMixin, DetailView):
 
 
 class CadastrarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, CreateView):
-    """UC47 – Manter Cadastro de Produtos (inclusão)."""
+    """UC13 – Manter Cadastro de Produtos (inclusão)."""
 
     perfis_permitidos = PERFIS_GESTAO_PRODUTOS
     model = Produto
@@ -63,7 +63,7 @@ class CadastrarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, CreateView
 
 
 class EditarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, UpdateView):
-    """UC47 – Manter Cadastro de Produtos (alteração)."""
+    """UC13 – Manter Cadastro de Produtos (alteração)."""
 
     perfis_permitidos = PERFIS_GESTAO_PRODUTOS
     model = Produto
@@ -82,7 +82,7 @@ class EditarProdutoView(PerfilRequeridoMixin, SuccessMessageMixin, UpdateView):
 
 
 class AlternarSituacaoProdutoView(PerfilRequeridoMixin, View):
-    """UC47 – inativa ou reativa um item, preservando dados e histórico."""
+    """UC13 – inativa ou reativa um item, preservando dados e histórico."""
 
     perfis_permitidos = PERFIS_GESTAO_PRODUTOS
     http_method_names = ["post"]
