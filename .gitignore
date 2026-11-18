@@ -4,5 +4,4 @@ __pycache__/
 staticfiles/
 .pytest_cache/
 *.local.txt
-.claude/
 .env
