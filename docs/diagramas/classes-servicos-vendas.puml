@@ -21,63 +21,63 @@ hide empty members
 hide circle
 
 package "vendas" {
-  class "vendas.servicos" as SV <<serviço>> {
+  class "ServicosVendas" as SV <<serviço>> {
     .. Caixa ..
-    + obter_caixa_aberto(): Caixa [0..1]
-    + abrir_caixa(usuario: Usuario, valor_inicial: Decimal): Caixa
-    + resumir_caixa(caixa: Caixa): ResumoCaixa
-    + fechar_caixa(caixa: Caixa, usuario: Usuario, valor_contado: Decimal,\n      justificativa: Texto = ""): Caixa
+    {static} + obter_caixa_aberto () : Caixa [0..1]
+    {static} + abrir_caixa (usuario : Usuario, valor_inicial : Decimal) : Caixa
+    {static} + resumir_caixa (caixa : Caixa) : ResumoCaixa
+    {static} + fechar_caixa (caixa : Caixa, usuario : Usuario, valor_contado : Decimal,\n      justificativa : Texto = "") : Caixa
     .. Venda ..
-    + obter_venda_em_andamento(usuario: Usuario, caixa: Caixa [0..1]): Venda [0..1]
-    + iniciar_ou_retomar_venda(usuario: Usuario): Venda
-    + localizar_produtos_para_venda(termo: Texto): Produto [0..10]
-    + adicionar_item(venda: Venda, produto: Produto, quantidade: Inteiro = 1): ItemVenda
-    + alterar_quantidade(item: ItemVenda, quantidade: Inteiro): ItemVenda
-    + remover_item(item: ItemVenda)
-    + cancelar_venda(venda: Venda): Venda
-    + verificar_finalizacao(venda: Venda)
-    + calcular_troco(total: Decimal, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): (valor_recebido: Decimal, troco: Decimal)
-    + concluir_venda(venda: Venda, forma_pagamento: FormaPagamento,\n      valor_recebido: Decimal [0..1]): Venda
-    - exigir_em_andamento(venda: Venda)
-    - validar_quantidade(produto: Produto, quantidade: Inteiro)
+    {static} + obter_venda_em_andamento (usuario : Usuario, caixa : Caixa [0..1]) : Venda [0..1]
+    {static} + iniciar_ou_retomar_venda (usuario : Usuario) : Venda
+    {static} + localizar_produtos_para_venda (termo : Texto) : Produto [0..10]
+    {static} + adicionar_item (venda : Venda, produto : Produto, quantidade : Inteiro = 1) : ItemVenda
+    {static} + alterar_quantidade (item : ItemVenda, quantidade : Inteiro) : ItemVenda
+    {static} + remover_item (item : ItemVenda)
+    {static} + cancelar_venda (venda : Venda) : Venda
+    {static} + verificar_finalizacao (venda : Venda)
+    {static} + calcular_troco (total : Decimal, forma_pagamento : FormaPagamento,\n      valor_recebido : Decimal [0..1]) : (valor_recebido : Decimal, troco : Decimal)
+    {static} + concluir_venda (venda : Venda, forma_pagamento : FormaPagamento,\n      valor_recebido : Decimal [0..1]) : Venda
+    {static} - exigir_em_andamento (venda : Venda)
+    {static} - validar_quantidade (produto : Produto, quantidade : Inteiro)
     .. Devolução ..
-    + prazo_devolucao(venda: Venda): DataHora
-    + motivo_devolucao_bloqueada(venda: Venda, agora: DataHora [0..1]): Texto [0..1]
-    + registrar_devolucao(venda: Venda, quantidades: Mapa<id do ItemVenda, Inteiro>,\n      motivo: Texto, usuario: Usuario): Devolucao
+    {static} + prazo_devolucao (venda : Venda) : DataHora
+    {static} + motivo_devolucao_bloqueada (venda : Venda, agora : DataHora [0..1]) : Texto [0..1]
+    {static} + registrar_devolucao (venda : Venda, quantidades : Mapa<id do ItemVenda, Inteiro>,\n      motivo : Texto, usuario : Usuario) : Devolucao
     .. Consulta e relatório ..
-    + filtrar_vendas(filtros: FiltroVendas): Venda [*]
-    + gerar_relatorio_vendas(filtros: FiltroVendas): RelatorioVendas
+    {static} + filtrar_vendas (filtros : FiltroVendas) : Venda [*]
+    {static} + gerar_relatorio_vendas (filtros : FiltroVendas) : RelatorioVendas
   }
   class ResumoCaixa <<dados>> {
-    + por_forma: LinhaFormaPagamento [4]
-    + quantidade_vendas: Inteiro
-    + total_vendido: Decimal
-    + quantidade_devolucoes: Inteiro
-    + total_estornado: Decimal
-    + total_liquido: Decimal
-    + valor_esperado: Decimal
-    + vendas_em_andamento: Inteiro
+    + por_forma [4] : LinhaFormaPagamento
+    + quantidade_vendas : Inteiro
+    + total_vendido : Decimal
+    + quantidade_devolucoes : Inteiro
+    + total_estornado : Decimal
+    + total_liquido : Decimal
+    + valor_esperado : Decimal
+    + vendas_em_andamento : Inteiro
   }
   class RelatorioVendas <<dados>> {
-    + vendas: Venda [*]
-    + por_forma: LinhaFormaPagamento [4]
-    + quantidade_vendas: Inteiro
-    + total_vendido: Decimal
-    + total_estornado: Decimal
-    + total_liquido: Decimal
+    + vendas [*] : Venda
+    + por_forma [4] : LinhaFormaPagamento
+    + quantidade_vendas : Inteiro
+    + total_vendido : Decimal
+    + total_estornado : Decimal
+    + total_liquido : Decimal
   }
   class FiltroVendas <<dados>> {
-    + identificador: Inteiro [0..1]
-    + situacao: SituacaoVenda [0..1]
-    + operador: Usuario [0..1]
-    + caixa: Inteiro [0..1]
-    + inicio: Data [0..1]
-    + fim: Data [0..1] {inicio <= fim}
+    + identificador [0..1] : Inteiro
+    + situacao [0..1] : SituacaoVenda
+    + operador [0..1] : Usuario
+    + caixa [0..1] : Inteiro
+    + inicio [0..1] : Data
+    + fim [0..1] : Data {inicio <= fim}
   }
   class LinhaFormaPagamento <<dados>> {
-    + forma: Texto
-    + quantidade: Inteiro
-    + valor: Decimal
+    + forma : Texto
+    + quantidade : Inteiro
+    + valor : Decimal
   }
   SV ..> ResumoCaixa : <<cria>>
   SV ..> RelatorioVendas : <<cria>>
@@ -87,10 +87,10 @@ package "vendas" {
 
 
 package "estoque" {
-  class "estoque.servicos" as SE <<serviço>>
+  class "ServicosEstoque" as SE <<serviço>>
 }
 package "catalogo" {
-  class "catalogo.servicos" as SC <<serviço>>
+  class "ServicosCatalogo" as SC <<serviço>>
 }
 note "Operações detalhadas na página 3/3." as N
 SE .. N

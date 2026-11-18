@@ -1,7 +1,10 @@
 @startuml classes-entidades
-' Diagrama de classes de projeto — entidades (camada de modelo).
-' Gerado a partir de contas/, catalogo/, estoque/ e vendas/models.py.
-' Abra no Lucidchart (Inserir > PlantUML) ou no draw.io (Organizar > Inserir > Avançado > PlantUML).
+' Diagrama de classes de projeto (1/3) — entidades (camada de modelo).
+' Notação dos slides "Diagrama de Classes" (INF01127):
+'   atributo: [visibilidade] nome [multiplicidade] : tipo [= valor inicial] [{propriedades}]
+'   operação: [visibilidade] nome (parâmetros) : tipo de retorno
+'   /nome = atributo derivado; {frozen} = não muda depois de criado; itálico = classe abstrata.
+' Fonte: contas/, catalogo/, estoque/ e vendas/models.py.
 
 title Lojinha do DACOMP — Diagrama de classes de projeto (1/3): entidades
 
@@ -20,46 +23,47 @@ hide empty members
 hide circle
 
 package "contas" {
-  class "AbstractUser" as AbstractUser <<Django>> {
-    + username: Texto {único, máx. 150}
-    + first_name: Texto {máx. 150}
-    + last_name: Texto {máx. 150}
-    + email: Texto
-    + is_active: Booleano = verdadeiro
-    + is_superuser: Booleano = falso
-    + check_password(senha: Texto): Booleano
+  abstract class AbstractUser <<Django>> {
+    + username : Texto {único, máx. 150}
+    + first_name : Texto {máx. 150}
+    + last_name : Texto {máx. 150}
+    + email : Texto
+    + is_active : Booleano = verdadeiro
+    + is_superuser : Booleano = falso
+    + check_password (senha : Texto) : Booleano
+    + set_password (senha : Texto)
   }
   class Usuario {
-    + /nomes_perfis: Texto[0..3]
-    + get_full_name(): Texto
+    + /nomes_perfis [0..3] : Texto
+    + get_full_name () : Texto
   }
-  class "Perfil (Group)" as Perfil <<Django>> {
-    + name: Texto {Diretoria | Bolsista | Voluntário}
+  class Perfil <<Django Group>> {
+    + name : Texto {único, frozen}
   }
   AbstractUser <|-- Usuario
-  Usuario "0..*" --> "0..3" Perfil : groups
+  Usuario "0..* membros" --> "0..3 groups" Perfil : possui >
 }
 
 package "catalogo" {
   class Produto {
-    + codigo: Texto {único, máx. 20, maiúsculas}
-    + nome: Texto {máx. 120}
-    + categoria: Categoria = OUTRO
-    + descricao: Texto [0..1]
-    + marca: Texto [0..1] {máx. 60}
-    + fornecedor: Texto [0..1] {máx. 120}
-    + codigo_barras: Texto [0..1] {único, máx. 50}
-    + unidade: Unidade = UNIDADE
-    {field} + preco_unitario: Decimal(8,2) {>= 0}
-    {field} + preco_custo: Decimal(8,2) [0..1] {>= 0}
-    + ativo: Booleano = verdadeiro
-    + controla_estoque: Booleano = verdadeiro
-    + saldo_estoque: Inteiro = 0 {>= 0, somente leitura}
-    + criado_em: DataHora {automático}
-    + alterado_em: DataHora {automático}
-    + /lucro_unitario: Decimal [0..1]
-    + /margem_percentual: Decimal [0..1]
-    + get_absolute_url(): Texto
+    + codigo : Texto {único, máx. 20}
+    + nome : Texto {máx. 120}
+    + categoria : Categoria = OUTRO
+    + descricao [0..1] : Texto
+    + marca [0..1] : Texto {máx. 60}
+    + fornecedor [0..1] : Texto {máx. 120}
+    + codigo_barras [0..1] : Texto {único, máx. 50}
+    + unidade : Unidade = UN
+    {field} + preco_unitario : Decimal(8,2) {>= 0}
+    {field} + preco_custo [0..1] : Decimal(8,2) {>= 0}
+    + ativo : Booleano = verdadeiro
+    + controla_estoque : Booleano = verdadeiro
+    + saldo_estoque : Inteiro = 0 {>= 0, alterado só por Movimentacao}
+    + criado_em : DataHora {frozen}
+    + alterado_em : DataHora
+    + /lucro_unitario [0..1] : Decimal
+    + /margem_percentual [0..1] : Decimal
+    + get_absolute_url () : Texto
   }
   enum Categoria <<enumeration>> {
     CAFE
@@ -81,15 +85,15 @@ package "catalogo" {
 }
 
 package "estoque" {
-  class Movimentacao <<imutável>> {
-    + tipo: TipoMovimentacao
-    + quantidade_anterior: Inteiro {>= 0}
-    + variacao: Inteiro
-    + quantidade_resultante: Inteiro {>= 0}
-    + motivo: MotivoAjuste [0..1] {obrigatório no ajuste}
-    + observacao: Texto [0..1] {máx. 255}
-    + realizada_em: DataHora {automático}
-    + get_absolute_url(): Texto
+  class Movimentacao {
+    + tipo : TipoMovimentacao {frozen}
+    + quantidade_anterior : Inteiro {>= 0, frozen}
+    + variacao : Inteiro {frozen}
+    + quantidade_resultante : Inteiro {>= 0, frozen}
+    + motivo [0..1] : MotivoAjuste {frozen, obrigatório se tipo = AJUSTE}
+    + observacao [0..1] : Texto {máx. 255, frozen}
+    + realizada_em : DataHora {frozen}
+    + get_absolute_url () : Texto
   }
   enum TipoMovimentacao <<enumeration>> {
     ENTRADA
@@ -108,45 +112,45 @@ package "estoque" {
 
 package "vendas" {
   class Caixa {
-    + situacao: SituacaoCaixa = ABERTO {no máximo 1 aberto}
-    {field} + valor_inicial: Decimal(10,2) {>= 0}
-    + aberto_em: DataHora {automático}
-    + fechado_em: DataHora [0..1]
-    {field} + valor_esperado: Decimal(10,2) [0..1]
-    {field} + valor_contado: Decimal(10,2) [0..1] {>= 0}
-    + justificativa: Texto [0..1] {máx. 255, obrigatória se houver diferença}
-    + /diferenca: Decimal [0..1]
+    + situacao : SituacaoCaixa = ABERTO {no máximo um ABERTO}
+    {field} + valor_inicial : Decimal(10,2) {>= 0, frozen}
+    + aberto_em : DataHora {frozen}
+    + fechado_em [0..1] : DataHora
+    {field} + valor_esperado [0..1] : Decimal(10,2)
+    {field} + valor_contado [0..1] : Decimal(10,2) {>= 0}
+    + justificativa [0..1] : Texto {máx. 255, obrigatória se houver diferença}
+    + /diferenca [0..1] : Decimal
   }
   class Venda {
-    + situacao: SituacaoVenda = EM_ANDAMENTO
-    + iniciada_em: DataHora {automático}
-    + concluida_em: DataHora [0..1]
-    {field} + total: Decimal(10,2) = 0
-    + forma_pagamento: FormaPagamento [0..1]
-    {field} + valor_recebido: Decimal(10,2) [0..1]
-    {field} + troco: Decimal(10,2) [0..1]
-    + /total_itens: Decimal
-    + /total_devolvido: Decimal
-    + /total_liquido: Decimal
-    + get_absolute_url(): Texto
+    + situacao : SituacaoVenda = EM_ANDAMENTO
+    + iniciada_em : DataHora {frozen}
+    + concluida_em [0..1] : DataHora
+    {field} + total : Decimal(10,2) = 0
+    + forma_pagamento [0..1] : FormaPagamento
+    {field} + valor_recebido [0..1] : Decimal(10,2)
+    {field} + troco [0..1] : Decimal(10,2)
+    + /total_itens : Decimal
+    + /total_devolvido : Decimal
+    + /total_liquido : Decimal
+    + get_absolute_url () : Texto
   }
   class ItemVenda {
-    + quantidade: Inteiro {> 0}
-    {field} + preco_unitario: Decimal(8,2) {preço praticado na venda}
-    + /subtotal: Decimal
-    + /quantidade_devolvida: Inteiro
-    + /quantidade_devolvivel: Inteiro
+    + quantidade : Inteiro {> 0}
+    {field} + preco_unitario : Decimal(8,2) {frozen, preço praticado na venda}
+    + /subtotal : Decimal
+    + /quantidade_devolvida : Inteiro
+    + /quantidade_devolvivel : Inteiro
   }
   class Devolucao {
-    + motivo: Texto {máx. 255, obrigatório}
-    + forma_estorno: FormaPagamento {= forma da venda}
-    {field} + valor_estornado: Decimal(10,2) {> 0}
-    + realizada_em: DataHora {automático}
-    + get_absolute_url(): Texto
+    + motivo : Texto {máx. 255, frozen}
+    + forma_estorno : FormaPagamento {frozen, = forma de pagamento da venda}
+    {field} + valor_estornado : Decimal(10,2) {> 0, frozen}
+    + realizada_em : DataHora {frozen}
+    + get_absolute_url () : Texto
   }
   class ItemDevolucao {
-    + quantidade: Inteiro {> 0, <= quantidade devolvível}
-    + /subtotal: Decimal
+    + quantidade : Inteiro {> 0, <= quantidade devolvível, frozen}
+    + /subtotal : Decimal
   }
   enum SituacaoCaixa <<enumeration>> {
     ABERTO
@@ -165,40 +169,40 @@ package "vendas" {
   }
 }
 
+' Posicionamento (links invisíveis, só para o layout).
+Categoria -[hidden]right- Unidade
+Produto -[hidden]down- Categoria
+TipoMovimentacao -[hidden]right- MotivoAjuste
+Movimentacao -[hidden]down- TipoMovimentacao
+SituacaoCaixa -[hidden]right- SituacaoVenda
+SituacaoVenda -[hidden]right- FormaPagamento
+
+' Associações: "multiplicidade papel" em cada extremidade e nome no meio.
+' Com seta: navegável só no sentido da seta. Sem seta: navegável nos dois sentidos.
+Caixa "1 caixa" -- "0..* vendas" Venda : registra >
+Caixa "1 caixa" -- "0..* devolucoes" Devolucao : estorna >
+Venda "1 venda" -- "0..* devolucoes" Devolucao : tem >
+
+' Composição: os itens só existem dentro da venda / devolução e são excluídos com ela.
+Venda "1 venda" *-- "0..* itens" ItemVenda : compõe <
+ItemVenda "0..*" --> "1 produto" Produto : refere-se a >
+Devolucao "1 devolucao" *-- "1..* itens" ItemDevolucao : compõe <
+ItemDevolucao "0..* devolucoes" -- "1 item_venda" ItemVenda : devolve >
+
+Movimentacao "0..*" --> "1 produto" Produto : altera saldo de >
+
+Produto "0..*" --> "1 criado_por\n1 alterado_por" Usuario : cadastrado por >
+Movimentacao "0..*" --> "1 responsavel" Usuario : registrada por >
+Caixa "0..*" --> "1 aberto_por\n0..1 fechado_por" Usuario : operado por >
+Venda "0..*" --> "1 operador" Usuario : atendida por >
+Devolucao "0..*" --> "1 operador" Usuario : registrada por >
+
 note bottom of ItemVenda
   {único: venda + produto}
-  Um produto aparece uma vez por venda;
-  repetir o produto soma a quantidade.
+  Repetir o produto soma à quantidade.
 end note
 note bottom of ItemDevolucao
   {único: devolucao + item_venda}
 end note
-
-' Posicionamento (links invisíveis, só para o layout).
-Categoria -[hidden]right- Unidade
-SituacaoCaixa -[hidden]right- SituacaoVenda
-SituacaoVenda -[hidden]right- FormaPagamento
-TipoMovimentacao -[hidden]right- MotivoAjuste
-Produto -[hidden]down- Categoria
-Movimentacao -[hidden]down- TipoMovimentacao
-ItemDevolucao -[hidden]down- SituacaoCaixa
-
-' Associações. Seta só de um lado: o código só navega naquele sentido
-' (related_name="+" ou acesso reverso não usado). Sem seta: navegável nos dois sentidos.
-Caixa "1" -- "0..*" Venda : vendas
-Venda "1" *-- "0..*" ItemVenda : itens
-ItemVenda "0..*" --> "1" Produto : produto
-Venda "1" -- "0..*" Devolucao : devolucoes
-Caixa "1" -- "0..*" Devolucao : devolucoes\n(caixa do estorno)
-Devolucao "1" *-- "1..*" ItemDevolucao : itens
-ItemDevolucao "0..*" -- "1" ItemVenda : item_venda / devolucoes
-Movimentacao "0..*" --> "1" Produto : produto
-
-Produto "0..*" --> "1" Usuario : criado_por,\nalterado_por
-Movimentacao "0..*" --> "1" Usuario : responsavel
-Caixa "0..*" --> "1" Usuario : aberto_por
-Caixa "0..*" --> "0..1" Usuario : fechado_por
-Venda "0..*" --> "1" Usuario : operador
-Devolucao "0..*" --> "1" Usuario : operador
 
 @enduml

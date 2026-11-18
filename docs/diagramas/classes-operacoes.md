@@ -5,12 +5,27 @@ Complementa os diagramas `classes-entidades`, `classes-servicos-vendas` e
 `Texto`, `Inteiro`, `Decimal`, `Booleano`, `Data`, `DataHora`. `[0..1]` indica valor
 opcional e `[*]`, uma coleção.
 
-Os serviços são módulos Python (`servicos.py`); nos diagramas aparecem como classes
-`<<serviço>>`. Todas as operações que gravam dados rodam numa transação atômica: se uma
+A notação segue os slides "Diagrama de Classes" da disciplina:
+
+- atributo: `[visibilidade] nome [multiplicidade] : tipo [= valor inicial] [{propriedades}]`;
+- operação: `[visibilidade] nome (parâmetros) : tipo de retorno`;
+- `/nome` indica atributo derivado; `{frozen}`, valor que não muda depois de criado;
+- sublinhado indica operação ou atributo de classe; itálico, classe abstrata (`AbstractUser`).
+
+Os serviços são módulos Python e aparecem nos diagramas como classes `<<serviço>>` cujas
+operações são operações de classe (sublinhadas):
+
+| Classe no diagrama | Módulo no código |
+|---|---|
+| `ServicosVendas` | `vendas/servicos.py` |
+| `ServicosEstoque` | `estoque/servicos.py` |
+| `ServicosCatalogo` | `catalogo/servicos.py` |
+| `Perfis` | `contas/perfis.py` |
+ Todas as operações que gravam dados rodam numa transação atômica: se uma
 regra falhar, nada é gravado (RNF01). Uma regra violada lança `ValidationError`, que a
 view mostra como mensagem na tela.
 
-## vendas.servicos
+## ServicosVendas (`vendas/servicos.py`)
 
 ### Caixa
 
@@ -53,7 +68,7 @@ view mostra como mensagem na tela.
 | `filtrar_vendas(filtros)` | Consultar Vendas por número, situação, operador, caixa e período. | `filtros: FiltroVendas`, todos opcionais. | `Venda [*]`. |
 | `gerar_relatorio_vendas(filtros)` | Gerar Relatórios Básicos: relatório das vendas concluídas da consulta. | `filtros: FiltroVendas` (a situação é sempre "concluída"). | `RelatorioVendas`: vendas, totais por forma de pagamento, total vendido, estornado e líquido. |
 
-## estoque.servicos
+## ServicosEstoque (`estoque/servicos.py`)
 
 | Operação | Propósito | Parâmetros | Retorno |
 |---|---|---|---|
@@ -66,7 +81,7 @@ view mostra como mensagem na tela.
 | `filtrar_movimentacoes(filtros)` | Consultar Movimentação no Estoque por produto, tipo e período. | `filtros: FiltroMovimentacoes`. | `Movimentacao [*]`. |
 | `gerar_relatorio_movimentacoes(filtros)` | Gerar Relatórios Básicos: relatório das movimentações da consulta. | `filtros: FiltroMovimentacoes`. | `RelatorioMovimentacoes`: registros do período e, por produto, entradas, ajustes, baixas, devoluções e saldo atual. |
 
-## catalogo.servicos
+## ServicosCatalogo (`catalogo/servicos.py`)
 
 | Operação | Propósito | Parâmetros | Retorno |
 |---|---|---|---|
@@ -77,7 +92,7 @@ view mostra como mensagem na tela.
 
 | Operação | Propósito | Parâmetros | Retorno |
 |---|---|---|---|
-| `perfis.possui_algum_perfil(usuario, perfis_permitidos)` | Verifica se o usuário pode usar uma tela. O superusuário sempre pode. | `usuario: Usuario`; `perfis_permitidos: Texto [1..3]`. | `Booleano`. |
+| `Perfis.possui_algum_perfil(usuario, perfis_permitidos)` | Verifica se o usuário pode usar uma tela. O superusuário sempre pode. | `usuario: Usuario`; `perfis_permitidos: Texto [1..3]`. | `Booleano`. |
 | `PerfilRequeridoMixin.test_func()` | Aplicada em todas as telas: exige login e um dos perfis da tela. | — (usa o usuário da requisição e `perfis_permitidos`). | `Booleano`. Falso resulta em acesso negado (403). |
 
 ## Operações das entidades
