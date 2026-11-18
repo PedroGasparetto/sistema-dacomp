@@ -24,6 +24,7 @@ from vendas.servicos import (
 )
 
 FormaPagamento = Venda.FormaPagamento
+ZERO_REAIS = Decimal("0.00")
 
 
 @pytest.fixture
@@ -443,3 +444,115 @@ def test_relatorio_usa_os_filtros_da_consulta(client, caixa, voluntario, produto
     assert "1 × Caneca do DACOMP" in resposta.content.decode()
     invalida = client.get(reverse("vendas:relatorio_vendas"), {"inicio": "2026-10-10", "fim": "2026-10-01"})
     assert invalida.status_code == 302
+
+
+# Correções da revisão -------------------------------------------------------
+
+
+def test_outro_operador_cancela_venda_esquecida_e_fecha_o_caixa(client, caixa, voluntario, bolsista, produto_com_saldo):
+    """Quem assume o caixa libera a venda que ficou em andamento no turno anterior."""
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    client.force_login(bolsista)
+    pagina = client.get(reverse("vendas:fechar_caixa")).content.decode()
+    assert reverse("vendas:cancelar_venda", args=[venda.pk]) in pagina
+
+    resposta = client.post(reverse("vendas:cancelar_venda", args=[venda.pk]))
+    assert resposta.url == reverse("vendas:fechar_caixa")
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.CANCELADA
+    fechar_caixa(caixa=caixa, usuario=bolsista, valor_contado=Decimal("50.00"))
+
+
+def test_cancelar_venda_ja_concluida_nao_desfaz_a_conclusao(caixa, voluntario, produto_com_saldo):
+    venda = iniciar_ou_retomar_venda(voluntario)
+    adicionar_item(venda=venda, produto=produto_com_saldo)
+    copia_antiga = Venda.objects.get(pk=venda.pk)  # lida antes do F4
+    concluir_venda(venda=venda, forma_pagamento=FormaPagamento.PIX)
+    with pytest.raises(ValidationError):
+        cancelar_venda(venda=copia_antiga)
+    with pytest.raises(ValidationError):
+        adicionar_item(venda=copia_antiga, produto=produto_com_saldo)
+    venda.refresh_from_db()
+    assert venda.situacao == Venda.Situacao.CONCLUIDA
+
+
+def test_devolucao_sem_caixa_aberto_avisa_em_vez_de_quebrar(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    fechar_caixa(caixa=caixa, usuario=voluntario, valor_contado=Decimal("50.00"))
+    item = venda.itens.get()
+    with pytest.raises(ValidationError):
+        registrar_devolucao(venda=venda, quantidades={item.pk: 1}, motivo="Defeito", usuario=voluntario)
+
+
+def test_relatorio_filtra_o_periodo_pela_conclusao(caixa, voluntario, produto_com_saldo):
+    venda = _vender(voluntario, (produto_com_saldo, 1))
+    ontem = timezone.localdate() - timedelta(days=1)
+    Venda.objects.filter(pk=venda.pk).update(iniciada_em=timezone.now() - timedelta(days=1))
+    assert gerar_relatorio_vendas(inicio=ontem, fim=ontem)["vendas"] == []
+    hoje = timezone.localdate()
+    assert gerar_relatorio_vendas(inicio=hoje, fim=hoje)["vendas"] == [venda]
+
+
+def _em_paralelo(*funcoes):
+    """Roda as funções ao mesmo tempo, cada uma com a própria conexão ao banco."""
+    import threading
+
+    from django.db import connection
+
+    barreira = threading.Barrier(len(funcoes))
+    erros = []
+
+    def rodar(funcao):
+        try:
+            barreira.wait()
+            funcao()
+        except Exception as erro:  # noqa: BLE001 - o teste confere os erros
+            erros.append(erro)
+        finally:
+            connection.close()
+
+    threads = [threading.Thread(target=rodar, args=(funcao,)) for funcao in funcoes]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return erros
+
+
+@pytest.mark.django_db(transaction=True)
+def test_toque_duplo_no_atalho_nao_cria_duas_vendas():
+    from django.contrib.auth.models import Group
+    from django.db import transaction
+
+    from conftest import _criar_usuario
+    from contas.perfis import TODOS_PERFIS
+
+    for perfil in TODOS_PERFIS:
+        Group.objects.get_or_create(name=perfil)
+    operador = _criar_usuario("operador", *TODOS_PERFIS)
+    cafe = Produto.objects.create(
+        codigo="CAF", nome="Café", preco_unitario=Decimal("2.00"), controla_estoque=False,
+        criado_por=operador, alterado_por=operador,
+    )
+    abrir_caixa(usuario=operador, valor_inicial=ZERO_REAIS)
+
+    def tocar():
+        with transaction.atomic():
+            adicionar_item(venda=iniciar_ou_retomar_venda(operador), produto=cafe)
+
+    for _ in range(5):
+        assert _em_paralelo(tocar, tocar) == []
+        venda = Venda.objects.get(situacao=Venda.Situacao.EM_ANDAMENTO)
+        assert venda.itens.get().quantidade == 2
+        cancelar_venda(venda=venda)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_abrir_caixa_ao_mesmo_tempo_avisa_em_vez_de_quebrar():
+    from conftest import _criar_usuario
+
+    operador = _criar_usuario("operador")
+    erros = _em_paralelo(*[lambda: abrir_caixa(usuario=operador, valor_inicial=ZERO_REAIS)] * 2)
+    assert Caixa.objects.count() == 1
+    assert len(erros) == 1 and isinstance(erros[0], ValidationError)

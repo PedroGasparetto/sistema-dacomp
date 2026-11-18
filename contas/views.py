@@ -19,6 +19,16 @@ class AlterarPropriaSenhaView(SuccessMessageMixin, PasswordChangeView):
     success_message = "Senha alterada com sucesso."
 
 
+def contas_gerenciaveis(usuario):
+    """Contas que `usuario` pode consultar e alterar.
+
+    Superusuários (administração técnica do sistema) só são geridos por outro
+    superusuário: a Diretoria não pode redefinir a senha nem desativar essas contas.
+    """
+    contas = Usuario.objects.all()
+    return contas if usuario.is_superuser else contas.filter(is_superuser=False)
+
+
 class ListaContasView(PerfilRequeridoMixin, ListView):
     """UC15 – Manter Contas (consulta)."""
 
@@ -28,7 +38,7 @@ class ListaContasView(PerfilRequeridoMixin, ListView):
     paginate_by = settings.TAMANHO_PAGINA
 
     def get_queryset(self):
-        return Usuario.objects.prefetch_related("groups").order_by("username")
+        return contas_gerenciaveis(self.request.user).prefetch_related("groups").order_by("username")
 
 
 class CriarContaView(PerfilRequeridoMixin, SuccessMessageMixin, CreateView):
@@ -52,6 +62,9 @@ class EditarContaView(PerfilRequeridoMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("contas:lista_contas")
     success_message = "Conta atualizada."
 
+    def get_queryset(self):
+        return contas_gerenciaveis(self.request.user)
+
     def get_form_kwargs(self):
         return {**super().get_form_kwargs(), "usuario_atuante": self.request.user}
 
@@ -64,7 +77,7 @@ class RedefinirSenhaContaView(PerfilRequeridoMixin, FormView):
     template_name = "contas/redefinir_senha.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.conta = get_object_or_404(Usuario, pk=kwargs["pk"])
+        self.conta = get_object_or_404(contas_gerenciaveis(request.user), pk=kwargs["pk"])
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):

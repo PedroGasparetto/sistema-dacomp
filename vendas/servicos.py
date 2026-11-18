@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Count, Sum
 from django.utils import timezone
 
@@ -31,26 +31,46 @@ def abrir_caixa(*, usuario, valor_inicial):
         raise ValidationError({"valor_inicial": "O valor inicial deve ser maior ou igual a zero."})
     if obter_caixa_aberto():
         raise ValidationError("Já existe um caixa aberto.")
-    return Caixa.objects.create(valor_inicial=valor_inicial, aberto_por=usuario)
+    try:
+        # Savepoint: dois pedidos simultâneos esbarram na restrição de caixa único.
+        with transaction.atomic():
+            return Caixa.objects.create(valor_inicial=valor_inicial, aberto_por=usuario)
+    except IntegrityError:
+        raise ValidationError("Já existe um caixa aberto.") from None
 
 
-def resumir_caixa(caixa):
-    """Totais das vendas concluídas no caixa, usados na conferência do fechamento."""
-    concluidas = caixa.vendas.filter(situacao=Situacao.CONCLUIDA)
+def _totais_por_forma(concluidas):
+    """Quantidade e valor das vendas concluídas por forma de pagamento.
+
+    O order_by() vazio impede que a ordenação da consulta entre no agrupamento.
+    """
     totais = {
         linha["forma_pagamento"]: linha
-        for linha in concluidas.values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
+        for linha in concluidas.order_by().values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
     }
     por_forma = [
         {
             "forma": forma.label,
+            "valor_forma": forma.value,
             "quantidade": totais.get(forma.value, {}).get("quantidade", 0),
             "valor": totais.get(forma.value, {}).get("valor") or ZERO,
         }
         for forma in FormaPagamento
     ]
-    recebido_em_dinheiro = totais.get(FormaPagamento.DINHEIRO, {}).get("valor") or ZERO
-    total_vendido = sum((linha["valor"] for linha in por_forma), ZERO)
+    return {
+        "por_forma": por_forma,
+        "quantidade_vendas": sum(linha["quantidade"] for linha in por_forma),
+        "total_vendido": sum((linha["valor"] for linha in por_forma), ZERO),
+    }
+
+
+def resumir_caixa(caixa):
+    """Totais das vendas concluídas no caixa, usados na conferência do fechamento."""
+    vendas = _totais_por_forma(caixa.vendas.filter(situacao=Situacao.CONCLUIDA))
+    recebido_em_dinheiro = next(
+        linha["valor"] for linha in vendas["por_forma"] if linha["valor_forma"] == FormaPagamento.DINHEIRO
+    )
+    total_vendido = vendas["total_vendido"]
 
     # Estornos das devoluções feitas neste caixa (UC16); em dinheiro, saem da gaveta.
     estornos = {
@@ -59,9 +79,7 @@ def resumir_caixa(caixa):
     }
     total_estornado = sum(estornos.values(), ZERO)
     return {
-        "por_forma": por_forma,
-        "quantidade_vendas": sum(linha["quantidade"] for linha in por_forma),
-        "total_vendido": total_vendido,
+        **vendas,
         "quantidade_devolucoes": caixa.devolucoes.count(),
         "total_estornado": total_estornado,
         "total_liquido": total_vendido - total_estornado,
@@ -113,9 +131,14 @@ def obter_venda_em_andamento(usuario, caixa):
     )
 
 
+@transaction.atomic
 def iniciar_ou_retomar_venda(usuario):
-    """Passos 1–2 do UC05: exige caixa aberto (sequência alternativa A1)."""
-    caixa = obter_caixa_aberto()
+    """Passos 1–2 do UC05: exige caixa aberto (sequência alternativa A1).
+
+    A trava do caixa serializa os pedidos: um toque duplo no PDV não cria duas
+    vendas, e o caixa não fecha enquanto o item é incluído.
+    """
+    caixa = Caixa.objects.select_for_update().filter(situacao=Caixa.Situacao.ABERTO).first()
     if caixa is None:
         raise ValidationError("O caixa está fechado. Abra o caixa para iniciar uma venda.")
     venda = obter_venda_em_andamento(usuario, caixa)
@@ -128,6 +151,13 @@ def localizar_produtos_para_venda(termo):
     if produto is not None:
         return [produto]
     return list(pesquisar_produtos(termo, PesquisarPor.NOME)[:10]) if termo.strip() else []
+
+
+def _travar_em_andamento(venda):
+    """Relê a venda com trava: pedidos simultâneos (como F4 e Cancelar) não se sobrepõem."""
+    venda = Venda.objects.select_for_update().get(pk=venda.pk)
+    _exigir_em_andamento(venda)
+    return venda
 
 
 def _exigir_em_andamento(venda):
@@ -147,7 +177,7 @@ def _validar_quantidade(produto, quantidade):
 @transaction.atomic
 def adicionar_item(*, venda, produto, quantidade=1):
     """Passos 3–6 do UC05; um produto repetido soma à quantidade do item."""
-    _exigir_em_andamento(venda)
+    venda = _travar_em_andamento(venda)
     if not produto.ativo:
         raise ValidationError(f"{produto.nome} está inativo e não pode ser vendido.")
 
@@ -164,22 +194,29 @@ def adicionar_item(*, venda, produto, quantidade=1):
     )
 
 
+@transaction.atomic
 def alterar_quantidade(*, item, quantidade):
-    _exigir_em_andamento(item.venda)
+    _travar_em_andamento(item.venda)
     _validar_quantidade(item.produto, quantidade)
     item.quantidade = quantidade
     item.save(update_fields=["quantidade"])
     return item
 
 
+@transaction.atomic
 def remover_item(*, item):
-    _exigir_em_andamento(item.venda)
+    _travar_em_andamento(item.venda)
     item.delete()
 
 
+@transaction.atomic
 def cancelar_venda(*, venda):
-    """UC17 – Cancelar Venda em Andamento: nada é registrado no pagamento nem no estoque."""
-    _exigir_em_andamento(venda)
+    """UC17 – Cancelar Venda em Andamento: nada é registrado no pagamento nem no estoque.
+
+    Qualquer operador pode cancelar uma venda deixada em andamento no caixa
+    aberto (por exemplo, por quem teve o turno encerrado), para liberar o fechamento.
+    """
+    venda = _travar_em_andamento(venda)
     venda.situacao = Situacao.CANCELADA
     venda.save(update_fields=["situacao"])
     return venda
@@ -305,7 +342,11 @@ def registrar_devolucao(*, venda, quantidades, motivo, usuario):
     if not devolvidos:
         raise ValidationError("Informe a quantidade de pelo menos um item a devolver.")
 
-    caixa = Caixa.objects.select_for_update().get(pk=obter_caixa_aberto().pk)
+    # Trava o caixa e confirma que ele continua aberto: um fechamento simultâneo
+    # já teria congelado o valor esperado.
+    caixa = Caixa.objects.select_for_update().filter(situacao=Caixa.Situacao.ABERTO).first()
+    if caixa is None:
+        raise ValidationError("Abra o caixa para registrar a devolução e fazer o estorno.")
     valor = sum((item.preco_unitario * quantidade for item, quantidade in devolvidos), ZERO)
     if venda.forma_pagamento == FormaPagamento.DINHEIRO and valor > resumir_caixa(caixa)["valor_esperado"]:
         raise ValidationError("Não há dinheiro suficiente no caixa para este estorno.")
@@ -329,8 +370,13 @@ def registrar_devolucao(*, venda, quantidades, motivo, usuario):
 # Consulta ------------------------------------------------------------------
 
 
-def filtrar_vendas(*, identificador=None, situacao="", operador=None, caixa=None, inicio=None, fim=None):
-    """UC07 – Consultar Vendas por identificador, período, operador ou caixa."""
+def filtrar_vendas(
+    *, identificador=None, situacao="", operador=None, caixa=None, inicio=None, fim=None, data="iniciada_em"
+):
+    """UC07 – Consultar Vendas por identificador, período, operador ou caixa.
+
+    `data` escolhe o campo do período: o relatório usa a data de conclusão.
+    """
     vendas = Venda.objects.select_related("operador", "caixa")
     if identificador:
         vendas = vendas.filter(pk=identificador)
@@ -341,42 +387,32 @@ def filtrar_vendas(*, identificador=None, situacao="", operador=None, caixa=None
     if caixa:
         vendas = vendas.filter(caixa_id=caixa)
     if inicio:
-        vendas = vendas.filter(iniciada_em__date__gte=inicio)
+        vendas = vendas.filter(**{f"{data}__date__gte": inicio})
     if fim:
-        vendas = vendas.filter(iniciada_em__date__lte=fim)
+        vendas = vendas.filter(**{f"{data}__date__lte": fim})
     return vendas
 
 
 def gerar_relatorio_vendas(**filtros):
     """UC14 – relatório das vendas filtradas na consulta (UC07).
 
-    Considera apenas vendas concluídas e desconta os estornos das devoluções.
-    Nenhum registro é alterado.
+    Considera apenas vendas concluídas no período (pela data de conclusão) e
+    desconta os estornos das devoluções dessas vendas. Nenhum registro é alterado.
     """
     filtros["situacao"] = Situacao.CONCLUIDA
-    vendas = filtrar_vendas(**filtros).prefetch_related("devolucoes", "itens__produto").order_by("concluida_em", "id")
-    totais = {
-        linha["forma_pagamento"]: linha
-        # order_by() vazio: a ordenação da lista não pode entrar no agrupamento dos totais.
-        for linha in vendas.order_by().values("forma_pagamento").annotate(valor=Sum("total"), quantidade=Count("id"))
-    }
-    por_forma = [
-        {
-            "forma": forma.label,
-            "quantidade": totais.get(forma.value, {}).get("quantidade", 0),
-            "valor": totais.get(forma.value, {}).get("valor") or ZERO,
-        }
-        for forma in FormaPagamento
-    ]
-    total_vendido = sum((linha["valor"] for linha in por_forma), ZERO)
+    vendas = (
+        filtrar_vendas(**filtros, data="concluida_em")
+        .prefetch_related("devolucoes", "itens__produto")
+        .order_by("concluida_em", "id")
+    )
+    totais = _totais_por_forma(vendas)
+    total_vendido = totais["total_vendido"]
     total_estornado = (
         Devolucao.objects.filter(venda__in=vendas).aggregate(valor=Sum("valor_estornado"))["valor"] or ZERO
     )
     return {
         "vendas": list(vendas),
-        "por_forma": por_forma,
-        "quantidade_vendas": sum(linha["quantidade"] for linha in por_forma),
-        "total_vendido": total_vendido,
+        **totais,
         "total_estornado": total_estornado,
         "total_liquido": total_vendido - total_estornado,
     }

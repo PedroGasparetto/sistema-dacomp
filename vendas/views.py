@@ -146,7 +146,10 @@ class RemoverItemView(PerfilRequeridoMixin, View):
     http_method_names = ["post"]
 
     def post(self, request, pk):
-        remover_item(item=_item_da_venda_em_andamento(request, pk))
+        try:
+            remover_item(item=_item_da_venda_em_andamento(request, pk))
+        except ValidationError as erro:
+            _avisar_erros(request, erro)
         return redirect("vendas:pdv")
 
 
@@ -160,14 +163,26 @@ def _venda_em_andamento(request, pk):
 
 
 class CancelarVendaView(PerfilRequeridoMixin, View):
-    """UC17 – Cancelar Venda em Andamento: desistência antes da confirmação do recebimento."""
+    """UC17 – Cancelar Venda em Andamento: desistência antes da confirmação do recebimento.
+
+    Também cancela a venda que outra pessoa deixou em andamento no caixa aberto
+    (por exemplo, quando o turno dela terminou), para liberar o fechamento.
+    """
 
     http_method_names = ["post"]
 
     def post(self, request, pk):
-        venda = cancelar_venda(venda=_venda_em_andamento(request, pk))
-        messages.success(request, f"{venda} cancelada. Nenhum pagamento ou baixa de estoque foi registrado.")
-        return redirect("vendas:pdv")
+        venda = get_object_or_404(
+            Venda, pk=pk, situacao=Venda.Situacao.EM_ANDAMENTO, caixa__situacao=Caixa.Situacao.ABERTO
+        )
+        de_outra_pessoa = venda.operador_id != request.user.pk
+        try:
+            venda = cancelar_venda(venda=venda)
+        except ValidationError as erro:
+            _avisar_erros(request, erro)
+        else:
+            messages.success(request, f"{venda} cancelada. Nenhum pagamento ou baixa de estoque foi registrado.")
+        return redirect("vendas:fechar_caixa" if de_outra_pessoa else "vendas:pdv")
 
 
 class PagamentoView(PerfilRequeridoMixin, View):
@@ -274,7 +289,15 @@ class FecharCaixaView(PerfilRequeridoMixin, View):
         return render(
             request,
             self.template_name,
-            {"caixa": caixa, "resumo": resumir_caixa(caixa), "vendas": vendas, "formulario": formulario},
+            {
+                "caixa": caixa,
+                "resumo": resumir_caixa(caixa),
+                "vendas": vendas,
+                "vendas_em_andamento": caixa.vendas.filter(situacao=Venda.Situacao.EM_ANDAMENTO)
+                .select_related("operador")
+                .prefetch_related("itens__produto"),
+                "formulario": formulario,
+            },
         )
 
 
