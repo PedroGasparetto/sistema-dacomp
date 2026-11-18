@@ -35,7 +35,7 @@
   <div class="tabela-rolavel">
     <table class="striped">
       <thead>
-        <tr><th>Nº</th><th>Concluída em</th><th>Operador</th><th>Caixa</th><th>Pagamento</th><th class="num">Total</th><th class="num">Devolvido</th></tr>
+        <tr><th>Nº</th><th>Concluída em</th><th>Operador</th><th>Caixa</th><th>Itens</th><th>Pagamento</th><th class="num">Total</th><th class="num">Devolvido</th></tr>
       </thead>
       <tbody>
         {% for venda in relatorio.vendas %}
@@ -44,6 +44,7 @@
             <td>{{ venda.concluida_em|date:"d/m/Y H:i" }}</td>
             <td>{{ venda.operador }}</td>
             <td>{{ venda.caixa.pk }}</td>
+            <td>{% for item in venda.itens.all %}{{ item.quantidade }} × {{ item.produto.nome }} ({{ item.subtotal|moeda }}){% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
             <td>{{ venda.get_forma_pagamento_display }}</td>
             <td class="num">{{ venda.total|moeda }}</td>
             <td class="num">{% if venda.total_devolvido %}{{ venda.total_devolvido|moeda }}{% else %}—{% endif %}</td>

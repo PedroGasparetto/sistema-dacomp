@@ -123,7 +123,7 @@ def test_lista_rejeita_periodo_invertido(client, voluntario):
     assert resposta.context["formulario_filtro"].errors
 
 
-# Relatório de movimentações (UC50) ---------------------------------------------
+# Relatório de movimentações (UC14) ---------------------------------------------
 
 
 def test_relatorio_soma_por_produto_e_tipo(client, produto, voluntario):
@@ -142,3 +142,5 @@ def test_relatorio_soma_por_produto_e_tipo(client, produto, voluntario):
     assert resposta.status_code == 200
     assert resposta.context["relatorio"]["totais"]["entrada"] == 10
     assert resposta.context["relatorio"]["totais"]["ajuste"] == 0
+    completo = client.get(reverse("estoque:relatorio_movimentacoes")).content.decode()
+    assert "Avaria" in completo

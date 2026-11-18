@@ -131,7 +131,7 @@
           <small>Total</small>
           <p class="pdv-total">{{ total|moeda }}</p>
           {% if venda and itens %}
-            {# UC12 – Receber Pagamento: forma e troco na própria tela, sem página extra. #}
+            {# UC06 – Receber Pagamento: forma e troco na própria tela, sem página extra. #}
             <form method="post" action="{% url 'vendas:pagamento' venda.pk %}" id="pdv-pagamento"
                   class="pdv-pagamento" data-total="{{ total|unlocalize }}" autocomplete="off">
               {% csrf_token %}

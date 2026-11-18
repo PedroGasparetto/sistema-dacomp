@@ -8,6 +8,7 @@ app_name = "contas"
 # UC15 – Manter Contas: telas da Diretoria. O comando criar_conta continua disponível
 # para criar a primeira conta da Diretoria na instalação.
 urlpatterns = [
+    # UC01 – Autenticar Usuário.
     path("entrar/", auth_views.LoginView.as_view(redirect_authenticated_user=True), name="entrar"),
     path("sair/", auth_views.LogoutView.as_view(), name="sair"),
     path("minha-senha/", views.AlterarPropriaSenhaView.as_view(), name="alterar_senha"),
