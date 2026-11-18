@@ -147,7 +147,7 @@ por categoria. Itens preparados na hora, como café coado, podem ser cadastrados
 
 Em **PDV**: abra o caixa e toque nos produtos da grade de atalhos (filtrada por categoria) ou leia o
 código de barras (ou digite o código ou parte do nome) e pressione Enter. A comanda fica à direita,
-com o total. Logo abaixo do total, escolha **Dinheiro** ou **PIX** (a lojinha não aceita cartões) e, em
+com o total. Logo abaixo do total, escolha a forma de pagamento (dinheiro, PIX, crédito ou débito) e, em
 dinheiro, informe a quantia recebida: o troco aparece na hora. `F4` (ou **Confirmar pagamento**)
 conclui a venda sem sair do PDV, que fica pronto para a próxima, com o link da última venda. `F2` volta
 ao campo de produto. O fechamento do caixa confere as vendas por forma de pagamento e exige
