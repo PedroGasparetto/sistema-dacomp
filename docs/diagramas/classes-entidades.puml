@@ -164,8 +164,6 @@ package "vendas" {
   enum FormaPagamento <<enumeration>> {
     DINHEIRO
     PIX
-    CREDITO
-    DEBITO
   }
 }
 
