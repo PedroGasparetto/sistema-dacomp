@@ -1,0 +1,87 @@
+<mxfile host="app.diagrams.net" modified="2026-11-18T20:23:00.000Z" agent="Antigravity" version="31.7.0" type="device">
+  <diagram id="sequencia-caixa" name="Sequência - Abertura e Fechamento de Caixa">
+    <mxGraphModel dx="1220" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1180" pageHeight="760" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Participantes -->
+        <mxCell id="c_op" value="Operador" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="75" y="15" width="30" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c_view" value="AbrirCaixaView /&#xa;FecharCaixaView" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="25" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="c_vs" value="vendas.servicos" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="25" width="160" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="c_db" value="PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#666666;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="25" width="160" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Linhas de vida -->
+        <mxCell id="cl_op" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="90" y="90" as="sourcePoint" /><mxPoint x="90" y="730" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cl_view" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="370" y="69" as="sourcePoint" /><mxPoint x="370" y="730" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cl_vs" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="69" as="sourcePoint" /><mxPoint x="680" y="730" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cl_db" value="" style="endArrow=none;dashed=1;html=1;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="69" as="sourcePoint" /><mxPoint x="1020" y="730" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- Abertura -->
+        <mxCell id="cf_abrir" value="Abertura de Caixa" style="shape=umlFrame;whiteSpace=wrap;html=1;width=140;height=22;fillColor=none;strokeColor=#82b366;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="1065" height="225" as="geometry" />
+        </mxCell>
+        <mxCell id="cm1" value="1: Informa valor_inicial" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="90" y="145" as="sourcePoint" /><mxPoint x="370" y="145" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm2" value="2: abrir_caixa(usuario, valor_inicial)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="370" y="185" as="sourcePoint" /><mxPoint x="680" y="185" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm3" value="3: Verifica se já existe Caixa aberto" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="225" as="sourcePoint" /><mxPoint x="1020" y="225" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm4" value="4: Cria Caixa (ABERTO) ou ValidationError" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="265" as="sourcePoint" /><mxPoint x="680" y="265" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm5" value="5: Redireciona para PDV (ou exibe erro)" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="305" as="sourcePoint" /><mxPoint x="90" y="305" as="targetPoint" /></mxGeometry>
+        </mxCell>
+
+        <!-- Fechamento -->
+        <mxCell id="cf_fechar" value="Fechamento de Caixa" style="shape=umlFrame;whiteSpace=wrap;html=1;width=160;height=22;fillColor=none;strokeColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="355" width="1065" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="cm6" value="6: Solicita fechamento do caixa" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="90" y="405" as="sourcePoint" /><mxPoint x="370" y="405" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm7" value="7: resumir_caixa(caixa)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="370" y="445" as="sourcePoint" /><mxPoint x="680" y="445" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm8" value="8: Agrega vendas concluídas e estornos de devoluções" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="485" as="sourcePoint" /><mxPoint x="1020" y="485" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm9" value="9: Resumo (por forma, estornos, total líquido, valor_esperado)" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="1020" y="525" as="sourcePoint" /><mxPoint x="370" y="525" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm10" value="10: Envia valor_contado e justificativa" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="90" y="570" as="sourcePoint" /><mxPoint x="370" y="570" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm11" value="11: fechar_caixa(caixa, usuario,&#xa;valor_contado, justificativa)" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="370" y="615" as="sourcePoint" /><mxPoint x="680" y="615" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm12" value="12: select_for_update() + valida sem venda em&#xa;andamento + recalcula valor_esperado + salva FECHADO" style="endArrow=classic;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="655" as="sourcePoint" /><mxPoint x="1020" y="655" as="targetPoint" /></mxGeometry>
+        </mxCell>
+        <mxCell id="cm13" value="13: Caixa fechado / DetalheCaixaView (ou erro)" style="dashed=1;endArrow=open;endFill=0;html=1;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="680" y="692" as="sourcePoint" /><mxPoint x="90" y="692" as="targetPoint" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

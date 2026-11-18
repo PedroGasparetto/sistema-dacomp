@@ -125,6 +125,8 @@ O sistema não depende de internet: CSS e fontes ficam em `static/vendor`.
 Monólito Django em camadas, dividido em pacotes por subsistema. Cada pacote segue
 `models.py` (entidades) → `servicos.py` (regras de negócio) → `forms.py`/`views.py` (controle) → `templates/` (apresentação).
 
+![Diagrama de Pacotes e Arquitetura](docs/diagramas/diagrama_de_pacotes.drawio.svg)
+
 | Pacote     | Responsabilidade                                                          | Casos de uso |
 |------------|---------------------------------------------------------------------------|--------------|
 | `contas`   | Autenticação, perfis fixos (Diretoria, Bolsista, Voluntário) e gestão de contas | Autenticar Usuário, Manter Contas |
@@ -182,3 +184,11 @@ filtros da consulta, pronto para imprimir:
 - **Vendas:** vendas concluídas, totais por forma de pagamento, estornos de devoluções e total líquido.
 - **Movimentações de estoque:** registros do período e, por produto, entradas, ajustes, baixas por
   venda, devoluções e saldo atual.
+
+## Documentação e Contribuição
+
+- **[Guia de Contribuição](CONTRIBUTING.md)** — fluxo de branches/PRs, convenções de código, migrações e execução de testes.
+- **[Arquitetura do Sistema](docs/arquitetura.md)** — diagrama de pacotes, modelo entidade-relacionamento (DER), diagrama de classes de projeto, matriz de perfis e mapa de rotas.
+- **[Fluxos de Negócio](docs/fluxos.md)** — máquinas de estado (`Caixa` e `Venda`) e diagramas de sequência (PDV atômico, fechamento de caixa, estoque e devolução).
+- **[Instalação na Rede Local](docs/instalacao-rede-local.md)** — guia de implantação em rede local com `docker-compose.rede-local.yml`.
+- **[Diagramas](docs/diagramas/)** — diagramas editáveis em Draw.io (`.drawio` / `.drawio.svg`), diagramas UML de classes em PlantUML (`classes-1` a `classes-5`) e [documentação das operações](docs/diagramas/classes-operacoes.md).
