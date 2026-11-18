@@ -864,6 +864,10 @@ kbd {
   cursor: pointer;
   background: #fff;
 }
+/* O Pico usa width: fit-content em rótulos com botão de opção; aqui cada opção ocupa a célula. */
+.pdv-formas .pdv-forma {
+  width: 100%;
+}
 .pdv-forma input {
   margin: 0;
 }
