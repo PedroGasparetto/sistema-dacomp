@@ -1,4 +1,4 @@
-# trab_eng_soft
+# sistema-dacomp
 
 Repositório para elaboração do trabalho da cadeira INF01127 - Engenharia de Software.
 
@@ -47,7 +47,14 @@ Docker Desktop não está aberto.
 
 ### 3. Subir o sistema
 
-Na pasta do projeto (depois de `git clone https://github.com/gbtaffarel/trab_eng_soft.git`):
+Baixe o código e entre na pasta do projeto:
+
+```bash
+git clone https://github.com/PedroGasparetto/sistema-dacomp.git
+cd sistema-dacomp
+```
+
+Na pasta do projeto:
 
 ```bash
 docker compose up --build -d
