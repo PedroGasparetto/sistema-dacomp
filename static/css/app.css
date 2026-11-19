@@ -452,6 +452,36 @@ div:has(> input[type="checkbox"]):has(> label) > .helptext {
   padding: 0 0.4rem;
   margin-left: -0.4rem;
 }
+.campo-codigo-barras {
+  margin-bottom: var(--pico-spacing);
+}
+.campo-codigo-barras [role="group"] {
+  margin-bottom: 0.35rem;
+}
+.campo-codigo-barras [role="group"] button {
+  flex: 0 0 auto;
+  width: auto;
+  white-space: nowrap;
+}
+.campo-codigo-barras .helptext {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+.status-busca-barras {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--pico-muted-color);
+}
+.status-busca-barras[data-tipo="sucesso"] {
+  color: #1c5c33;
+}
+.status-busca-barras[data-tipo="erro"] {
+  color: #b42318;
+}
+.status-busca-barras[data-tipo="aviso"] {
+  color: #9a5b00;
+}
 
 /* Selos ------------------------------------------------------------------------- */
 
