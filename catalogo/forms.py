@@ -8,14 +8,16 @@ DINHEIRO = forms.NumberInput(attrs={"step": "0.01", "inputmode": "decimal"})
 
 class FormularioProduto(forms.ModelForm):
     GRUPOS = (
-        ("Identificação", ("codigo", "nome", "categoria", "descricao", "marca", "fornecedor")),
+        (
+            "Identificação",
+            ("codigo_barras", "codigo", "nome", "categoria", "descricao", "marca", "fornecedor"),
+        ),
         (
             "Venda e estoque",
             (
                 "preco_unitario",
                 "preco_custo",
                 "unidade",
-                "codigo_barras",
                 "controla_estoque",
             ),
         ),
@@ -24,6 +26,7 @@ class FormularioProduto(forms.ModelForm):
     class Meta:
         model = Produto
         fields = (
+            "codigo_barras",
             "codigo",
             "nome",
             "categoria",
@@ -33,14 +36,15 @@ class FormularioProduto(forms.ModelForm):
             "preco_unitario",
             "preco_custo",
             "unidade",
-            "codigo_barras",
             "controla_estoque",
         )
         widgets = {
             "descricao": forms.Textarea(attrs={"rows": 3}),
             "preco_unitario": DINHEIRO,
             "preco_custo": DINHEIRO,
-            "codigo_barras": forms.TextInput(attrs={"autocomplete": "off"}),
+            "codigo_barras": forms.TextInput(
+                attrs={"autocomplete": "off", "placeholder": "Ex.: 7891000100103"}
+            ),
         }
 
     def grupos(self):

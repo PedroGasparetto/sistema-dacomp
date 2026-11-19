@@ -2,13 +2,28 @@
 {% block title %}{% if produto %}Editar produto{% else %}Cadastrar produto{% endif %}{% endblock %}
 {% block content %}
 <h1>{% if produto %}Editar {{ produto.nome }}{% else %}Cadastrar produto{% endif %}</h1>
-<form method="post" class="formulario-medio">
+<form method="post" class="formulario-medio" id="formulario-produto">
   {% csrf_token %}
   {{ form.non_field_errors }}
   {% for titulo, campos in form.grupos %}
     <fieldset class="grupo-formulario">
       <legend>{{ titulo }}</legend>
-      {% for campo in campos %}{{ campo.as_field_group }}{% endfor %}
+      {% for campo in campos %}
+        {% if campo.name == "codigo_barras" %}
+          <div class="campo-codigo-barras">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            <div role="group">
+              {{ campo }}
+              <button type="button" id="btn-buscar-barras" class="secondary outline">Buscar dados</button>
+            </div>
+            {{ campo.errors }}
+            {% if campo.help_text %}<small class="helptext">{{ campo.help_text }}</small>{% endif %}
+            <small id="status-busca-barras" class="status-busca-barras" aria-live="polite" hidden></small>
+          </div>
+        {% else %}
+          {{ campo.as_field_group }}
+        {% endif %}
+      {% endfor %}
     </fieldset>
   {% endfor %}
   {% if produto %}
@@ -19,4 +34,119 @@
     <a href="{% if produto %}{{ produto.get_absolute_url }}{% else %}{% url 'catalogo:lista_produtos' %}{% endif %}">Cancelar</a>
   </div>
 </form>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    const formulario = document.getElementById("formulario-produto");
+    if (!formulario) return;
+
+    const campoBarras = formulario.querySelector("[name=codigo_barras]");
+    const botaoBuscar = document.getElementById("btn-buscar-barras");
+    const status = document.getElementById("status-busca-barras");
+    const urlConsulta = "{% url 'catalogo:consultar_codigo_barras' %}";
+
+    {% if not produto %}
+    campoBarras?.focus();
+    {% endif %}
+
+    const camposAutopreenchiveis = ["nome", "marca", "categoria", "descricao"].map((nome) =>
+      formulario.querySelector(`[name=${nome}]`)
+    ).filter(Boolean);
+
+    camposAutopreenchiveis.forEach((campo) => {
+      const limparMarca = () => { delete campo.dataset.autopreenchido; };
+      campo.addEventListener("input", limparMarca);
+      campo.addEventListener("change", limparMarca);
+    });
+
+    function mostrarStatus(texto, tipo) {
+      status.textContent = texto;
+      status.dataset.tipo = tipo || "";
+      status.hidden = !texto;
+    }
+
+    function preencherCampoTexto(nome, valor) {
+      if (!valor) return false;
+      const campo = formulario.querySelector(`[name=${nome}]`);
+      if (!campo) return false;
+      if (!campo.value.trim() || campo.dataset.autopreenchido === "1") {
+        campo.value = valor;
+        campo.dataset.autopreenchido = "1";
+        return true;
+      }
+      return false;
+    }
+
+    function preencherCategoria(valor) {
+      if (!valor) return false;
+      const campo = formulario.querySelector("[name=categoria]");
+      if (!campo) return false;
+      if (campo.value === "outro" || campo.dataset.autopreenchido === "1") {
+        campo.value = valor;
+        campo.dataset.autopreenchido = "1";
+        return true;
+      }
+      return false;
+    }
+
+    async function buscarPorCodigoBarras() {
+      const codigo = (campoBarras?.value || "").trim();
+      if (!codigo) {
+        mostrarStatus("Informe um código de barras antes de buscar.", "aviso");
+        campoBarras?.focus();
+        return;
+      }
+
+      botaoBuscar.setAttribute("aria-busy", "true");
+      botaoBuscar.disabled = true;
+      mostrarStatus("Buscando informações do produto...", "info");
+
+      try {
+        const resposta = await fetch(`${urlConsulta}?codigo=${encodeURIComponent(codigo)}`, {
+          headers: { Accept: "application/json" },
+        });
+        const corpo = await resposta.json();
+
+        if (!resposta.ok) {
+          mostrarStatus(corpo.erro || "Não foi possível consultar a API no momento.", "erro");
+          return;
+        }
+
+        if (!corpo.encontrado || !corpo.dados) {
+          mostrarStatus("Nenhum produto encontrado para este código de barras.", "aviso");
+          return;
+        }
+
+        const dados = corpo.dados;
+        const preenchidos = [
+          preencherCampoTexto("nome", dados.nome),
+          preencherCampoTexto("marca", dados.marca),
+          preencherCategoria(dados.categoria),
+          preencherCampoTexto("descricao", dados.descricao),
+        ].some(Boolean);
+
+        if (preenchidos) {
+          const fonte = dados.fonte ? ` (${dados.fonte})` : "";
+          mostrarStatus(`Dados preenchidos automaticamente${fonte}. Confira antes de salvar.`, "sucesso");
+        } else {
+          mostrarStatus("Produto encontrado, mas os campos já estavam preenchidos.", "info");
+        }
+      } catch (_erro) {
+        mostrarStatus("Falha de conexão ao consultar o código de barras.", "erro");
+      } finally {
+        botaoBuscar.removeAttribute("aria-busy");
+        botaoBuscar.disabled = false;
+      }
+    }
+
+    botaoBuscar?.addEventListener("click", buscarPorCodigoBarras);
+    campoBarras?.addEventListener("keydown", (evento) => {
+      if (evento.key === "Enter") {
+        evento.preventDefault();
+        buscarPorCodigoBarras();
+      }
+    });
+  })();
+</script>
 {% endblock %}

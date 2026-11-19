@@ -169,3 +169,104 @@ def test_admin_aplica_as_validacoes_do_cadastro(client, produto, bolsista):
     assert resposta.status_code == 200
     produto.refresh_from_db()
     assert produto.controla_estoque
+
+
+# Código de barras no início e API externa ----------------------------
+
+
+def test_codigo_de_barras_eh_o_primeiro_campo_do_formulario():
+    from catalogo.forms import FormularioProduto
+
+    formulario = FormularioProduto()
+    grupos = formulario.grupos()
+    assert grupos[0][1][0].name == "codigo_barras"
+    assert list(formulario.fields)[0] == "codigo_barras"
+
+
+def test_consultar_codigo_barras_externo_preenche_campos(monkeypatch):
+    import io
+    import json
+    from catalogo.servicos import consultar_codigo_barras_externo
+
+    payload = {
+        "status": 1,
+        "product": {
+            "product_name_pt": "Refrigerante Guaraná",
+            "generic_name_pt": "Refrigerante de guaraná",
+            "quantity": "350 ml",
+            "brands": "Antarctica, Ambev",
+            "categories_tags": ["en:beverages", "en:sodas"],
+        },
+    }
+
+    class _RespostaFake(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    monkeypatch.setattr(
+        "urllib.request.urlopen",
+        lambda req, timeout=5: _RespostaFake(json.dumps(payload).encode("utf-8")),
+    )
+
+    dados = consultar_codigo_barras_externo("7891991010856")
+    assert dados == {
+        "nome": "Refrigerante Guaraná 350 ml",
+        "marca": "Antarctica, Ambev",
+        "categoria": Produto.Categoria.BEBIDA,
+        "descricao": "Refrigerante de guaraná",
+        "fonte": "Open Food Facts",
+    }
+
+
+def test_consultar_codigo_barras_externo_erro_rede(monkeypatch):
+    import urllib.error
+    import pytest
+    from catalogo.servicos import ErroConsultaCodigoBarras, consultar_codigo_barras_externo
+
+    def _falhar(*args, **kwargs):
+        raise urllib.error.URLError("sem rede")
+
+    monkeypatch.setattr("urllib.request.urlopen", _falhar)
+    with pytest.raises(ErroConsultaCodigoBarras):
+        consultar_codigo_barras_externo("7891991010856")
+
+
+def test_view_consultar_codigo_barras_permissoes_e_respostas(client, voluntario, bolsista, monkeypatch):
+    url = reverse("catalogo:consultar_codigo_barras")
+
+    client.force_login(voluntario)
+    assert client.get(url, {"codigo": "7891991010856"}).status_code == 403
+
+    client.force_login(bolsista)
+    assert client.get(url).status_code == 400
+
+    monkeypatch.setattr(
+        "catalogo.views.consultar_codigo_barras_externo",
+        lambda codigo: {
+            "nome": "Biscoito Recheado 130 g",
+            "marca": "Oreo",
+            "categoria": Produto.Categoria.DOCE,
+            "descricao": "Biscoito de chocolate",
+            "fonte": "Open Food Facts",
+        },
+    )
+    resposta = client.get(url, {"codigo": "7622210602084"})
+    assert resposta.status_code == 200
+    assert resposta.json() == {
+        "encontrado": True,
+        "dados": {
+            "nome": "Biscoito Recheado 130 g",
+            "marca": "Oreo",
+            "categoria": Produto.Categoria.DOCE,
+            "descricao": "Biscoito de chocolate",
+            "fonte": "Open Food Facts",
+        },
+    }
+
+    monkeypatch.setattr("catalogo.views.consultar_codigo_barras_externo", lambda codigo: None)
+    resposta_nao_encontrado = client.get(url, {"codigo": "00000000"})
+    assert resposta_nao_encontrado.status_code == 200
+    assert resposta_nao_encontrado.json() == {"encontrado": False}

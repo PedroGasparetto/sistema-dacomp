@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
@@ -10,7 +11,12 @@ from contas.perfis import PERFIS_GESTAO_PRODUTOS
 
 from .forms import FormularioPesquisaProduto, FormularioProduto
 from .models import Produto
-from .servicos import PesquisarPor, pesquisar_produtos
+from .servicos import (
+    ErroConsultaCodigoBarras,
+    PesquisarPor,
+    consultar_codigo_barras_externo,
+    pesquisar_produtos,
+)
 
 
 class ListaProdutosView(PerfilRequeridoMixin, ListView):
@@ -95,3 +101,25 @@ class AlternarSituacaoProdutoView(PerfilRequeridoMixin, View):
         situacao = "reativado" if produto.ativo else "inativado"
         messages.success(request, f"Produto {produto.nome} {situacao}.")
         return redirect(produto)
+
+
+class ConsultarCodigoBarrasView(PerfilRequeridoMixin, View):
+    """Consulta API externa de código de barras para autopreencher o cadastro."""
+
+    perfis_permitidos = PERFIS_GESTAO_PRODUTOS
+    http_method_names = ["get"]
+
+    def get(self, request):
+        codigo = (request.GET.get("codigo") or "").strip()
+        if not codigo:
+            return JsonResponse(
+                {"encontrado": False, "erro": "Informe um código de barras."}, status=400
+            )
+        try:
+            dados = consultar_codigo_barras_externo(codigo)
+        except ErroConsultaCodigoBarras as erro:
+            return JsonResponse({"encontrado": False, "erro": str(erro)}, status=502)
+
+        if not dados:
+            return JsonResponse({"encontrado": False})
+        return JsonResponse({"encontrado": True, "dados": dados})
